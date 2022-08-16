@@ -9,6 +9,7 @@ namespace WizMes_WooJung
     public class LoadINI
     {
         public static StringBuilder server = new StringBuilder();
+
         public static StringBuilder Database = new StringBuilder();
 
         public static StringBuilder FTPPort = new StringBuilder();

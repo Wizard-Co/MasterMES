@@ -44,11 +44,13 @@ namespace WizMes_WooJung
         //private string ConnectionString = "Data Source=wizis.iptime.org,20150;Initial Catalog=MES_DaeWon;UID=DBUser;PWD=Wizardis; Connection Timeout=0";
         //private string LogConnectionString = "Data Source=wizis.iptime.org,20150;Initial Catalog=WizLog;UID=DBUser;PWD=Wizardis; Connection Timeout=0";
 
+#if DEBUG
         private string ConnectionString = "Data Source=wizis.iptime.org,20150;Initial Catalog=MES_WooJung;UID=DBUser;PWD=Wizardis; Connection Timeout=180";
         private string LogConnectionString = "Data Source=wizis.iptime.org,20150;Initial Catalog=WizLog;UID=DBUser;PWD=Wizardis; Connection Timeout=180";
-
-        //private string ConnectionString = "Data Source=" + LoadINI.server + ";Initial Catalog=" + LoadINI.Database + ";UID=DBUser;PWD=Wizardis; Connection Timeout= 0";
-        //private string LogConnectionString = "Data Source=" + LoadINI.server + ";Initial Catalog=WizLog;UID=DBUser;PWD=Wizardis; Connection Timeout= 0";
+#else
+        private string ConnectionString = "Data Source=" + LoadINI.server + ";Initial Catalog=" + LoadINI.Database + ";UID=DBUser;PWD=Wizardis; Connection Timeout= 0";
+        private string LogConnectionString = "Data Source=" + LoadINI.server + ";Initial Catalog=WizLog;UID=DBUser;PWD=Wizardis; Connection Timeout= 0";
+#endif
 
         private string ZipConnectionString = "Data Source=wizis.iptime.org,1433;Initial Catalog=ZipDB;UID= wizard;PWD=wizard2013; Connection Timeout= 0";
 
@@ -192,7 +194,7 @@ namespace WizMes_WooJung
             }
         }
 
-        #region Base Query
+#region Base Query
 
         /// <summary>
         /// 주소 검색시 사용
@@ -321,11 +323,11 @@ namespace WizMes_WooJung
             //}
         }
 
-        #endregion
+#endregion
 
 
 
-        #region 쿼리공통
+#region 쿼리공통
 
         /// <summary>
         /// ProcedureToDataSet
@@ -614,7 +616,7 @@ namespace WizMes_WooJung
 
                 string value = Convert.ToString(p_Command.ExecuteScalar());
 
-                #region 출하처리에 프로시저 예외처리 0일경우 commit 나머지 rollback
+#region 출하처리에 프로시저 예외처리 0일경우 commit 나머지 rollback
                 string[] valueSplit = value.Split(',');
                 if (valueSplit.Length > 1)
                 {
@@ -628,7 +630,7 @@ namespace WizMes_WooJung
                         throw new Exception(value);
                     }
                 }
-                #endregion
+#endregion
 
                 transaction.Commit();
 
@@ -1970,11 +1972,11 @@ namespace WizMes_WooJung
             }
         }
 
-        #endregion
+#endregion
 
 
 
-        #region Transcation 별도 처리
+#region Transcation 별도 처리
 
         public void TransactionBegin()
         {
@@ -2015,11 +2017,11 @@ namespace WizMes_WooJung
 #endif
         }
 
-        #endregion
+#endregion
 
 
 
-        #region TxnLog
+#region TxnLog
         private string[] InsertTrxLog(System.Reflection.MethodBase baseInfo)
         {
             //p_Connection Opne/Close를 하지 않는다.
@@ -2143,7 +2145,7 @@ namespace WizMes_WooJung
 
         }
 
-        #endregion
+#endregion
         public string[] ExecuteAllProcedureOutputNew(List<Procedure> AllProcedure, List<Dictionary<string, object>> sqlParameterall)
         {
             // Output 결과 값을 넣을 List
@@ -2329,7 +2331,7 @@ namespace WizMes_WooJung
                 CloseConnection();
             }
         }
-        #region 주석
+#region 주석
         ////public string[] ExecuteAllProcedureOutputNew(List<Procedure> AllProcedure, List<Dictionary<string, object>> sqlParameterall)
         //{
         //    // Output 결과 값을 넣을 Dictionary
@@ -2513,7 +2515,7 @@ namespace WizMes_WooJung
         //        CloseConnection();
         //    }
         //}
-        #endregion
+#endregion
 
         private string[] InsertTrxLogByUserIDErrLog(System.Reflection.MethodBase baseInfo, string exMsg)
         {
