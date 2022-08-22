@@ -21,6 +21,8 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_com_ArticleCode_U : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
 
         Lib lib = new Lib();
         PlusFinder pf = new PlusFinder();
@@ -69,6 +71,11 @@ namespace WizMes_WooJung
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             Lib.Instance.UiLoading(sender);
             SetComboBox();
 
@@ -555,6 +562,8 @@ namespace WizMes_WooJung
             {
                 if (MessageBox.Show("선택하신 항목을 삭제하시겠습니까?", "삭제 전 확인", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
+                    DataStore.Instance.InsertLogByForm(this.GetType().Name, "D");
+
                     //삭제 전 체크
                     if (!DeleteDataCheck(winArticleCode.ArticleID))
                         return;
@@ -605,6 +614,7 @@ namespace WizMes_WooJung
         //닫기
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             Lib.Instance.ChildMenuClose(this.ToString());
         }
 
@@ -681,6 +691,7 @@ namespace WizMes_WooJung
             {
                 if (ExpExc.choice.Equals(dgdArticleCode.Name))
                 {
+                    DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                     if (ExpExc.Check.Equals("Y"))
                         dt = Lib.Instance.DataGridToDTinHidden(dgdArticleCode);
                     else
@@ -970,7 +981,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("sArticleGrpID", chkArticleGrpSrh.IsChecked == true && cboArticleGrpSearch.SelectedValue != null ? cboArticleGrpSearch.SelectedValue.ToString() : "");
                 sqlParameter.Add("sSupplyType", chkSupplyTypeSrh.IsChecked == true && cboSrhSupplyType.SelectedValue != null ? cboSrhSupplyType.SelectedValue.ToString() : "");
 
-                DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_Article_sArticle", sqlParameter, false);
+                DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_Article_sArticle", sqlParameter, true, "R");
 
                 if (ds != null && ds.Tables.Count > 0)
                 {
@@ -1304,7 +1315,7 @@ namespace WizMes_WooJung
                             }
 
                             string[] Confirm = new string[2];
-                            Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew(Prolist, ListParameter);
+                            Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew_NewLog(Prolist, ListParameter,"C");
                             if (Confirm[0] != "success")
                             {
                                 MessageBox.Show("[저장실패]\r\n" + Confirm[1].ToString());
@@ -1364,7 +1375,7 @@ namespace WizMes_WooJung
                         }
 
                         string[] Confirm = new string[2];
-                        Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew(Prolist, ListParameter);
+                        Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew_NewLog(Prolist, ListParameter,"U");
                         if (Confirm[0] != "success")
                         {
                             MessageBox.Show("[저장실패]\r\n" + Confirm[1].ToString());

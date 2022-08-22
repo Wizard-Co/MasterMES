@@ -18,6 +18,9 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_mtr_LotStock_Q : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         Lib lib = new Lib();
         int rowNum = 0;
 
@@ -46,6 +49,11 @@ namespace WizMes_WooJung
 
         public void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             Lib.Instance.UiLoading(sender);
 
             dtpSDate.SelectedDate = DateTime.Today;
@@ -456,6 +464,7 @@ namespace WizMes_WooJung
         {
             try
             {
+                DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
                 Lib.Instance.ChildMenuClose(this.ToString());
             }
             catch (Exception ex)
@@ -508,6 +517,7 @@ namespace WizMes_WooJung
                     {
                         if (ExpExc.choice.Equals(dgd.Name))
                         {
+                            DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                             //if (ExpExc.Check.Equals("Y"))
                             //    dt = Lib.Instance.DataGridToDTinHidden(dgd);
                             //else

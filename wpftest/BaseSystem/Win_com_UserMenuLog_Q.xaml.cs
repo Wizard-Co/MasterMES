@@ -1,9 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 using WizMes_WooJung.PopUP;
 using WPF.MDI;
 
@@ -16,6 +24,9 @@ namespace WizMes_WooJung
     {
         Lib lib = new Lib();
 
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         public Win_com_UserMenuLog_Q()
         {
             InitializeComponent();
@@ -26,6 +37,10 @@ namespace WizMes_WooJung
             chkDate.IsChecked = true;
             btnToday_Click(null, null);
 
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
         }
 
         #region 상단 검색조건 모음
@@ -33,13 +48,13 @@ namespace WizMes_WooJung
         //사용일자
         private void lblDate_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (chkDate.IsChecked == true)
+            if (chkDate.IsChecked == true) 
             {
-                chkDate.IsChecked = false;
+                chkDate.IsChecked = false; 
             }
-            else
+            else 
             {
-                chkDate.IsChecked = true;
+                chkDate.IsChecked = true; 
             }
         }
 
@@ -60,8 +75,10 @@ namespace WizMes_WooJung
         //전일
         private void btnYesterDay_Click(object sender, RoutedEventArgs e)
         {
-            dtpSDate.SelectedDate = DateTime.Today.AddDays(-1);
-            dtpEDate.SelectedDate = DateTime.Today.AddDays(-1);
+            DateTime[] SearchDate = lib.BringLastDayDateTimeContinue(dtpEDate.SelectedDate.Value);
+
+            dtpSDate.SelectedDate = SearchDate[0];
+            dtpEDate.SelectedDate = SearchDate[1];
         }
 
         //금일
@@ -74,27 +91,29 @@ namespace WizMes_WooJung
         //전월
         private void btnLastMonth_Click(object sender, RoutedEventArgs e)
         {
-            dtpSDate.SelectedDate = lib.BringLastMonthDatetimeList()[0];
-            dtpEDate.SelectedDate = lib.BringLastMonthDatetimeList()[1];
+            DateTime[] SearchDate = lib.BringLastMonthContinue(dtpSDate.SelectedDate.Value);
+
+            dtpSDate.SelectedDate = SearchDate[0];
+            dtpEDate.SelectedDate = SearchDate[1];
         }
 
         //금월
         private void btnThisMonth_Click(object sender, RoutedEventArgs e)
         {
-            dtpSDate.SelectedDate = lib.BringThisMonthDatetimeList()[0];
-            dtpEDate.SelectedDate = lib.BringThisMonthDatetimeList()[1];
+            dtpSDate.SelectedDate = Lib.Instance.BringThisMonthDatetimeList()[0];
+            dtpEDate.SelectedDate = Lib.Instance.BringThisMonthDatetimeList()[1];
         }
 
         //사원명
         private void lblPersonName_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (chkPersonName.IsChecked == true)
+            if (chkPersonName.IsChecked == true) 
             {
-                chkPersonName.IsChecked = false;
+                chkPersonName.IsChecked = false; 
             }
-            else
+            else 
             {
-                chkPersonName.IsChecked = true;
+                chkPersonName.IsChecked = true; 
             }
         }
 
@@ -133,11 +152,6 @@ namespace WizMes_WooJung
         //검색
         private void btnSearch_Click(object sender, RoutedEventArgs e)
         {
-            //검색버튼 비활성화
-            btnSearch.IsEnabled = false;
-            //딜레이주면 표시남. 딜레이 안주면 표가 안남.
-            lib.Delay(500);
-
             if (dgdMain.Items.Count > 0)
             {
                 dgdMain.Items.Clear();
@@ -149,9 +163,6 @@ namespace WizMes_WooJung
             {
                 dgdMain.SelectedIndex = 0;
             }
-
-            //검색 다 되면 활성화
-            btnSearch.IsEnabled = true;
         }
 
         //닫기
@@ -170,6 +181,9 @@ namespace WizMes_WooJung
                 }
                 i++;
             }
+
+            //화면종료 로그 남기기 2022-06-23 추가
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
         }
 
         //엑셀
@@ -191,14 +205,15 @@ namespace WizMes_WooJung
                 {
                     if (ExpExc.choice.Equals(dgdMain.Name))
                     {
+
                         if (ExpExc.Check.Equals("Y"))
-                            dt = lib.DataGridToDTinHidden(dgdMain);
+                            dt = Lib.Instance.DataGridToDTinHidden(dgdMain);
                         else
-                            dt = lib.DataGirdToDataTable(dgdMain);
+                            dt = Lib.Instance.DataGirdToDataTable(dgdMain);
 
                         Name = dgdMain.Name;
-                        if (lib.GenerateExcel(dt, Name))
-                            lib.excel.Visible = true;
+                        if (Lib.Instance.GenerateExcel(dt, Name))
+                            Lib.Instance.excel.Visible = true;
                         else
                             return;
                     }
@@ -219,7 +234,7 @@ namespace WizMes_WooJung
         private void DataGrid_SizeChange(object sender, SizeChangedEventArgs e)
         {
             DataGrid dgs = sender as DataGrid;
-            if (dgs.ColumnHeaderHeight == 0)
+            if(dgs.ColumnHeaderHeight == 0)
             {
                 dgs.ColumnHeaderHeight = 1;
             }
@@ -227,13 +242,13 @@ namespace WizMes_WooJung
             double b = e.PreviousSize.Height / 100;
             double c = a / b;
 
-            if (c != double.PositiveInfinity && c != 0 && double.IsNaN(c) == false)
+            if(c !=double.PositiveInfinity && c != 0 && double.IsNaN(c) == false)
             {
                 dgs.ColumnHeaderHeight = dgs.ColumnHeaderHeight * c;
                 dgs.FontSize = dgs.FontSize * c;
             }
         }
-
+        
 
         //실조회
         private void FillGrid()
@@ -245,10 +260,10 @@ namespace WizMes_WooJung
                 sqlParameter.Add("ChkDate", chkDate.IsChecked == true ? 1 : 0);
                 sqlParameter.Add("sFromDate", chkDate.IsChecked == true ? dtpSDate.SelectedDate.Value.ToString("yyyyMMdd") : "");
                 sqlParameter.Add("sToDate", chkDate.IsChecked == true ? dtpEDate.SelectedDate.Value.ToString("yyyyMMdd") : "");
-                sqlParameter.Add("ChkPerson", chkPersonName.IsChecked == true ? 1 : 0);
+                sqlParameter.Add("ChkPerson", chkPersonName.IsChecked == true ? 1:0);
                 sqlParameter.Add("sPerson", chkPersonName.IsChecked == false || txtPersonName.Text == null || txtPersonName.Text.Trim().Equals("") ? "" : txtPersonName.Text);
 
-                DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_Common_sLogData", sqlParameter, false);
+                DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_Common_sLogData_New", sqlParameter, true, "R");
 
                 if (ds != null && ds.Tables.Count > 0)
                 {
@@ -261,6 +276,11 @@ namespace WizMes_WooJung
                     else
                     {
                         DataRowCollection drc = dt.Rows;
+                        string pickDate = "";
+                        string pickMenu = "";
+
+                        pickDate = drc[0]["WorkDate"].ToString();
+                        pickMenu = drc[0]["Menu"].ToString();
 
                         for (int i = 0; i < drc.Count; i++)
                         {
@@ -270,23 +290,53 @@ namespace WizMes_WooJung
                             {
                                 Num = (i + 1),
                                 WorkDate = dr["WorkDate"].ToString(),
-                                WorkTime = dr["WorkTime"].ToString(),
-                                PersonID = dr["PersonID"].ToString(),
+                                //WorkTime = dr["WorkTime"].ToString(),
+                                //PersonID = dr["PersonID"].ToString(),
                                 UserID = dr["UserID"].ToString(),
                                 Name = dr["Name"].ToString(),
-                                MenuID = dr["MenuID"].ToString(),
-                                Menu = dr["Menu"].ToString()
+                                //MenuID = dr["MenuID"].ToString(),
+                                Menu = dr["Menu"].ToString(),
+                                StartDate = dr["StartDate"].ToString(),
+                                StartTime = dr["StartTime"].ToString(),
+                                EndDate = dr["EndDate"].ToString(),
+                                EndTime = dr["EndTime"].ToString(),
+                                Duration = stringFormatN0(dr["Duration"]),
+                                C = stringFormatN0(dr["C"]),
+                                R = stringFormatN0(dr["R"]),
+                                U = stringFormatN0(dr["U"]),
+                                D = stringFormatN0(dr["D"])
                             };
 
-                            WinUserMenuLog.WorkDate = lib.StrDateTimeBar(WinUserMenuLog.WorkDate);
-
-                            if (WinUserMenuLog.WorkTime.Length > 0 && WinUserMenuLog.WorkTime.Length == 4)
+                            //처음에는 무조건 CRUD 넣는다. 
+                            if (i > 0)
                             {
-                                WinUserMenuLog.WorkTime = WinUserMenuLog.WorkTime.Substring(0, 2) + ":" +
-                                    WinUserMenuLog.WorkTime.Substring(2, 2);
+                                if (pickDate.Equals(WinUserMenuLog.WorkDate) && pickMenu.Equals(WinUserMenuLog.Menu))
+                                {
+                                    WinUserMenuLog.C = "";
+                                    WinUserMenuLog.R = "";
+                                    WinUserMenuLog.U = "";
+                                    WinUserMenuLog.D = "";
+                                }
+                                else
+                                {
+                                    pickDate = drc[i]["WorkDate"].ToString();
+                                    pickMenu = drc[i]["Menu"].ToString();
+                                }
                             }
 
+                            WinUserMenuLog.WorkDate_CV = WinUserMenuLog.WorkDate != null ? Lib.Instance.StrDateTimeBar(WinUserMenuLog.WorkDate) : ""; 
+
+                            WinUserMenuLog.StartDate_CV = WinUserMenuLog.StartDate != null ? DatePickerFormat(dr["StartDate"].ToString()) : ""; 
+                            WinUserMenuLog.StartTime_CV = WinUserMenuLog.StartTime != null ? DateTimeFormat(WinUserMenuLog.StartTime) : "";
+
+                            WinUserMenuLog.EndDate_CV = WinUserMenuLog.EndDate != null ? DatePickerFormat(dr["EndDate"].ToString()) : "";
+                            WinUserMenuLog.EndTime_CV = WinUserMenuLog.EndTime != null ? DateTimeFormat(WinUserMenuLog.EndTime) : "";
+
+                            
+
+
                             dgdMain.Items.Add(WinUserMenuLog);
+
                         }
 
                         tbkCount.Text = "▶ 검색 결과 : " + dt.Rows.Count.ToString() + " 건";
@@ -302,17 +352,69 @@ namespace WizMes_WooJung
                 DataStore.Instance.CloseConnection();
             }
         }
+
+        // 데이터피커 포맷으로 변경
+        private string DatePickerFormat(string str)
+        {
+            string result = "";
+
+            if (str.Length == 8)
+            {
+                if (!str.Trim().Equals(""))
+                {
+                    result = str.Substring(0, 4) + "-" + str.Substring(4, 2) + "-" + str.Substring(6, 2);
+                }
+            }
+
+            return result;
+        }
+
+        // 시간 형식
+        private string DateTimeFormat(string str)
+        {
+            str = str.Replace(":", "").Trim();
+
+            if (str.Length == 4)
+            {
+                string Hour = str.Substring(0, 2);
+                string Min = str.Substring(2, 2);
+
+                str = Hour + ":" + Min ;
+            }
+
+            return str;
+        }
+
+        
+        private string stringFormatN0(object obj)
+        {
+            return string.Format("{0:N0}", obj);
+        }
     }
 
     class Win_sys_UserMenuLog_Q_CodeView : BaseView
     {
         public int Num { get; set; }
         public string WorkDate { get; set; }
+        public string WorkDate_CV { get; set; }
         public string WorkTime { get; set; }
         public string PersonID { get; set; }
         public string UserID { get; set; }
         public string Name { get; set; }
         public string MenuID { get; set; }
         public string Menu { get; set; }
+        public string StartDate { get; set; }
+        public string StartDate_CV { get; set; }
+        public string StartTime { get; set; }
+        public string StartTime_CV { get; set; }
+        public string EndDate { get; set; }
+        public string EndDate_CV { get; set; }
+        public string EndTime { get; set; }
+        public string EndTime_CV { get; set; }
+        public string Duration { get; set; }
+        public string C { get; set; }
+        public string R { get; set; }
+        public string U { get; set; }
+        public string D { get; set; }
     }
 }

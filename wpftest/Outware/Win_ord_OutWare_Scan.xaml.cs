@@ -16,6 +16,9 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_ord_OutWare_Scan : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         Lib lib = new Lib();
         PlusFinder pf = new PlusFinder();
 
@@ -50,6 +53,11 @@ namespace WizMes_WooJung
         {
             try
             {
+                stDate = DateTime.Now.ToString("yyyyMMdd");
+                stTime = DateTime.Now.ToString("HHmm");
+
+                DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
                 chkOutwareDay.IsChecked = true; //출고일자 IsCheked
                 dtpFromDate.Text = DateTime.Now.ToString("yyyy-MM-dd");
                 dtpToDate.Text = DateTime.Now.ToString("yyyy-MM-dd");   // 오늘 날짜 자동 반영
@@ -486,6 +494,7 @@ namespace WizMes_WooJung
         {
             try
             {
+                DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
                 Lib.Instance.ChildMenuClose(this.ToString());
             }
             catch (Exception ee)
@@ -601,6 +610,7 @@ namespace WizMes_WooJung
                 {
                     if (ExpExc.choice.Equals(dgdOutware.Name))
                     {
+                        DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                         //MessageBox.Show("대분류");
                         if (ExpExc.Check.Equals("Y"))
                             dt = lib2.DataGridToDTinHidden(dgdOutware);
@@ -709,6 +719,7 @@ namespace WizMes_WooJung
                     MessageBox.Show("거래명세표 항목이 정확히 선택되지 않았습니다.");
                     return;
                 }
+                DataStore.Instance.InsertLogByForm(this.GetType().Name, "P");
                 msg.Show();
                 msg.Topmost = true;
                 msg.Refresh();
@@ -1353,7 +1364,7 @@ namespace WizMes_WooJung
                 //sqlParameter.Add("nBuyerArticleNo", "");      //모르겠어서 빈값으로 전체조회
                 //sqlParameter.Add("BuyerArticleNo", txtArticle.Text);
 
-                ds = DataStore.Instance.ProcedureToDataSet("xp_Outware_sOrder", sqlParameter, false);
+                ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_Outware_sOrder", sqlParameter, true, "R");
 
                 if (ds != null && ds.Tables.Count > 0)
                 {
@@ -1630,7 +1641,7 @@ namespace WizMes_WooJung
                         ListParameter.Add(sqlParameter);
 
                         List<KeyValue> list_Result = new List<KeyValue>();
-                        list_Result = DataStore.Instance.ExecuteAllProcedureOutputGetCS(Prolist, ListParameter);
+                        list_Result = DataStore.Instance.ExecuteAllProcedureOutputGetCS_NewLog(Prolist, ListParameter,"C");
                         string sGetID = string.Empty;
 
                         if (list_Result[0].key.ToLower() == "success")
@@ -1845,7 +1856,7 @@ namespace WizMes_WooJung
                     #endregion 수정
 
                     string[] Confirm = new string[2];
-                    Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew(Prolist, ListParameter);
+                    Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew_NewLog(Prolist, ListParameter,"U");
                     if (Confirm[0] != "success")
                     {
                         MessageBox.Show("[저장실패]\r\n" + Confirm[1].ToString());
@@ -1964,7 +1975,7 @@ namespace WizMes_WooJung
                 sqlParameter.Clear();
                 sqlParameter.Add("OutwareID", OutwareID);
 
-                string[] result = DataStore.Instance.ExecuteProcedure("xp_Outware_dOutware_20200721_test", sqlParameter, false);
+                string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_Outware_dOutware_20200721_test", sqlParameter, "D");
 
                 if (result[0].Equals("success"))
                 {

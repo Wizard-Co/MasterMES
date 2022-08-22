@@ -15,6 +15,9 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_mtr_Stuffin_Q : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         private int rowNum = 0;
         Lib lib = new Lib();
 
@@ -36,6 +39,11 @@ namespace WizMes_WooJung
         // 폼 로드
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             // 발주별 토글버튼 클릭
             tgnCustomSort.IsChecked = true;
 
@@ -406,6 +414,7 @@ namespace WizMes_WooJung
         // 닫기
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             Lib.Instance.ChildMenuClose(this.ToString());
         }
         #region 인쇄
@@ -443,6 +452,7 @@ namespace WizMes_WooJung
                 return;
             }
 
+            DataStore.Instance.InsertLogByForm(this.GetType().Name, "P");
             msg.Show();
             msg.Topmost = true;
             msg.Refresh();
@@ -628,6 +638,7 @@ namespace WizMes_WooJung
                 {
                     if (ExpExc.choice.Equals(dgd.Name))
                     {
+                        DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                         if (ExpExc.Check.Equals("Y"))
                             dt = Lib.Instance.DataGridToDTinHidden(dgd);
                         else
@@ -790,7 +801,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("nBuyArticleNo", chkArticleSrh.IsChecked == true ? 1 : 0);
                 sqlParameter.Add("BuyArticleNo", chkArticleSrh.IsChecked == true && !txtArticleSrh.Text.Trim().Equals("") ? @Escape(txtArticleSrh.Text) : "");
 
-                DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_StuffIN_sStuffIN", sqlParameter, false);
+                DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_StuffIN_sStuffIN", sqlParameter, true, "R");
 
                 if (ds != null && ds.Tables.Count > 0)
                 {

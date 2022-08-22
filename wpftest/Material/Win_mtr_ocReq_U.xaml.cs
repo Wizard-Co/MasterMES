@@ -13,6 +13,9 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_mtr_ocReq_U : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         Lib lib = new Lib();
         string strBasisID = string.Empty;
         string InspectName = string.Empty;
@@ -42,6 +45,11 @@ namespace WizMes_WooJung
         // 폼 로드 됬을때
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             // 콤보박스 세팅
             comboBoxSetting();
 
@@ -415,6 +423,7 @@ namespace WizMes_WooJung
         // 닫기버튼 클릭 이벤트
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             Lib.Instance.ChildMenuClose(this.ToString());
         }
         // 검색버튼 클릭 이벤트
@@ -563,6 +572,7 @@ namespace WizMes_WooJung
                 MessageBox.Show("해당 자료가 존재하지 않습니다.");
                 return;
             }
+            DataStore.Instance.InsertLogByForm(this.GetType().Name, "P");
             msg.Show();
             msg.Topmost = true;
             msg.Refresh();
@@ -1475,7 +1485,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("ChkBuyArticleID", chkBuyArticleSrh.IsChecked == true ? 1 : 0);
                 sqlParameter.Add("BuyArticleID", chkBuyArticleSrh.IsChecked == true ? (txtBuyArticleSrh.Tag == null ? "" : txtBuyArticleSrh.Tag.ToString()) : "");
 
-                DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_DyeAuxReq_sDyeAuxReq", sqlParameter, false);
+                DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_DyeAuxReq_sDyeAuxReq", sqlParameter, true, "R");
 
                 if (ds != null && ds.Tables.Count > 0)
                 {
@@ -1603,7 +1613,7 @@ namespace WizMes_WooJung
 
             try
             {
-                string[] result = DataStore.Instance.ExecuteProcedure("xp_DyeAuxReq_dDyeAuxReq", sqlParameter, true);
+                string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_DyeAuxReq_dDyeAuxReq", sqlParameter, "D");
 
                 if (!result[0].Equals("success"))
                 {
@@ -1738,7 +1748,7 @@ namespace WizMes_WooJung
                         ListParameter.Add(sqlParameter);
 
                         List<KeyValue> list_Result = new List<KeyValue>();
-                        list_Result = DataStore.Instance.ExecuteAllProcedureOutputGetCS(Prolist, ListParameter);
+                        list_Result = DataStore.Instance.ExecuteAllProcedureOutputGetCS_NewLog(Prolist, ListParameter,"C");
                         string getReqID = string.Empty;
 
                         if (list_Result[0].key.ToLower() == "success")
@@ -1888,7 +1898,7 @@ namespace WizMes_WooJung
                     #endregion
 
                     string[] Confirm = new string[2];
-                    Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew(Prolist, ListParameter);
+                    Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew_NewLog(Prolist, ListParameter,"U");
                     if (Confirm[0] != "success")
                     {
                         MessageBox.Show("[저장실패]\r\n" + Confirm[1].ToString());

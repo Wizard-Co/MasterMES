@@ -16,9 +16,12 @@ namespace WizMes_WooJung
     public partial class Win_com_Custom_U : UserControl
     {
         #region 변수 선언 및 로드
+
         Lib lib = new Lib();
         PlusFinder pf = new PlusFinder();
 
+        string stDate = string.Empty;
+        string stTime = string.Empty;
 
         string strBasisID = string.Empty;
         //int dgdInComBoNum = 0;
@@ -40,6 +43,11 @@ namespace WizMes_WooJung
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             Lib.Instance.UiLoading(sender);
 
             SetComboBox();
@@ -260,6 +268,7 @@ namespace WizMes_WooJung
         //닫기
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             Lib.Instance.ChildMenuClose(this.ToString());
         }
 
@@ -399,7 +408,7 @@ namespace WizMes_WooJung
             {
                 if (ExpExc.choice.Equals(dgdCustom.Name))
                 {
-
+                    DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                     if (ExpExc.Check.Equals("Y"))
                         dt = Lib.Instance.DataGridToDTinHidden(dgdCustom);
                     else
@@ -453,7 +462,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("iIncNotUse", chkNoUse.IsChecked == true ? 1 : 0);
                 sqlParameter.Add("Chief", CheckBoxChiefSearch.IsChecked == true ? (TextBoxChiefSearch.Text == "" ? "" : TextBoxChiefSearch.Text) : "");
 
-                DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_Custom_sCustom", sqlParameter, false);
+                DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_Custom_sCustom", sqlParameter, true, "R");
 
                 if (ds != null && ds.Tables.Count > 0)
                 {
@@ -611,7 +620,7 @@ namespace WizMes_WooJung
                 sqlParameter.Clear();
                 sqlParameter.Add("sCustomID", strCustomID);
 
-                string[] result = DataStore.Instance.ExecuteProcedure("xp_Custom_dCustom", sqlParameter, false);
+                string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_Custom_dCustom", sqlParameter, "D");
 
                 if (result[0].Equals("success"))
                 {
@@ -706,7 +715,7 @@ namespace WizMes_WooJung
                         ListParameter.Add(sqlParameter);
 
                         List<KeyValue> list_Result = new List<KeyValue>();
-                        list_Result = DataStore.Instance.ExecuteAllProcedureOutputGetCS(Prolist, ListParameter);
+                        list_Result = DataStore.Instance.ExecuteAllProcedureOutputGetCS_NewLog(Prolist, ListParameter,"C");
                         string sGetID = string.Empty;
 
                         if (list_Result[0].key.ToLower() == "success")
@@ -747,7 +756,7 @@ namespace WizMes_WooJung
                         ListParameter.Add(sqlParameter);
 
                         string[] Confirm = new string[2];
-                        Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew(Prolist, ListParameter);
+                        Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew_NewLog(Prolist, ListParameter,"U");
                         if (Confirm[0] != "success")
                         {
                             MessageBox.Show("[저장실패]\r\n" + Confirm[1].ToString());

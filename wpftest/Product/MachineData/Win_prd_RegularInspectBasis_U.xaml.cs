@@ -34,6 +34,9 @@ namespace WizMes_WooJung
             InitializeComponent();
         }
 
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         string strFlag = string.Empty;
         bool strCopy = false;
         int rowMainNum = 0;  //메인데이터그리드 rowNum
@@ -109,6 +112,10 @@ namespace WizMes_WooJung
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
             Lib.Instance.UiLoading(sender);
         }
 
@@ -370,6 +377,7 @@ namespace WizMes_WooJung
         //닫기
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             int i = 0;
             foreach (MenuViewModel mvm in MainWindow.mMenulist)
             {
@@ -493,6 +501,7 @@ namespace WizMes_WooJung
             {
                 if (ExpExc.choice.Equals(dgdMain.Name))
                 {
+                    DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                     if (ExpExc.Check.Equals("Y"))
                         dt = Lib.Instance.DataGridToDTinHidden(dgdMain);
                     else
@@ -993,7 +1002,7 @@ namespace WizMes_WooJung
                         ListParameter.Add(sqlParameter);
 
                         List<KeyValue> list_Result = new List<KeyValue>();
-                        list_Result = DataStore.Instance.ExecuteAllProcedureOutputGetCS(Prolist, ListParameter);
+                        list_Result = DataStore.Instance.ExecuteAllProcedureOutputGetCS_NewLog(Prolist, ListParameter,"C");
                         string sGetID = string.Empty;
 
                         if (list_Result[0].key.ToLower() == "success")
@@ -1073,7 +1082,7 @@ namespace WizMes_WooJung
 
 
                         string[] confirm = new string[2];
-                        confirm = DataStore.Instance.ExecuteAllProcedureOutputNew(Prolist, ListParameter);
+                        confirm = DataStore.Instance.ExecuteAllProcedureOutputNew_NewLog(Prolist, ListParameter,"U");
 
                         if (confirm[0] == "success")
                         {
@@ -1512,7 +1521,7 @@ namespace WizMes_WooJung
             sqlParameter.Clear();
             sqlParameter.Add("McInspectBasisID", strID);
 
-            string[] result = DataStore.Instance.ExecuteProcedure("xp_McReqularInspectBasis_dMcReqularInspectBasis", sqlParameter, false);
+            string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_McReqularInspectBasis_dMcReqularInspectBasis", sqlParameter, "D");
             DataStore.Instance.CloseConnection();
 
             if (result[0].Equals("success"))
@@ -1571,7 +1580,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("chkStandardNumberSrh", chkStandardNumberSrh.IsChecked == true ? 1 : 0);
                 sqlParameter.Add("McInspectBasisID", chkStandardNumberSrh.IsChecked == true ? txtStandardNumberSrh.Text : "");
                 sqlParameter.Add("MCID", chkMcPartNameSrh.IsChecked == true && !txtMcPartNameSrh.Text.ToString().Trim().Equals("") ? txtMcPartNameSrh.Tag.ToString() : "");
-                ds = DataStore.Instance.ProcedureToDataSet("xp_McReqularInspectBasis_sMcReqularInspectBasis", sqlParameter, false);
+                ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_McReqularInspectBasis_sMcReqularInspectBasis", sqlParameter, true, "R");
 
                 if (ds != null && ds.Tables.Count > 0)
                 {

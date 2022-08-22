@@ -16,6 +16,9 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_Qul_QulDefectGoal_U : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         string sInspectPoint = string.Empty;
         string strFlag = string.Empty;
         string strRemain = string.Empty;
@@ -38,6 +41,11 @@ namespace WizMes_WooJung
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             TbnJaju_Click(tbnJaju, null);
             chkYear.IsChecked = true;
             BtnLast5Years_Click(null, null);
@@ -324,6 +332,8 @@ namespace WizMes_WooJung
                 {
                     if (MessageBox.Show("선택하신 항목을 삭제하시겠습니까?", "삭제 전 확인", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                     {
+                        DataStore.Instance.InsertLogByForm(this.GetType().Name, "D");
+
                         if (dgdMain.Items.Count > 0 && dgdMain.SelectedItem != null)
                         {
                             Wh_Ar_SelectedLastIndex = dgdMain.SelectedIndex;
@@ -358,6 +368,7 @@ namespace WizMes_WooJung
         /// </summary>
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             Lib.Instance.ChildMenuClose(this.ToString());
         }
 
@@ -567,7 +578,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("nChkDate", chkYear.IsChecked == true ? 1 : 0);
                 sqlParameter.Add("sFromYYYY", chkYear.IsChecked == true ? dtpSDate.SelectedDate.Value.ToString("yyyy") : "");
                 sqlParameter.Add("sToYYYY", chkYear.IsChecked == true ? dtpEDate.SelectedDate.Value.ToString("yyyy") : "");
-                DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_Qul_sDefectGoalYear", sqlParameter, false);
+                DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_Qul_sDefectGoalYear", sqlParameter, true, "R");
 
                 if (ds != null && ds.Tables.Count > 0)
                 {
@@ -819,7 +830,7 @@ namespace WizMes_WooJung
                     }
 
                     string[] Confirm = new string[2];
-                    Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew(Prolist, ListParameter);
+                    Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew_NewLog(Prolist, ListParameter,"C");
                     if (Confirm[0] != "success")
                     {
                         MessageBox.Show("[저장실패]\r\n" + Confirm[1].ToString());
@@ -871,7 +882,7 @@ namespace WizMes_WooJung
                     }
 
                     string[] Confirm = new string[2];
-                    Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew(Prolist, ListParameter);
+                    Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew_NewLog(Prolist, ListParameter,"U");
                     if (Confirm[0] != "success")
                     {
                         MessageBox.Show("[저장실패]\r\n" + Confirm[1].ToString());
