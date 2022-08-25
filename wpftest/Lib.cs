@@ -2774,7 +2774,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("sWorkDate", DateTime.Now.ToString("yyyyMMdd"));
                 sqlParameter.Add("sWorkTime", DateTime.Now.ToString("HHmm"));
 
-                sqlParameter.Add("sUserID", MainWindow.CurrentUser);
+                sqlParameter.Add("sUserID", MainWindow.CurrentPersonID);
                 sqlParameter.Add("sWorkComputer", System.Environment.MachineName);
                 sqlParameter.Add("sWorkComputerIP", userhost.ToString());
                 sqlParameter.Add("sWorkLog", "DaeOne" + " " + "[" + MenuID + "]" + " " + MenuName + " " + "(" + objList.ToString() + ")");
