@@ -2003,7 +2003,7 @@ namespace WizMes_WooJung
         {
             try
             {
-                dtpWorkEndDate.Focus();
+                //dtpWorkEndDate.Focus();
             }
             catch (Exception ee)
             {
@@ -2040,7 +2040,7 @@ namespace WizMes_WooJung
         {
             try
             {
-                txtWorkMinute.Focus();
+                //txtWorkMinute.Focus();
             }
             catch (Exception ee)
             {
