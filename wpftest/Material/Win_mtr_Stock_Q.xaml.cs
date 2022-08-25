@@ -20,6 +20,10 @@ namespace WizMes_WooJung
         {
             InitializeComponent();
         }
+
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         Lib lib = new Lib();
         PlusFinder pf = new PlusFinder();
 
@@ -39,6 +43,11 @@ namespace WizMes_WooJung
         // 첫 로드시.
         private void Win_sbl_Stock_Q_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             chkInOutDate.IsChecked = true;
 
             First_Step();
@@ -521,7 +530,7 @@ namespace WizMes_WooJung
             sqlParameter.Add("BuyerArticleNo", chkArticle.IsChecked == true && txtArticle.Text != null ? txtArticle.Text : "");
 
 
-            DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_Subul_sStockList_Mtr", sqlParameter, false);
+            DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_Subul_sStockList_Mtr", sqlParameter, true, "R");
             //DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_Subul_sStockList", sqlParameter, false);
             DataTable dt = null;
 
@@ -678,6 +687,7 @@ namespace WizMes_WooJung
         // 닫기 버튼클릭.
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             int i = 0;
             foreach (MenuViewModel mvm in MainWindow.mMenulist)
             {
@@ -719,6 +729,7 @@ namespace WizMes_WooJung
             {
                 if (ExpExc.choice.Equals(dgdStock.Name))
                 {
+                    DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                     //MessageBox.Show("대분류");
                     if (ExpExc.Check.Equals("Y"))
                         dt = lib.DataGridToDTinHidden(dgdStock);
@@ -804,6 +815,7 @@ namespace WizMes_WooJung
                 return;
             }
 
+            DataStore.Instance.InsertLogByForm(this.GetType().Name, "P");
             msg.Show();
             msg.Topmost = true;
             msg.Refresh();

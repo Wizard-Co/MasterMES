@@ -23,6 +23,9 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_prd_LotDetail_Q : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         string strLabelFlag = string.Empty;
         Win_prd_LOTDetail_Q_CodeView WinBoxData = new Win_prd_LOTDetail_Q_CodeView();
 
@@ -33,6 +36,11 @@ namespace WizMes_WooJung
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             Lib.Instance.UiLoading(sender);
             btnToday_Click(null, null);
             CheckRBN();
@@ -264,6 +272,8 @@ namespace WizMes_WooJung
         //닫기
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
+
             int i = 0;
             foreach (MenuViewModel mvm in MainWindow.mMenulist)
             {
@@ -301,6 +311,7 @@ namespace WizMes_WooJung
             {
                 if (ExpExc.choice.Equals(dgdBoxID.Name))
                 {
+                    DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                     if (ExpExc.Check.Equals("Y"))
                         dt = Lib.Instance.DataGridToDTinHidden(dgdBoxID);
                     else
@@ -374,7 +385,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("chk4MID", chk4Mnumber.IsChecked == true ? 1 : 0);
                 sqlParameter.Add("s4MNo", chk4Mnumber.IsChecked == true ? txt4Mnumber.Text : "");
 
-                DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_prd_sLabelIDList", sqlParameter, false);
+                DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_prd_sLabelIDList", sqlParameter, true, "R");
 
                 if (ds != null && ds.Tables.Count > 0)
                 {

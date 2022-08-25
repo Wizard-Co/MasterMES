@@ -25,6 +25,9 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_Prd_ProcessResultSum_Q : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         Lib lib = new Lib();
         public Win_Prd_ProcessResultSum_Q()
         {
@@ -33,6 +36,11 @@ namespace WizMes_WooJung
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             Lib.Instance.UiLoading(sender);
             dtpSDate.SelectedDate = DateTime.Today;
             dtpEDate.SelectedDate = DateTime.Today;
@@ -320,6 +328,7 @@ namespace WizMes_WooJung
         //조회
         private void btnSearch_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByForm(this.GetType().Name, "R");
             //검색버튼 비활성화
             btnSearch.IsEnabled = false;
 
@@ -349,6 +358,7 @@ namespace WizMes_WooJung
         //닫기
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             Lib.Instance.ChildMenuClose(this.ToString());
         }
 
@@ -374,6 +384,7 @@ namespace WizMes_WooJung
                 {
                     if (ExpExc.choice.Equals(dgdByProcess.Name))
                     {
+                        DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                         if (ExpExc.Check.Equals("Y"))
                             dt = Lib.Instance.DataGridToDTinHidden(dgdByProcess);
                         else

@@ -12,6 +12,9 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_com_BuseoJikChaek_U : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         string strFlag = string.Empty;
         int rowNumB = 0;
         int rowNumJ = 0;
@@ -28,6 +31,11 @@ namespace WizMes_WooJung
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             //Lib.Instance.UiLoading(sender);
 
             // 활성화된 메뉴 이름을 가져와서, 앞 두글자가 부서면 부서 / 직책이면 직책 탭 활성화
@@ -262,6 +270,7 @@ namespace WizMes_WooJung
         //닫기
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             Lib.Instance.ChildMenuClose(this.ToString());
         }
 
@@ -368,7 +377,9 @@ namespace WizMes_WooJung
                 {
                     if (ExpExc.choice.Equals(dgdBuseo.Name))
                     {
+                        DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                         if (ExpExc.Check.Equals("Y"))
+                            if (ExpExc.Check.Equals("Y"))
                             dt = Lib.Instance.DataGridToDTinHidden(dgdBuseo);
                         else
                             dt = Lib.Instance.DataGirdToDataTable(dgdBuseo);
@@ -464,7 +475,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("sDepart", chkSrh.IsChecked == true && !txtBuseoSrh.Text.Trim().Equals("") ? txtBuseoSrh.Text : "");
                 sqlParameter.Add("sUseClss", chkUseClss.IsChecked == true ? 1 : 0);
 
-                DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_Code_sDepart", sqlParameter, false);
+                DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_Code_sDepart", sqlParameter, true, "R");
                 if (ds != null && ds.Tables.Count > 0)
                 {
                     DataTable dt = ds.Tables[0];
@@ -598,7 +609,7 @@ namespace WizMes_WooJung
             sqlParameter.Add("sCodeID", strTableName + "ID");
             sqlParameter.Add("sID", strID);
 
-            string[] result = DataStore.Instance.ExecuteProcedure("xp_Code_dCode_NotUse", sqlParameter, false);
+            string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_Code_dCode_NotUse", sqlParameter, "D");
             DataStore.Instance.CloseConnection();
 
             if (result[0].Equals("success"))
@@ -696,7 +707,7 @@ namespace WizMes_WooJung
                     }
 
                     string[] Confirm = new string[2];
-                    Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew(Prolist, ListParameter);
+                    Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew_NewLog(Prolist, ListParameter,"C");
                     if (Confirm[0] != "success")
                     {
                         MessageBox.Show("[저장실패]\r\n" + Confirm[1].ToString());

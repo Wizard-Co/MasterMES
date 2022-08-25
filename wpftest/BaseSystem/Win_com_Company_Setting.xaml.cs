@@ -13,6 +13,9 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_com_Company_Setting : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         public Win_com_Company_Setting()
         {
             InitializeComponent();
@@ -20,6 +23,11 @@ namespace WizMes_WooJung
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             FillGrid();
 
             if (dgdMain.Items.Count > 0)
@@ -95,6 +103,8 @@ namespace WizMes_WooJung
         //닫기
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
+
             try
             {
                 int i = 0;
@@ -127,7 +137,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("sCompanyID", "");
                 sqlParameter.Add("sKCompany", "");
 
-                DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_Info_GetCompanyInfo", sqlParameter, false);
+                DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_Info_GetCompanyInfo", sqlParameter, true, "R");
 
                 if (ds != null && ds.Tables.Count > 0)
                 {

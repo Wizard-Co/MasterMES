@@ -21,6 +21,9 @@ namespace WizMes_WooJung
     {
         #region 전역변수 설정
 
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         Lib lib = new Lib();
         PlusFinder pf = new PlusFinder();
 
@@ -57,6 +60,11 @@ namespace WizMes_WooJung
         // 첫 로드시.
         private void Win_Qul_CustomDefect_U_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             First_Step();
             ComboBoxSetting();
         }
@@ -1119,7 +1127,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("CloseYN", CloseYN);
                 sqlParameter.Add("BuyerArticleNme", chkArticle.IsChecked == true ? txtArticle.Text : "");
                 sqlParameter.Add("BuyerArticleNo", chkArticleNo.IsChecked == true ? txtArticleNo.Text : "");
-                DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_Qul_sInspectCustom", sqlParameter, false);
+                DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_Qul_sInspectCustom", sqlParameter, true, "R");
 
                 if (ds != null && ds.Tables.Count > 0)
                 {
@@ -1837,7 +1845,7 @@ namespace WizMes_WooJung
                     ListParameter.Add(sqlParameter);
 
                     List<KeyValue> list_Result = new List<KeyValue>();
-                    list_Result = DataStore.Instance.ExecuteAllProcedureOutputGetCS(Prolist, ListParameter);
+                    list_Result = DataStore.Instance.ExecuteAllProcedureOutputGetCS_NewLog(Prolist, ListParameter,"C");
                     string sGetDefectID = string.Empty;
 
                     if (list_Result[0].key.ToLower() == "success")
@@ -2030,7 +2038,7 @@ namespace WizMes_WooJung
                     ListParameter.Add(sqlParameter);
 
                     string[] Confirm = new string[2];
-                    Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew(Prolist, ListParameter);
+                    Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew_NewLog(Prolist, ListParameter,"C");
                     if (Confirm[0] == "success")
                     {
                         bool AttachYesNo = false;
@@ -2086,7 +2094,7 @@ namespace WizMes_WooJung
                 sqlParameter.Clear();
                 sqlParameter.Add("DefectID", DefectID);
 
-                string[] result = DataStore.Instance.ExecuteProcedure("xp_Qul_dInspectCustom", sqlParameter, false);
+                string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_Qul_dInspectCustom", sqlParameter, "D");
                 if (!result[0].Equals("success"))
                 {
                     MessageBox.Show("이상발생, 관리자에게 문의하세요.");
@@ -2133,6 +2141,7 @@ namespace WizMes_WooJung
         // 닫기 버튼 클릭.
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             int i = 0;
             foreach (MenuViewModel mvm in MainWindow.mMenulist)
             {
@@ -2174,6 +2183,7 @@ namespace WizMes_WooJung
             {
                 if (ExpExc.choice.Equals(dgdCustomDefect.Name))
                 {
+                    DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                     if (ExpExc.Check.Equals("Y"))
                         dt = lib2.DataGridToDTinHidden(dgdCustomDefect);
                     //dt = lib.DataGridToDTinHidden(dgdCustomDefect);

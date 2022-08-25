@@ -27,6 +27,9 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_prd_MCCode_U : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         int rowNum = 0;
         string strFlag = string.Empty;
         Win_prd_MCCode_U_CodeView WinMcCode = new Win_prd_MCCode_U_CodeView();
@@ -85,6 +88,11 @@ namespace WizMes_WooJung
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             Lib.Instance.UiLoading(sender);
             SetComboBox();
             _ftp = new FTP_EX(FTP_ADDRESS, FTP_ID, FTP_PASS);
@@ -284,6 +292,8 @@ namespace WizMes_WooJung
         //닫기
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
+
             int i = 0;
             foreach (MenuViewModel mvm in MainWindow.mMenulist)
             {
@@ -385,6 +395,7 @@ namespace WizMes_WooJung
             {
                 if (ExpExc.choice.Equals(dgdMain.Name))
                 {
+                    DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                     if (ExpExc.Check.Equals("Y"))
                         dt = Lib.Instance.DataGridToDTinHidden(dgdMain);
                     else
@@ -460,7 +471,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("sMcName", chkMcCodeSrh.IsChecked == true ? txtMcCodeSrh.Text : "");
                 sqlParameter.Add("iIncNotUse", chkNoUse.IsChecked == true ? 1 : 0); //2021-11-15 사용안함 추가
 
-                ds = DataStore.Instance.ProcedureToDataSet("xp_McCode_sMcCode", sqlParameter, false);
+                ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_McCode_sMcCode", sqlParameter, true, "R");
 
                 if (ds != null && ds.Tables.Count > 0)
                 {
@@ -766,7 +777,7 @@ namespace WizMes_WooJung
                 sqlParameter.Clear();
                 sqlParameter.Add("sMcID", strID);
 
-                string[] result = DataStore.Instance.ExecuteProcedure("xp_McCode_dMcCode", sqlParameter, false);
+                string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_McCode_dMcCode", sqlParameter, "D");
 
                 if (result[0].Equals("success"))
                 {
@@ -889,7 +900,7 @@ namespace WizMes_WooJung
 
                         //동운씨가 만든 아웃풋 값 찾는 방법
                         List<KeyValue> list_Result = new List<KeyValue>();
-                        list_Result = DataStore.Instance.ExecuteAllProcedureOutputGetCS(Prolist, ListParameter);
+                        list_Result = DataStore.Instance.ExecuteAllProcedureOutputGetCS_NewLog(Prolist, ListParameter,"C");
 
                         Prolist.RemoveAt(0);
                         ListParameter.RemoveAt(0);
@@ -1044,7 +1055,7 @@ namespace WizMes_WooJung
                         }
 
                         string[] Confirm = new string[2];
-                        Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew(Prolist, ListParameter); // 저장되는 소스
+                        Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew_NewLog(Prolist, ListParameter,"U"); // 저장되는 소스
                         if (Confirm[0] != "success")
                         {
                             MessageBox.Show("[저장실패]\r\n" + Confirm[1].ToString());

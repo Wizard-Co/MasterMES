@@ -24,6 +24,9 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_Qul_DefectArticle_Q : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         //제품별 점유율에 사용
         Win_Qul_DefectArticle_Q_ModelOccupy_CodeView WinModelName = new Win_Qul_DefectArticle_Q_ModelOccupy_CodeView();
         //유형별 점유율에 사용
@@ -66,6 +69,11 @@ namespace WizMes_WooJung
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             lib.UiLoading(sender);
             btnThisMonth_Click(null, null);
             CreateDataGridRowsColumns();
@@ -323,6 +331,8 @@ namespace WizMes_WooJung
 
         private void btnSearch_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByForm(this.GetType().Name, "R");
+
             //검색버튼 비활성화
             btnSearch.IsEnabled = false;
 
@@ -349,6 +359,7 @@ namespace WizMes_WooJung
 
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             int i = 0;
             foreach (MenuViewModel mvm in MainWindow.mMenulist)
             {
@@ -392,6 +403,8 @@ namespace WizMes_WooJung
 
             ExportExcelxaml ExpExc = new ExportExcelxaml(lst);
             ExpExc.ShowDialog();
+
+            DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
 
             if (ExpExc.DialogResult.HasValue)
             {

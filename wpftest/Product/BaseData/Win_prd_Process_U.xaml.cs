@@ -18,6 +18,9 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_prd_Process_U : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         Lib lib = new Lib();
         PlusFinder pf = MainWindow.pf;
 
@@ -32,6 +35,11 @@ namespace WizMes_WooJung
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             Lib.Instance.UiLoading(sender);
             SetComboBox();
 
@@ -527,6 +535,7 @@ namespace WizMes_WooJung
         //닫기
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             Lib.Instance.ChildMenuClose(this.ToString());
         }
 
@@ -612,6 +621,7 @@ namespace WizMes_WooJung
             {
                 if (ExpExc.choice.Equals(dgdMain.Name))
                 {
+                    DataStore.Instance.InsertLogByForm(this.GetType().Name, "P");
                     if (ExpExc.Check.Equals("Y"))
                         dt = Lib.Instance.DataGridToDTinHidden(dgdMain);
                     else
@@ -772,7 +782,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("ArticleGrpID", chkArticleGrpSrh.IsChecked == true && cboArticleGrpSrh.SelectedValue != null ? cboArticleGrpSrh.SelectedValue.ToString() : "");
                 sqlParameter.Add("UseClss", chkUseClssSrh.IsChecked == true ? 1: 0);
 
-                DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_prd_sProcessMain", sqlParameter, false);
+                DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_prd_sProcessMain", sqlParameter, true, "R");
 
                 if (ds != null && ds.Tables.Count > 0)
                 {
@@ -947,7 +957,7 @@ namespace WizMes_WooJung
                     ListParameter.Add(sqlParameter);
 
                     string[] Confirm = new string[2];
-                    Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew(Prolist, ListParameter);
+                    Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew_NewLog(Prolist, ListParameter,"C");
                     if (Confirm[0] != "success")
                     {
                         MessageBox.Show("[저장실패]\r\n" + Confirm[1].ToString());
@@ -1116,7 +1126,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("ProcessID", strID);
                 sqlParameter.Add("UpdateUserID", MainWindow.CurrentUser);
 
-                string[] result = DataStore.Instance.ExecuteProcedure("xp_prd_dProcess", sqlParameter, false);
+                string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_prd_dProcess", sqlParameter, "D");
                 DataStore.Instance.CloseConnection();
 
                 if (result[0].Equals("success"))

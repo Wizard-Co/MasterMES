@@ -14,6 +14,8 @@ namespace WizMes_WooJung
 {
     public partial class Win_mtr_ocStuffIN_U : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
 
         Lib lib = new Lib();
         string strBasisID = string.Empty;
@@ -47,6 +49,11 @@ namespace WizMes_WooJung
         // 폼 로드 됬을때
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             // 입고일자 체크하기
             chkDateSrh.IsChecked = true;
             dtpSDateSrh.SelectedDate = DateTime.Today;
@@ -622,6 +629,7 @@ namespace WizMes_WooJung
         // 닫기 버튼 이벤트
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             Lib.Instance.ChildMenuClose(this.ToString());
         }
 
@@ -711,6 +719,7 @@ namespace WizMes_WooJung
                 MessageBox.Show("해당 자료가 존재하지 않습니다.");
                 return;
             }
+            DataStore.Instance.InsertLogByForm(this.GetType().Name, "P");
             msg.Show();
             msg.Topmost = true;
             msg.Refresh();
@@ -960,7 +969,7 @@ namespace WizMes_WooJung
                 MessageBox.Show("해당 자료가 존재하지 않습니다.");
                 return;
             }
-
+            DataStore.Instance.InsertLogByForm(this.GetType().Name, "P");
             //msg.Show();
             //msg.Topmost = true;
             //msg.Refresh();
@@ -1269,6 +1278,7 @@ namespace WizMes_WooJung
             {
                 if (ExpExc.choice.Equals(dgdMain.Name))
                 {
+                    DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                     if (ExpExc.Check.Equals("Y"))
                         dt = Lib.Instance.DataGridToDTinHidden(dgdMain);
                     else
@@ -2046,7 +2056,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("sLotID", chkMtrLOTIDSrh.IsChecked == true && !txtMtrLOTIDSrh.Text.Trim().Equals("") ? txtMtrLOTIDSrh.Text : "");  //@escape함수제거
 
 
-                DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_StuffIN_sStuffIN", sqlParameter, false);
+                DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_StuffIN_sStuffIN", sqlParameter, true, "R");
 
                 if (ds != null && ds.Tables.Count > 0)
                 {
@@ -2390,10 +2400,6 @@ namespace WizMes_WooJung
             sqlParameter.Clear();
             sqlParameter.Add("sStuffINID", StuffINID);
 
-
-
-
-
             try
             {
 
@@ -2408,7 +2414,7 @@ namespace WizMes_WooJung
 
                 List<KeyValue> list_Result = new List<KeyValue>();
                 list_Result = DataStore.Instance.ExecuteAllProcedureOutputGetCS(Prolist, ListParameter);
-                string[] result = DataStore.Instance.ExecuteProcedure("xp_StuffIN_dStuffIN", sqlParameter, false);
+                string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_StuffIN_dStuffIN", sqlParameter, "D");
 
                 if (list_Result[0].Equals("success"))
                 {
@@ -2715,7 +2721,7 @@ namespace WizMes_WooJung
                         ListParameter.Add(sqlParameter);
 
                         List<KeyValue> list_Result = new List<KeyValue>();
-                        list_Result = DataStore.Instance.ExecuteAllProcedureOutputGetCS(Prolist, ListParameter);
+                        list_Result = DataStore.Instance.ExecuteAllProcedureOutputGetCS_NewLog(Prolist, ListParameter,"C");
                         string sGetID = string.Empty;
 
                         if (list_Result[0].key.ToLower() == "success")
@@ -2812,7 +2818,7 @@ namespace WizMes_WooJung
                     }
 
                     string[] Confirm = new string[2];
-                    Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew(Prolist, ListParameter);
+                    Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew_NewLog(Prolist, ListParameter,"U");
                     if (Confirm[0] != "success")
                     {
                         MessageBox.Show("[저장실패]\r\n" + Confirm[1].ToString());

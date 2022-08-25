@@ -22,6 +22,9 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_Qul_XBarR_Q : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         Lib lib = new Lib();
         string RASpecMax = string.Empty;
         string RASpecMin = string.Empty;
@@ -49,6 +52,11 @@ namespace WizMes_WooJung
 
         private void Win_Qul_sts_XBarR_Q_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             First_Step();
         }
 
@@ -480,7 +488,7 @@ namespace WizMes_WooJung
             sqlParameter.Add("@BuyerArticleNo", ArticleID);
             //sqlParameter.Add("Article", Article);
 
-            DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_Qual_sSpc_std", sqlParameter, false);
+            DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_Qual_sSpc_std", sqlParameter, true, "R");
 
             if (ds != null && ds.Tables.Count > 0)
             {
@@ -990,6 +998,7 @@ namespace WizMes_WooJung
         // 닫기.
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             Lib.Instance.ChildMenuClose(this.ToString());
         }
 
@@ -1021,6 +1030,7 @@ namespace WizMes_WooJung
 
             if (ExpExc.DialogResult.HasValue)
             {
+                DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                 if (ExpExc.choice.Equals(dgdXBar_std.Name))
                 {
                     //MessageBox.Show("대분류");

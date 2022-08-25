@@ -23,6 +23,9 @@ namespace WizMes_WooJung.PopUp
 
         int fail = 0;
 
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         public LoginPage()
         {
             InitializeComponent();
@@ -30,6 +33,10 @@ namespace WizMes_WooJung.PopUp
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
             GetInfo();
         }
 
@@ -40,6 +47,7 @@ namespace WizMes_WooJung.PopUp
             {
                 strLogRegID = txtUserID.Text;
                 Lib.Instance.SetLogResitry(strLogRegID);
+                DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
                 DialogResult = true;
             }
             else
@@ -52,6 +60,7 @@ namespace WizMes_WooJung.PopUp
         //취소
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             DialogResult = false;
         }
 
@@ -296,6 +305,7 @@ namespace WizMes_WooJung.PopUp
                 {
                     strLogRegID = txtUserID.Text;
                     Lib.Instance.SetLogResitry(strLogRegID);
+                    DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
                     DialogResult = true;
                 }
                 else

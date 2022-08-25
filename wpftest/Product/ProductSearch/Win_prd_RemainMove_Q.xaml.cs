@@ -29,6 +29,9 @@ namespace WizMes_WooJung
     {
         int rowNum = 0;
 
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         ScrollViewer scrollView = null;
         ScrollViewer scrollView2 = null;
 
@@ -39,6 +42,11 @@ namespace WizMes_WooJung
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             // 스크롤 동기화
             scrollView = dgdMainHeader;
             scrollView2 = getScrollbar(dgdMain);
@@ -231,6 +239,7 @@ namespace WizMes_WooJung
         // 닫기버튼
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             Lib.Instance.ChildMenuClose(this.ToString());
         }
 
@@ -252,6 +261,7 @@ namespace WizMes_WooJung
             {
                 if (ExpExc.choice.Equals(dgdMain.Name))
                 {
+                    DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                     if (ExpExc.Check.Equals("Y"))
                         dt = Lib.Instance.DataGridToDTinHidden(dgdMain);
                     else
@@ -314,7 +324,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("nLabelID", chkLabelID.IsChecked == true ? 1 : 0);
                 sqlParameter.Add("LabelID", chkLabelID.IsChecked == true && txtLabelID.Text.Trim().Equals("") == false ? txtLabelID.Text : "");
 
-                DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_prd_sRemainMoveQty", sqlParameter, false);
+                DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_prd_sRemainMoveQty", sqlParameter, true, "R");
 
                 if (ds != null && ds.Tables.Count > 0)
                 {

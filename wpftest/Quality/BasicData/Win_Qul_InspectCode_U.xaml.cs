@@ -31,6 +31,9 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_Qul_InspectCode_U : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         string strFlag = string.Empty;
 
         int Wh_Ar_SelectedLastIndex = 0;        // 그리드 마지막 선택 줄 임시저장 그릇
@@ -61,6 +64,10 @@ namespace WizMes_WooJung
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
             SetComboBox();
             FillGrid();
             FillProcessGrid();
@@ -150,6 +157,8 @@ namespace WizMes_WooJung
         {
             try
             {
+                DataStore.Instance.InsertLogByForm(this.GetType().Name, "R");
+
                 ovcDefect.Clear();
                 ovcBasis.Clear();
                 ovcGrade.Clear();
@@ -529,6 +538,7 @@ namespace WizMes_WooJung
         /// </summary>
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByForm(this.GetType().Name, "D");
             string strID = string.Empty;
             if (tabOne.IsSelected == true)
             {
@@ -575,6 +585,7 @@ namespace WizMes_WooJung
         /// </summary>
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             Lib.Instance.ChildMenuClose(this.ToString());
         }
 
@@ -900,6 +911,7 @@ namespace WizMes_WooJung
             {
                 if (ExpExc.choice.Equals(dgdOne.Name))
                 {
+                    DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                     if (ExpExc.Check.Equals("Y"))
                         dt = lib.DataGridToDTinHidden(dgdOne);
                     else
@@ -1077,6 +1089,7 @@ namespace WizMes_WooJung
 
                         if (strFlag.Equals("I"))
                         {
+                            DataStore.Instance.InsertLogByForm(this.GetType().Name, "C");
                             sqlParameter.Add("BasisID", "0");
                             sqlParameter.Add("CreateUserID", MainWindow.CurrentUser);
 
@@ -1111,6 +1124,7 @@ namespace WizMes_WooJung
                         }
                         else
                         {
+                            DataStore.Instance.InsertLogByForm(this.GetType().Name, "U");
                             sqlParameter.Add("LastUpdateUserID", MainWindow.CurrentUser);
 
                             Procedure pro1 = new Procedure();

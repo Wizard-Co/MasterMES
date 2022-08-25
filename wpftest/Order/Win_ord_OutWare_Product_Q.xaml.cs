@@ -17,6 +17,9 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_ord_OutWare_Product_Q : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         Win_ord_OutWare_Product_QView wopqv = new Win_ord_OutWare_Product_QView();
         Lib lib = new Lib();
         PlusFinder pf = new PlusFinder();
@@ -29,6 +32,12 @@ namespace WizMes_WooJung
 
         private void Window_OutwareProduct_Loaded(object sender, RoutedEventArgs e)
         {
+
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             First_Step();
             ComboBoxSetting();
         }
@@ -432,7 +441,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("nMainItem", interestitems);
                 sqlParameter.Add("BuyerArticleNo", chkArticle.IsChecked == true ? txtArticle.Text.ToString().Trim() : "");
 
-                DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_Outware_sOutwareProduct", sqlParameter, false);
+                DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_Outware_sOutwareProduct", sqlParameter, true, "R");
 
                 if (ds != null && ds.Tables.Count > 0)
                 {
@@ -752,6 +761,7 @@ namespace WizMes_WooJung
             {
                 if (ExpExc.choice.Equals(dgdOutware.Name))
                 {
+                    DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                     //MessageBox.Show("대분류");
                     if (ExpExc.Check.Equals("Y"))
                         dt = lib2.DataGridToDTinHidden(dgdOutware);
@@ -783,6 +793,8 @@ namespace WizMes_WooJung
         //닫기 버튼 클릭./
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
+
             int i = 0;
             foreach (MenuViewModel mvm in MainWindow.mMenulist)
             {

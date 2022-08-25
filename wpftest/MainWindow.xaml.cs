@@ -16,6 +16,10 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static string mainStDate = string.Empty;
+        public static string mainStTime = string.Empty;
+
+
         public static List<MenuViewModel> mMenulist = new List<MenuViewModel>();
         public static MdiContainer MainMdiContainer = new MdiContainer();
         public static string CurrentUser = string.Empty;
@@ -60,6 +64,9 @@ namespace WizMes_WooJung
             {
                 Style = (Style)FindResource(typeof(Window));
                 menuLoad();
+
+                mainStDate = DateTime.Now.ToString("yyyyMMdd");
+                mainStTime = DateTime.Now.ToString("HHmm");
 
                 this.Height = SystemParameters.WorkArea.Height;
                 this.Width = SystemParameters.WorkArea.Width;
@@ -821,6 +828,7 @@ namespace WizMes_WooJung
             {
                 if (MessageBox.Show("WizMes_WooJung를 종료하시겠습니까?", "", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
+                    DataStore.Instance.InsertLogByFormAllUpdate(mainStDate, mainStTime);
                     Environment.Exit(0);
                     System.Diagnostics.Process.GetCurrentProcess().Kill();
                 }
@@ -845,6 +853,7 @@ namespace WizMes_WooJung
         {
             if (MessageBox.Show("WizMes_WooJung를 종료하시겠습니까?", "", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
+                DataStore.Instance.InsertLogByFormAllUpdate(mainStDate, mainStTime);
                 SaveFontSetting();
                 Environment.Exit(0);
                 System.Diagnostics.Process.GetCurrentProcess().Kill();

@@ -21,6 +21,9 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_prd_RegularInspect_Q : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         string strFlag = string.Empty;
         int rowNum = 0;
         string strPoint = string.Empty;
@@ -71,6 +74,11 @@ namespace WizMes_WooJung
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             Lib.Instance.UiLoading(sender);
             //chkInspectDate.IsChecked = true;
             dtpSDate.SelectedDate = DateTime.Today;
@@ -296,6 +304,7 @@ namespace WizMes_WooJung
         //닫기
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             int i = 0;
             foreach (MenuViewModel mvm in MainWindow.mMenulist)
             {
@@ -342,6 +351,7 @@ namespace WizMes_WooJung
 
             if (ExpExc.DialogResult.HasValue)
             {
+                DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                 if (ExpExc.choice.Equals(dgdMCPartRInsOne.Name))
                 {
                     if (ExpExc.Check.Equals("Y"))
@@ -429,7 +439,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("ChkInsCycleGbn", chkRegularInspect.IsChecked == true ? 1 : 0);
                 sqlParameter.Add("McInsCycleGbn", chkRegularInspect.IsChecked == true ?
                     (cboRegularInspect.SelectedValue != null ? cboRegularInspect.SelectedValue.ToString() : "") : "");
-                ds = DataStore.Instance.ProcedureToDataSet("xp_McReqularInspect_sMcReqularInspectMax", sqlParameter, false);
+                ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_McReqularInspect_sMcReqularInspectMax", sqlParameter, true, "R");
 
                 if (ds != null && ds.Tables.Count > 0)
                 {

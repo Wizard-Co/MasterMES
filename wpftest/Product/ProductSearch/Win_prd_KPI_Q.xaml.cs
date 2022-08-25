@@ -21,6 +21,9 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_prd_KPI_Q : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         Lib lib = new Lib();
         PlusFinder pf = new PlusFinder();
 
@@ -33,6 +36,11 @@ namespace WizMes_WooJung
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             lib.UiLoading(sender);
             DatePickerStartDateSearch.SelectedDate = DateTime.Today;
             DatePickerEndDateSearch.SelectedDate = DateTime.Today;
@@ -249,6 +257,7 @@ namespace WizMes_WooJung
         {
             try
             {
+                DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
                 lib.ChildMenuClose(this.ToString());
             }
             catch (Exception ee)
@@ -281,6 +290,7 @@ namespace WizMes_WooJung
 
                 if (ExpExc.DialogResult.HasValue)
                 {
+                    DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                     if (ExpExc.choice.Equals(dgdGonsu.Name))
                     {
                         if (ExpExc.Check.Equals("Y"))

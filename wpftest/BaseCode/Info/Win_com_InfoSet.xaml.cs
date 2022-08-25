@@ -18,6 +18,9 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_com_InfoSet : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         Lib lib = new Lib();
         string strFlag = string.Empty;
         int rowNum = 0;
@@ -62,6 +65,11 @@ namespace WizMes_WooJung
         //
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             Lib.Instance.UiLoading(sender);
 
             // 기존에 있던 공지사항 사원 리스트 제거
@@ -335,6 +343,7 @@ namespace WizMes_WooJung
         // 닫기 버튼 클릭 이벤트
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             Lib.Instance.ChildMenuClose(this.ToString());
         }
         // 검색 버튼 클릭 이벤트
@@ -1381,7 +1390,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("SDate", chkSearchDay.IsChecked == true ? FromDateSearch.SelectedDate.Value.ToString("yyyyMMdd") : "20000101");
                 sqlParameter.Add("EDate", chkSearchDay.IsChecked == true ? ToDateSearch.SelectedDate.Value.ToString("yyyyMMdd") : "29000101");
 
-                DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_Info_sInfoByDate", sqlParameter, false);
+                DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_Info_sInfoByDate", sqlParameter, true, "R");
 
                 if (ds != null && ds.Tables.Count > 0)
                 {
@@ -1541,7 +1550,7 @@ namespace WizMes_WooJung
                 }
 
                 string[] Confirm = new string[2];
-                Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew(Prolist, ListParameter);
+                Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew_NewLog(Prolist, ListParameter,"D");
                 if (Confirm[0] != "success")
                 {
                     MessageBox.Show("[삭제 실패]\r\n" + Confirm[1].ToString());

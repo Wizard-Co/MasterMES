@@ -16,6 +16,9 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_mtr_Move_U : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         string strBasisID = string.Empty;
         string InspectName = string.Empty;
         string AASS = string.Empty;
@@ -52,6 +55,11 @@ namespace WizMes_WooJung
         // 폼 로드
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             // 이동일자 오늘 날짜로 세팅
             chkDateSrh.IsChecked = true;
             dtpSDateSrh.SelectedDate = DateTime.Today;
@@ -599,6 +607,7 @@ namespace WizMes_WooJung
         // 닫기 버튼 이벤트
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             Lib.Instance.ChildMenuClose(this.ToString());
         }
         // 검색 버튼 이벤트
@@ -1096,6 +1105,7 @@ namespace WizMes_WooJung
             {
                 if (ExpExc.choice.Equals(dgdMain.Name))
                 {
+                    DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                     if (ExpExc.Check.Equals("Y"))
                         dt = Lib.Instance.DataGridToDTinHidden(dgdMain);
                     else
@@ -2285,7 +2295,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("nBuyerArticleNo", chkBuyerArticleNo.IsChecked == true ? 1 : 0);
                 sqlParameter.Add("BuyerArticleNo", chkBuyerArticleNo.IsChecked == true && !txtBuyerArticleNo.Text.Trim().Equals("") ? txtBuyerArticleNo.Text : "");
 
-                DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_Outware_sOrder_move", sqlParameter, false);
+                DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_Outware_sOrder_move", sqlParameter, true, "R");
 
                 if (ds != null && ds.Tables.Count > 0)
                 {
@@ -2894,7 +2904,7 @@ namespace WizMes_WooJung
                         outputParam.Add("OutwareNo", 12);
                         outputParam.Add("OutSeq", 10);
 
-                        Dictionary<string, string> dicResult = DataStore.Instance.ExecuteProcedureOutputNoTran("xp_Outware_iOutware", sqlParameter, outputParam, true); //xp_Outware_iOutware 2021-09-27
+                        Dictionary<string, string> dicResult = DataStore.Instance.ExecuteProcedureOutputNoTran_NewLog("xp_Outware_iOutware", sqlParameter, outputParam, true, "C"); //xp_Outware_iOutware 2021-09-27
                         string result = dicResult["OutwareNo"];
                         string resultSeq = dicResult["OutSeq"];
 
@@ -3600,7 +3610,7 @@ namespace WizMes_WooJung
                     #endregion // 수정
 
                     string[] Confirm = new string[2];
-                    Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew(Prolist, ListParameter);
+                    Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew_NewLog(Prolist, ListParameter,"U");
                     if (Confirm[0] != "success")
                     {
                         MessageBox.Show("[저장실패]\r\n" + Confirm[1].ToString());
@@ -3640,7 +3650,7 @@ namespace WizMes_WooJung
                 sqlParameter.Clear();
                 sqlParameter.Add("OutwareID", OutwareID);
 
-                string[] result = DataStore.Instance.ExecuteProcedure("xp_Outware_dOutware", sqlParameter, false);
+                string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_Outware_dOutware", sqlParameter, "D");
 
                 if (result[0].Equals("success"))
                 {
