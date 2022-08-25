@@ -38,6 +38,9 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_prd_MachineCode_U : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         Lib lib = new Lib();
         PlusFinder pf = MainWindow.pf;
 
@@ -52,6 +55,11 @@ namespace WizMes_WooJung
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             lib.UiLoading(sender);
             SetComboBox();
 
@@ -110,7 +118,7 @@ namespace WizMes_WooJung
                 sqlParameter.Clear();
                 sqlParameter.Add("Process", process);
 
-                ds = DataStore.Instance.ProcedureToDataSet("xp_Code_sProcess", sqlParameter, false);
+                ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_Code_sProcess", sqlParameter, true, "R");
 
                 if(ds != null && ds.Tables.Count > 0)
                 {
@@ -281,7 +289,7 @@ namespace WizMes_WooJung
                         ListParameter.Add(sqlParameter);
 
                         string[] Confirm = new string[2];
-                        Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew(Prolist, ListParameter);
+                        Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew_NewLog(Prolist, ListParameter,"C");
                         if (Confirm[0] != "success")
                         {
                             MessageBox.Show("[저장실패]\r\n" + Confirm[1].ToString());
@@ -312,7 +320,7 @@ namespace WizMes_WooJung
                         ListParameter.Add(sqlParameter);
 
                         string[] Confirm = new string[2];
-                        Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew(Prolist, ListParameter);
+                        Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew_NewLog(Prolist, ListParameter,"U");
                         if (Confirm[0] != "success")
                         {
                             MessageBox.Show("[저장실패]\r\n" + Confirm[1].ToString());
@@ -353,7 +361,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("sProcessID", strProcessID);
                 sqlParameter.Add("sMachineID", strMachineID);
 
-                string[] result = DataStore.Instance.ExecuteProcedure("xp_Process_dMachine", sqlParameter, false);
+                string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_Process_dMachine", sqlParameter, "D");
                 DataStore.Instance.CloseConnection();
 
                 if (result[0].Equals("success"))
@@ -821,6 +829,8 @@ namespace WizMes_WooJung
         {
             try
             {
+                DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
+
                 this.DataContext = null;
                 DataGridMain = null;
                 DataGridSub = null;
@@ -927,6 +937,7 @@ namespace WizMes_WooJung
                 {
                     if (ExpExc.choice.Equals(DataGridMain.Name))
                     {
+                        DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                         if (ExpExc.Check.Equals("Y"))
                             dt = Lib.Instance.DataGridToDTinHidden(DataGridMain);
                         else

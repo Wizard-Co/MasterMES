@@ -19,6 +19,9 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_Qul_InspectAuto_U : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         //불량을 체크하는 리스트 
         List<DataRow> defectCheck1 = new List<DataRow>(); //sub1
         List<DataRow> defectCheck2 = new List<DataRow>(); //sub2
@@ -89,6 +92,11 @@ namespace WizMes_WooJung
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             lib.UiLoading(sender);
             tbnInspect.IsChecked = true;
             chkDate.IsChecked = true;
@@ -559,6 +567,7 @@ namespace WizMes_WooJung
         //닫기
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             int i = 0;
             foreach (MenuViewModel mvm in MainWindow.mMenulist)
             {
@@ -644,7 +653,7 @@ namespace WizMes_WooJung
                     }
                 }
             }
-
+            DataStore.Instance.InsertLogByForm(this.GetType().Name, "P");
             msg.Show();
             msg.Topmost = true;
             msg.Refresh();
@@ -1172,6 +1181,7 @@ namespace WizMes_WooJung
             {
                 if (ExpExc.choice.Equals(dgdMain.Name))
                 {
+                    DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                     if (ExpExc.Check.Equals("Y"))
                         dt = lib.DataGridToDTinHidden(dgdMain);
                     else
@@ -1271,7 +1281,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("sDefectYN", chkResultSrh.IsChecked == true ? cboResultSrh.SelectedValue.ToString() : "");
                 sqlParameter.Add("BuyerArticleNo", chkArticleNo.IsChecked == true ? txtArticleNo.Text : "");
                 sqlParameter.Add("BuyerArticleNme", chkArticleSrh.IsChecked == true && !txtArticleSrh.Text.Trim().Equals("") ? txtArticleSrh.Text : "");
-                ds = DataStore.Instance.ProcedureToDataSet("xp_Inspect_sAutoInspect", sqlParameter, false);
+                ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_Inspect_sAutoInspect", sqlParameter, true, "R");
 
                 if (ds != null && ds.Tables.Count > 0)
                 {
@@ -1626,7 +1636,7 @@ namespace WizMes_WooJung
                 sqlParameter.Clear();
                 sqlParameter.Add("InspectID", strID);
 
-                string[] result = DataStore.Instance.ExecuteProcedure("xp_Inspect_DAutoInspect", sqlParameter, false);
+                string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_Inspect_DAutoInspect", sqlParameter, "D");
 
                 if (result[0].Equals("success"))
                 {
@@ -1862,7 +1872,7 @@ namespace WizMes_WooJung
                         }
 
                         List<KeyValue> list_Result = new List<KeyValue>();
-                        list_Result = DataStore.Instance.ExecuteAllProcedureOutputGetCS(Prolist, ListParameter);
+                        list_Result = DataStore.Instance.ExecuteAllProcedureOutputGetCS_NewLog(Prolist, ListParameter,"C");
                         string sGetID = string.Empty;
 
                         if (list_Result[0].key.ToLower() == "success")
@@ -1914,7 +1924,7 @@ namespace WizMes_WooJung
                     {
                         sqlParameter.Add("UpdateUserID", MainWindow.CurrentUser);
 
-                        string[] result = DataStore.Instance.ExecuteProcedure("xp_Inspect_uAutoInspect", sqlParameter, false);
+                        string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_Inspect_uAutoInspect", sqlParameter, "U");
                         if (!result[0].Equals("success"))
                         {
                             flag = false;

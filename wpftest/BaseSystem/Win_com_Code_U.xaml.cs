@@ -13,6 +13,9 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_com_Code_U : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         string strFlag = string.Empty;
         Win_sys_CommonCode_U_CodeView winCode = new Win_sys_CommonCode_U_CodeView();
         Win_sys_CommonCode_U_CodeView_Sub winCodeSub = new Win_sys_CommonCode_U_CodeView_Sub();
@@ -29,6 +32,11 @@ namespace WizMes_WooJung
         //화면 로드시
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             lib.UiLoading(sender);
         }
 
@@ -189,6 +197,7 @@ namespace WizMes_WooJung
         //닫기 클릭시
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             lib.ChildMenuClose(this.ToString());
         }
 
@@ -256,6 +265,7 @@ namespace WizMes_WooJung
                 {
                     if (ExpExc.choice.Equals(dgdMcg.Name))
                     {
+                        DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                         //MessageBox.Show("대분류");
                         if (ExpExc.Check.Equals("Y"))
                             dt = lib.DataGridToDTinHidden(dgdMcg);
@@ -351,7 +361,7 @@ namespace WizMes_WooJung
                 Dictionary<string, object> sqlParameter = new Dictionary<string, object>();
                 sqlParameter.Add("CodeSrh", txtCodeSrh.Text);
 
-                DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_Code_sCmCode_MainCategory", sqlParameter, false);
+                DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_Code_sCmCode_MainCategory", sqlParameter, true, "R");
 
                 if (ds != null && ds.Tables.Count > 0)
                 {
@@ -500,7 +510,7 @@ namespace WizMes_WooJung
                     sqlParameter.Add("CodeGBN", strCodeGBN);
                     sqlParameter.Add("Code_ID", strCodeID);
 
-                    string[] result = DataStore.Instance.ExecuteProcedure("xp_Code_dCmCode", sqlParameter, false);
+                    string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_Code_dCmCode", sqlParameter, "D");
 
                     if (!result[0].Equals("success"))
                     {
@@ -666,7 +676,7 @@ namespace WizMes_WooJung
                         sqlParameter.Add("Relation", txtRelation.Text);
                         sqlParameter.Add("CreateUserID", MainWindow.CurrentUser);
 
-                        string[] result = DataStore.Instance.ExecuteProcedure("xp_Code_iCmCode", sqlParameter, false);
+                        string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_Code_iCmCode", sqlParameter, "C");
 
                         //이건 왜 있는지?
                         //Procedure pro1 = new Procedure();
@@ -744,7 +754,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("Use_YN", Use_YN);
                 sqlParameter.Add("UserID", MainWindow.CurrentUser);
 
-                string[] result = DataStore.Instance.ExecuteProcedure("xp_Code_uCmCode", sqlParameter, false);
+                string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_Code_uCmCode", sqlParameter, "U");
 
                 if (!result[0].Equals("success"))
                 {

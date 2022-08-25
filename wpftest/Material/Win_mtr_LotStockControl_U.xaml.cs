@@ -22,6 +22,9 @@ namespace WizMes_WooJung
             InitializeComponent();
         }
 
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         Lib lib = new Lib();
         PlusFinder pf = new PlusFinder();
 
@@ -37,6 +40,12 @@ namespace WizMes_WooJung
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             CanBtnControl();
             ComboBoxSetting();
 
@@ -208,6 +217,7 @@ namespace WizMes_WooJung
         //닫기
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             Lib.Instance.ChildMenuClose(this.ToString());
         }
 
@@ -283,6 +293,7 @@ namespace WizMes_WooJung
             {
                 if (ExpExc.choice.Equals(dgdMain.Name))
                 {
+                    DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                     if (ExpExc.Check.Equals("Y"))
                         dt = Lib.Instance.DataGridToDTinHidden(dgdMain);
                     else
@@ -808,7 +819,7 @@ namespace WizMes_WooJung
 
                 sqlParameter.Add("sToLocID", chkToLocSrh.IsChecked == true ? (cboWareHouse.SelectedValue != null ? cboWareHouse.SelectedValue.ToString() : "") : ""); // 창고
 
-                DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_sbStock_sLotStockControl", sqlParameter, false);
+                DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_sbStock_sLotStockControl", sqlParameter, true, "R");
 
                 if (ds != null && ds.Tables.Count > 0)
                 {
@@ -1044,7 +1055,7 @@ namespace WizMes_WooJung
 
                         //동운씨가 만든 아웃풋 값 찾는 방법
                         List<KeyValue> list_Result = new List<KeyValue>();
-                        list_Result = DataStore.Instance.ExecuteAllProcedureOutputGetCS(Prolist, ListParameter);
+                        list_Result = DataStore.Instance.ExecuteAllProcedureOutputGetCS_NewLog(Prolist, ListParameter, "C");
 
                         string sGetID = string.Empty;
 
@@ -1114,7 +1125,7 @@ namespace WizMes_WooJung
                         }
 
                         string[] confirm = new string[2];
-                        confirm = DataStore.Instance.ExecuteAllProcedureOutputNew(Prolist, ListParameter);
+                        confirm = DataStore.Instance.ExecuteAllProcedureOutputNew_NewLog(Prolist, ListParameter,"U");
 
                         if (confirm[0] == "success")
                         {
@@ -1215,7 +1226,7 @@ namespace WizMes_WooJung
 
             try
             {
-                string[] result = DataStore.Instance.ExecuteProcedure("xp_sbStock_dLotStockControl", sqlParameter, true);
+                string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_sbStock_dLotStockControl", sqlParameter, "D");
 
                 if (!result[0].Equals("success"))
                 {

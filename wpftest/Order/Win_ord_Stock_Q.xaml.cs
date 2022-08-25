@@ -22,6 +22,9 @@ namespace WizMes_WooJung
         Lib lib = new Lib();
         PlusFinder pf = new PlusFinder();
 
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         // 엑셀 활용 용도 (프린트)
         private Microsoft.Office.Interop.Excel.Application excelapp;
         private Microsoft.Office.Interop.Excel.Workbook workbook;
@@ -36,6 +39,11 @@ namespace WizMes_WooJung
         // 첫 로드시.
         private void Win_ord_Stock_Q_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             First_Step();
             ComboBoxSetting();
             //제품으로 고정
@@ -547,7 +555,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("BuyerArticleNo", txtArticle.Text);
 
 
-                DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_Subul_sStockList", sqlParameter, false);
+                DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_Subul_sStockList", sqlParameter, true, "R");
                 DataTable dt = null;
 
                 if (ds != null && ds.Tables.Count > 0)
@@ -706,6 +714,8 @@ namespace WizMes_WooJung
         // 닫기 버튼클릭.
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
+
             int i = 0;
             foreach (MenuViewModel mvm in MainWindow.mMenulist)
             {
@@ -747,6 +757,7 @@ namespace WizMes_WooJung
             {
                 if (ExpExc.choice.Equals(dgdStock.Name))
                 {
+                    DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                     //MessageBox.Show("대분류");
                     if (ExpExc.Check.Equals("Y"))
                         dt = lib3.DataGridToDTinHidden(dgdStock);
@@ -842,7 +853,7 @@ namespace WizMes_WooJung
                 MessageBox.Show("먼저 검색해 주세요.");
                 return;
             }
-
+            DataStore.Instance.InsertLogByForm(this.GetType().Name, "P");
             msg.Show();
             msg.Topmost = true;
             msg.Refresh();

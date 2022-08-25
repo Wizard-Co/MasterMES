@@ -14,6 +14,8 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_com_Info : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
 
         #region 전역변수, 초기설정(ftp)
 
@@ -54,6 +56,11 @@ namespace WizMes_WooJung
         // 첫 로드시.
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             Lib.Instance.UiLoading(sender);
 
             string yyyy = DateToday.Substring(0, 4);
@@ -150,7 +157,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("SDate", yyyyMMdd);
                 sqlParameter.Add("EDate", yyyyMMdd);
 
-                DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_Info_sInfoByDate", sqlParameter, false);
+                DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_Info_sInfoByDate", sqlParameter, true, "R");
 
                 if (ds != null && ds.Tables.Count > 0)
                 {
@@ -376,6 +383,7 @@ namespace WizMes_WooJung
         //닫기
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             Lib.Instance.ChildMenuClose(this.ToString());
         }
         #endregion

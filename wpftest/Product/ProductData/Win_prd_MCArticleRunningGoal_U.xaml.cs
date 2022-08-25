@@ -25,6 +25,9 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_prd_MCArticleRunningGoal_U : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         string strFlag = string.Empty;
         Lib lib = new Lib();
         int rowNum = 0;
@@ -48,6 +51,10 @@ namespace WizMes_WooJung
 
         private void UserContrl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
             dtpStartDate.SelectedDate = DateTime.Today;
             dtpEndDate.SelectedDate = DateTime.Today;
             SetComboBox();
@@ -261,6 +268,7 @@ namespace WizMes_WooJung
         //닫기
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             int i = 0;
             foreach (MenuViewModel mvm in MainWindow.mMenulist)
             {
@@ -425,6 +433,7 @@ namespace WizMes_WooJung
             {
                 if (ExpExc.choice.Equals(dgdMain.Name))
                 {
+                    DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                     if (ExpExc.Check.Equals("Y"))
                         dt = Lib.Instance.DataGridToDTinHidden(dgdMain);
                     else
@@ -619,7 +628,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("sYYYY", chkTermSrh.IsChecked == true ? dtpStartDate.SelectedDate.Value.ToString("yyyy") : "");
                 sqlParameter.Add("eYYYY", chkTermSrh.IsChecked == true ? dtpEndDate.SelectedDate.Value.ToString("yyyy") : "");
 
-                ds = DataStore.Instance.ProcedureToDataSet("xp_MachineGoal_sMachineGoalList", sqlParameter, false);
+                ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_MachineGoal_sMachineGoalList", sqlParameter, true, "R");
 
                 if (ds != null && ds.Tables.Count > 0)
                 {
@@ -775,7 +784,7 @@ namespace WizMes_WooJung
             sqlParameter.Add("ProcessID", strProcessID);
             sqlParameter.Add("MachineID", strMachineID);
 
-            string[] result = DataStore.Instance.ExecuteProcedure("xp_MachineGoal_dMachineGoalAll", sqlParameter, false);
+            string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_MachineGoal_dMachineGoalAll", sqlParameter, "D");
             DataStore.Instance.CloseConnection();
 
             if (result[0].Equals("success"))
@@ -862,7 +871,7 @@ namespace WizMes_WooJung
                         }
 
                         string[] Confirm = new string[2];
-                        Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew(Prolist, ListParameter);
+                        Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew_NewLog(Prolist, ListParameter,"C");
                         if (Confirm[0] != "success")
                         {
                             MessageBox.Show("[저장실패]\r\n" + Confirm[1].ToString());

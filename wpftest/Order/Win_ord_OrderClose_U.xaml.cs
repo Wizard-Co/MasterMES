@@ -15,6 +15,9 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_ord_OrderClose_U : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         private Microsoft.Office.Interop.Excel.Application excelapp;
         private Microsoft.Office.Interop.Excel.Workbook workbook;
         private Microsoft.Office.Interop.Excel.Worksheet worksheet;
@@ -39,6 +42,11 @@ namespace WizMes_WooJung
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             Lib.Instance.UiLoading(sender);
             btnToday_Click(null, null);
             SetComboBox();
@@ -505,6 +513,7 @@ namespace WizMes_WooJung
         //닫기
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             Lib.Instance.ChildMenuClose(this.ToString());
         }
 
@@ -541,6 +550,7 @@ namespace WizMes_WooJung
                 return;
             }
 
+            DataStore.Instance.InsertLogByForm(this.GetType().Name, "P");
             msg.Show();
             msg.Topmost = true;
             msg.Refresh();
@@ -573,6 +583,7 @@ namespace WizMes_WooJung
             {
                 if (ExpExc.choice.Equals(dgdMain.Name))
                 {
+                    DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                     //MessageBox.Show("대분류");
                     if (ExpExc.Check.Equals("Y"))
                         dt = lib.DataGridToDTinHidden(dgdMain);
@@ -632,7 +643,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("sWorkID", chkWork.IsChecked == true ? (cboWork.SelectedValue != null ? cboWork.SelectedValue.ToString() : "") : "");
                 sqlParameter.Add("BuyerArticleNo", chkArticle.IsChecked == true ? txtArticle.Text.Trim() : "");
 
-                DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_Order_sOrderTotal", sqlParameter, false);
+                DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_Order_sOrderTotal", sqlParameter, true, "R");
 
                 if (ds != null && ds.Tables.Count > 0)
                 {

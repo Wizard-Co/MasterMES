@@ -58,18 +58,10 @@
                     <ColumnDefinition Width="10*"/>
                     <ColumnDefinition Width="10*"/>
                 </Grid.ColumnDefinitions>
-                <Button x:Name="btnYesterDay" Grid.Column="0" HorizontalContentAlignment="Center" 
-                        VerticalContentAlignment="Center" Content="전일" Margin="1"
-                        Click="btnYesterDay_Click"/>
-                <Button x:Name="btnToday" Grid.Column="1" HorizontalContentAlignment="Center" 
-                        VerticalContentAlignment="Center" Content="금일" Margin="1"
-                        Click="btnToday_Click"/>
-                <Button x:Name="btnLastMonth" Grid.Column="2" HorizontalContentAlignment="Center" 
-                        VerticalContentAlignment="Center" Content="전월" Margin="1"
-                        Click="btnLastMonth_Click"/>
-                <Button x:Name="btnThisMonth" Grid.Column="3" HorizontalContentAlignment="Center" 
-                        VerticalContentAlignment="Center" Content="금월" Margin="1"
-                        Click="btnThisMonth_Click"/>
+                <Button x:Name="btnLastMonth" Grid.Column="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="전월" Margin="1" Click="btnLastMonth_Click"/>
+                <Button x:Name="btnThisMonth" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="금월" Margin="1" Click="btnThisMonth_Click" />
+                <Button x:Name="btnYesterDay" Grid.Column="2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="전일" Margin="1" Click="btnYesterDay_Click"/>
+                <Button x:Name="btnToday" Grid.Column="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="금일" Margin="1" Click="btnToday_Click"/>
             </Grid>
 
             <Grid Grid.Row="0" Grid.Column="2">
@@ -147,28 +139,22 @@
                 <RowDefinition Height="10*"/>
             </Grid.RowDefinitions>
             <DataGrid x:Name="dgdMain" Style="{DynamicResource DataGridSet1}" IsReadOnly="True" Grid.Row="0" SizeChanged="DataGrid_SizeChange">
-                <DataGrid.RowStyle>
-                    <Style TargetType="DataGridRow">
-                        <Style.Resources>
-                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#3399FF"/>
-                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White"/>
-                            <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#3399FF" />
-                            <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="White"/>
-                        </Style.Resources>
-                    </Style>
-                </DataGrid.RowStyle>
                 <DataGrid.Columns>
-                    
-                    <DataGridTextColumn Header="순" Binding="{Binding Num}" Width="*"/>
-                    <DataGridTextColumn Header="일자" Binding="{Binding WorkDate}" Width="2*"
-                                        CellStyle="{DynamicResource DataGridCellAndCentering}"/>
-                    <DataGridTextColumn Header="시간" Binding="{Binding WorkTime}" Width="2*"
-                                        CellStyle="{DynamicResource DataGridCellAndCentering}"/>
-                    <DataGridTextColumn Header="사용자ID" Binding="{Binding UserID}" Width="4*"/>
-                    <DataGridTextColumn Header="사용자" Binding="{Binding Name}" Width="4*"/>
-                    <DataGridTextColumn Header="메뉴ID" Binding="{Binding MenuID}" Width="2*"
-                                        CellStyle="{DynamicResource DataGridCellAndCentering}"/>
-                    <DataGridTextColumn Header="메뉴명" Binding="{Binding Menu}" Width="5*"/>
+                    <DataGridTextColumn Header="순" Binding="{Binding Num}" Width="0.5*" CellStyle="{DynamicResource DataGridCellAndCentering}"/>
+                    <DataGridTextColumn Header="일자" Binding="{Binding WorkDate_CV}" Width="1*"  CellStyle="{DynamicResource DataGridCellAndCentering}"/>
+                    <DataGridTextColumn Header="사용자ID" Binding="{Binding UserID}" Width="0.7*" CellStyle="{DynamicResource DataGridCellAndCentering}"/>
+                    <DataGridTextColumn Header="사용자" Binding="{Binding Name}" Width="0.7*" CellStyle="{DynamicResource DataGridCellAndCentering}"/>
+                    <DataGridTextColumn Header="메뉴" Binding="{Binding Menu}" Width="3*"/>
+                    <DataGridTextColumn Header="시작일자" Binding="{Binding StartDate_CV}" Width="1*" CellStyle="{DynamicResource DataGridCellAndCentering}"/>
+                    <DataGridTextColumn Header="시작시간" Binding="{Binding StartTime_CV}" Width="0.8*" CellStyle="{DynamicResource DataGridCellAndCentering}"/>
+                    <DataGridTextColumn Header="종료일자" Binding="{Binding EndDate_CV}" Width="1*" CellStyle="{DynamicResource DataGridCellAndCentering}"/>
+                    <DataGridTextColumn Header="종료시간" Binding="{Binding EndTime_CV}" Width="0.8*" CellStyle="{DynamicResource DataGridCellAndCentering}"/>
+                    <DataGridTextColumn Header="로그인시간(분)" Binding="{Binding Duration}" Width="*" CellStyle="{DynamicResource DataGridCellAndCentering}"/>
+                    <DataGridTextColumn Header="입력" Binding="{Binding C}" Width="1*" CellStyle="{DynamicResource DataGridCellAndCentering}"/>
+                    <DataGridTextColumn Header="조회" Binding="{Binding R}" Width="1*" CellStyle="{DynamicResource DataGridCellAndCentering}"/>
+                    <DataGridTextColumn Header="수정" Binding="{Binding U}" Width="1*" CellStyle="{DynamicResource DataGridCellAndCentering}"/>
+                    <DataGridTextColumn Header="삭제" Binding="{Binding D}" Width="1*" CellStyle="{DynamicResource DataGridCellAndCentering}"/>
+
                 </DataGrid.Columns>
             </DataGrid>
             <TextBlock x:Name="tbkCount" Grid.Row="1" VerticalAlignment="Center" Text="▶ 검색 결과 :   건"

@@ -17,6 +17,9 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_com_Article_BOM_U : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         string strFlag = string.Empty;
         string strDirection = string.Empty;
         int rowNum = 0;
@@ -35,6 +38,11 @@ namespace WizMes_WooJung
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             Lib.Instance.UiLoading(sender);
             SetComboBox();
             strDirection = "B";
@@ -263,6 +271,8 @@ namespace WizMes_WooJung
                 {
                     if (MessageBox.Show("선택하신 항목을 삭제하시겠습니까?", "삭제 전 확인", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                     {
+                        DataStore.Instance.InsertLogByForm(this.GetType().Name, "D");
+
                         //삭제 전 체크
                         if (!DeleteDataCheck(WinArticleBomList.ArticleID, WinArticleBomList.PARENTArticleID))
                             return;
@@ -287,6 +297,7 @@ namespace WizMes_WooJung
         //닫기
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             Lib.Instance.ChildMenuClose(this.ToString());
         }
 
@@ -398,6 +409,7 @@ namespace WizMes_WooJung
 
             if (ExpExc.DialogResult.HasValue)
             {
+                DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                 if (ExpExc.choice.Equals(tlvItemList.Name))
                 {
                     //if (ExpExc.Check.Equals("Y"))
@@ -926,7 +938,7 @@ namespace WizMes_WooJung
                         ListParameter.Add(sqlParameter);
 
                         string[] Confirm = new string[2];
-                        Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew(Prolist, ListParameter);
+                        Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew_NewLog(Prolist, ListParameter,"C");
                         if (Confirm[0] != "success")
                         {
                             MessageBox.Show("[저장실패]\r\n" + Confirm[1].ToString());
@@ -955,7 +967,7 @@ namespace WizMes_WooJung
                         ListParameter.Add(sqlParameter);
 
                         string[] Confirm = new string[2];
-                        Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew(Prolist, ListParameter);
+                        Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew_NewLog(Prolist, ListParameter,"U");
                         if (Confirm[0] != "success")
                         {
                             MessageBox.Show("[저장실패]\r\n" + Confirm[1].ToString());

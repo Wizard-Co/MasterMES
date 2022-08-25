@@ -12,6 +12,8 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_com_OrderCode_U : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
 
         Lib lib = new Lib();
         PlusFinder pf = new PlusFinder();
@@ -28,6 +30,11 @@ namespace WizMes_WooJung
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             Lib.Instance.UiLoading(sender);
         }
 
@@ -182,6 +189,7 @@ namespace WizMes_WooJung
         //닫기
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             Lib.Instance.ChildMenuClose(this.ToString());
         }
 
@@ -237,6 +245,7 @@ namespace WizMes_WooJung
             {
                 if (ExpExc.choice.Equals(dgdWork.Name))
                 {
+                    DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                     if (ExpExc.Check.Equals("Y"))
                         dt = Lib.Instance.DataGridToDTinHidden(dgdWork);
                     else
@@ -291,7 +300,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("WorkName", chkWorkSrh.IsChecked == true && !txtWorkSrh.Text.Trim().Equals("") ? txtWorkSrh.Text : "");
                 sqlParameter.Add("sUseClss", chkNoUseClss.IsChecked == true ? 1 : 0);
 
-                DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_Code_sWork", sqlParameter, false);
+                DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_Code_sWork", sqlParameter, true, "R");
                 if (ds != null && ds.Tables.Count > 0)
                 {
                     DataTable dt = ds.Tables[0];
@@ -413,7 +422,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("sID", strWorkID);
                 sqlParameter.Add("LastUpdateUserID", MainWindow.CurrentUser);
 
-                string[] result = DataStore.Instance.ExecuteProcedure("xp_Code_uDeleteCode", sqlParameter, false);
+                string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_Code_uDeleteCode", sqlParameter, "D");
                 DataStore.Instance.CloseConnection();
 
                 if (result[0].Equals("success"))
@@ -473,7 +482,7 @@ namespace WizMes_WooJung
                         ListParameter.Add(sqlParameter);
 
                         string[] Confirm = new string[2];
-                        Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew(Prolist, ListParameter);
+                        Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew_NewLog(Prolist, ListParameter,"C");
                         if (Confirm[0] != "success")
                         {
                             MessageBox.Show("[저장실패]\r\n" + Confirm[1].ToString());
@@ -504,7 +513,7 @@ namespace WizMes_WooJung
                         ListParameter.Add(sqlParameter);
 
                         string[] Confirm = new string[2];
-                        Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew(Prolist, ListParameter);
+                        Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew_NewLog(Prolist, ListParameter,"U");
                         if (Confirm[0] != "success")
                         {
                             MessageBox.Show("[저장실패]\r\n" + Confirm[1].ToString());

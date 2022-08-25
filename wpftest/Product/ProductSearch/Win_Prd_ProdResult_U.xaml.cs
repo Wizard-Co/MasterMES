@@ -25,6 +25,9 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_Prd_ProdResult_U : UserControl
     {
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         Win_Prd_ProdResult_U_CodeView prodResult = new Win_Prd_ProdResult_U_CodeView();
         Lib lib = new Lib();
         int rowNum = 0;
@@ -40,6 +43,11 @@ namespace WizMes_WooJung
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             Lib.Instance.UiLoading(sender);
 
             chkDay.IsChecked = true;
@@ -888,6 +896,7 @@ namespace WizMes_WooJung
         /// 닫기
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             Lib.Instance.ChildMenuClose(this.ToString());
         }
 
@@ -938,6 +947,7 @@ namespace WizMes_WooJung
             {
                 if (ExpExc.choice.Equals(dgdResult.Name))
                 {
+                    DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                     if (ExpExc.Check.Equals("Y"))
                         dt = Lib.Instance.DataGridToDTinHidden(dgdResult);
                     else
@@ -1058,7 +1068,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("nWorkerName", chkWorkerName.IsChecked == true ? 1 : 0);
                 sqlParameter.Add("sWorkerName", chkWorkerName.IsChecked == true ? txtWorkerNameSearch.Text : "");
 
-                DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_prd_sWKResult_WPF", sqlParameter, false);
+                DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_prd_sWKResult_WPF", sqlParameter, true, "R");
 
                 if (ds != null && ds.Tables.Count > 0)
                 {
@@ -1431,7 +1441,7 @@ namespace WizMes_WooJung
                     sqlParameter.Add("WorkTimeMinute", txtWorkMinute.Text == string.Empty ? 0 : Convert.ToDouble(txtWorkMinute.Text.Replace(",", "")));
                     sqlParameter.Add("UpdateUserID", MainWindow.CurrentUser);
 
-                    string[] result = DataStore.Instance.ExecuteProcedure("xp_prd_uWkResultOne_WPF", sqlParameter, true);
+                    string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_prd_uWkResultOne_WPF", sqlParameter, "U");
 
                     if (!result[0].Equals("success"))
                     {
@@ -1581,7 +1591,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("CreateUserID", MainWindow.CurrentUser);
                 sqlParameter.Add("sRtnMsg", "");
 
-                string[] result = DataStore.Instance.ExecuteProcedure("xp_prdWork_dWkResult", sqlParameter, true);
+                string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_prdWork_dWkResult", sqlParameter, "D");
 
                 if (result[0].Equals("success"))
                 {
