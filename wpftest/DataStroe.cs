@@ -17,7 +17,7 @@ using WizMes_WooJung.Properties;
 //*******************************************************************************
 // 변경일자     변경자      요청자      요구사항ID          요청 및 작업내용
 //*******************************************************************************
-// 00
+// 0000
 //
 //*******************************************************************************
 
@@ -45,7 +45,7 @@ namespace WizMes_WooJung
         //private string LogConnectionString = "Data Source=wizis.iptime.org,20150;Initial Catalog=WizLog;UID=DBUser;PWD=Wizardis; Connection Timeout=0";
 
 #if DEBUG
-        private string ConnectionString = "Data Source=wizis.iptime.org,20150;Initial Catalog=MES_Woojung;UID=DBUser;PWD=Wizardis; Connection Timeout=180";
+        private string ConnectionString = "Data Source=wizis.iptime.org,20150;Initial Catalog=MES_DaeSung;UID=DBUser;PWD=Wizardis; Connection Timeout=180";
         private string LogConnectionString = "Data Source=wizis.iptime.org,20150;Initial Catalog=WizLog;UID=DBUser;PWD=Wizardis; Connection Timeout=180";
 #else
         private string ConnectionString = "Data Source=" + LoadINI.server + ";Initial Catalog=" + LoadINI.Database + ";UID=DBUser;PWD=Wizardis; Connection Timeout= 0";
