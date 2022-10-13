@@ -2070,9 +2070,64 @@ namespace WizMes_WooJung
             }
         }
 
+
         #endregion
 
-        
+        #region 작업시간 자동계산
+        private void txtStartTime_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                if (txtStartTime.Text != string.Empty && txtEndTime.Text != string.Empty && txtStartTime.Text.Length == 8)
+                {
+                    string SDate = txtStartTime.Text;
+                    string EDate = txtEndTime.Text;
+
+                    DateTime StartDate = Convert.ToDateTime(SDate);
+                    DateTime EndDate = Convert.ToDateTime(EDate);
+
+                    TimeSpan dateDiff = EndDate - StartDate;
+
+                    double totalMinutes = dateDiff.TotalMinutes;
+
+                    txtWorkMinute.Text = Math.Round(totalMinutes).ToString();
+                }
+            }
+            catch
+            {
+
+            }
+
+        }
+
+        private void txtEndTime_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                if (txtStartTime.Text != string.Empty && txtEndTime.Text != string.Empty && txtStartTime.Text.Length == 8)
+                {
+                    string SDate = txtStartTime.Text;
+                    string EDate = txtEndTime.Text;
+
+                    DateTime StartDate = Convert.ToDateTime(SDate);
+                    DateTime EndDate = Convert.ToDateTime(EDate);
+
+                    TimeSpan dateDiff = EndDate - StartDate;
+
+                    double totalMinutes = dateDiff.TotalMinutes;
+
+                    txtWorkMinute.Text = Math.Round(totalMinutes).ToString();
+                }
+            }
+            catch
+            {
+
+            }
+
+        }
+
+        #endregion
+
     }
 
     class Win_Prd_ProdResult_U_CodeView : BaseView
