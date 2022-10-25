@@ -481,7 +481,7 @@ namespace WizMes_WooJung
                             ArticleID = dr["ArticleID"].ToString(),
                             BuyerArticleNo = dr["BuyerArticleNo"].ToString(),
                             TradeID = dr["TradeID"].ToString(),
-                            //Article = dr["Article"].ToString()
+                            Article = dr["Article"].ToString()
                         };
 
                         dgdCustomArticle.Items.Add(dgdCustomArticleInfo);
@@ -567,7 +567,7 @@ namespace WizMes_WooJung
                                     {
                                         AllNum = i.ToString(),
                                         ArticleID = dr["ArticleID"].ToString(),
-                                        //Article = dr["Article"].ToString(),
+                                        Article = dr["Article"].ToString(),
                                         BuyerArticleNo = dr["BuyerArticleNo"].ToString(),
                                         chkFlag = false
                                     };
@@ -662,7 +662,7 @@ namespace WizMes_WooJung
                         {
                             SelectNum = i.ToString(),
                             ArticleID = dr["ArticleID"].ToString(),
-                            //Article = dr["Article"].ToString(),
+                            Article = dr["Article"].ToString(),
                             BuyerArticleNo = dr["BuyerArticleNo"].ToString(),
                             chkFlag = false
                         };
@@ -707,7 +707,7 @@ namespace WizMes_WooJung
                         {
                             AllNum = i.ToString(),
                             ArticleID = dr["ArticleID"].ToString(),
-                            //Article = dr["Article"].ToString(),
+                            Article = dr["Article"].ToString(),
                             BuyerArticleNo = dr["BuyerArticleNo"].ToString(),
                             chkFlag = false
                         };
@@ -1612,7 +1612,7 @@ namespace WizMes_WooJung
         public string CustomID { get; set; }
         public string KCustom { get; set; }
         public string ArticleID { get; set; }
-        //public string Article { get; set; }
+        public string Article { get; set; }
         public string BuyerArticleNo { get; set; }
         public string TradeID { get; set; }
 
@@ -1632,7 +1632,7 @@ namespace WizMes_WooJung
         public string CustomID { get; set; }
         public string KCustom { get; set; }
         public string ArticleID { get; set; }
-        //public string Article { get; set; }
+        public string Article { get; set; }
 
         public string BuyerArticleNo { get; set; }
 

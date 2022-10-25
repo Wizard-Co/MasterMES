@@ -306,8 +306,9 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="품명" Binding="{Binding Article}" Width="*" Visibility="Visible"/>
                             <DataGridTextColumn Header="품번" Binding="{Binding BuyerArticleNo}"   Width="*"/>
-                            <DataGridTextColumn Header="품명코드" Binding="{Binding ArticleID}" Width="*" Visibility="Hidden"/>
+                            
 
                             <!--<DataGridTextColumn Header="차종" Binding="{Binding ArticleID}"  HeaderTemplate="{StaticResource ResourceKey=HorizonalCenter}" Width="*"/>-->
 
@@ -424,8 +425,9 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="품명" Binding="{Binding ArticleID}"  Width="*" Visibility="Visible"/>
                             <DataGridTextColumn Header="품번" Binding="{Binding BuyerArticleNo}"  Width="*"/>
-                            <DataGridTextColumn Header="품명코드" Binding="{Binding ArticleID}"  Width="*" Visibility="Hidden"/>
+                            
 
                             <!--<DataGridTextColumn Header="차종" Binding="{Binding ArticleID}"  HeaderTemplate="{StaticResource ResourceKey=HorizonalCenter}" Width="*"/>
                             <DataGridTextColumn Header="포장수량" Binding="{Binding ArticleID}"  HeaderTemplate="{StaticResource ResourceKey=HorizonalCenter}" Width="*"/>
