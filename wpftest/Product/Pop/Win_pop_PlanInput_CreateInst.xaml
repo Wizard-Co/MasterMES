@@ -1,0 +1,235 @@
+﻿<Window x:Class="WizMes_WooJung.PopUp.Win_pop_PlanInput_CreateInst"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WizMes_WooJung.PopUp"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Title="잔재 발생처리" Height="650" Width="900" >
+    <!--Loaded="MoveSub_Loaded"-->
+    <Grid>
+        <!--<Grid.RowDefinitions>
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="9*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Background="{StaticResource WizMes_WooJung}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="4*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+ 
+            --><!-- 검색조건 --><!--
+            <Grid Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="5*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                
+            </Grid>
+
+            --><!-- 검색 버튼! --><!--
+            <Grid Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="3.5*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="1.2*" />
+                </Grid.RowDefinitions>
+                <Button x:Name="btnSearch"  Grid.Column="1" Grid.ColumnSpan="2" Margin="1" Click="btnSearch_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="{DynamicResource btiSearch}" Style="{DynamicResource imgSize}" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Source={StaticResource tblSearch},Mode=OneWay,Path=Text}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                
+                <ColumnDefinition Width="20*"/>
+
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="10*" />
+                <RowDefinition Height="1*" />
+                
+            </Grid.RowDefinitions>
+
+            
+            <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Visibility="Hidden">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0.1*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <CheckBox Grid.Row="1" x:Name="chkAll" Content="전체선택" Margin="5 2 1 1"
+                          Checked="AllCheck_Checked" Unchecked="AllCheck_Unchecked"/>
+            </Grid>
+
+
+            <Grid Grid.Row="0" x:Name="SubGridAdd" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="10*" />
+                    <ColumnDefinition Width="10*" />
+                    <ColumnDefinition Width="10*" />
+                    <ColumnDefinition Width="10*" />
+                    <ColumnDefinition Width="10*" />
+                </Grid.ColumnDefinitions>
+                <Button x:Name="ButtonDataGridSubRowAdd" Grid.Column="3" Content="추가" Click="ButtonDataGridSubRowAdd_Click" ></Button>
+                <Button x:Name="ButtonDataGridSubRowDel" Grid.Column="4" Content="삭제" Click="ButtonDataGridSubRowDel_Click" ></Button>
+            </Grid>
+            
+            --><!--<Label Grid.Column="0" Grid.Row="0" HorizontalContentAlignment="Center">
+                <TextBlock Text="조정일자" Margin="-2"/>
+            </Label>
+            <DatePicker x:Name="dtpAdjustDate" Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Padding="0" Background="#fff2d2"
+                                    Text="{Binding Path=ControlDate}" TabIndex="10"
+                                    Keyboard.PreviewKeyUp="dtpAdjustDate_PreviewKeyUp" CalendarClosed="dtpAdjustDate_CalendarClosed"/>--><!--
+
+
+            <DataGrid x:Name="dgdMain" Grid.Row="1" Style="{DynamicResource DataGridSet1}" >
+
+                <DataGrid.CellStyle>
+                    <Style TargetType="DataGridCell">
+                        <EventSetter Event="PreviewKeyDown" Handler="DataGridSub_PreviewKeyDown"/>
+                        <EventSetter Event="KeyDown" Handler="DataGridSub_KeyDown"/>
+                        <EventSetter Event="KeyUp" Handler="DataGridSub_TextFocus"/>
+                        <EventSetter Event="GotFocus" Handler="DataGridSub_GotFocus" />
+                        <EventSetter Event="MouseUp" Handler="DataGridSub_MouseUp" />
+                    </Style>
+                </DataGrid.CellStyle>
+                
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="선택">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox Click="chkReq_Click"> 
+                                    <CheckBox.Style>
+                                        <Style TargetType="CheckBox">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Chk,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Value="true">
+                                                    <Setter Property="IsChecked" Value="True"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Chk,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Value="false">
+                                                    <Setter Property="IsChecked" Value="False"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                        </Style>
+                                    </CheckBox.Style>
+                                </CheckBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTextColumn Header="" Binding="{Binding Num}" Width="auto" Visibility="Hidden" />
+                    <DataGridTextColumn Header="지시번호(숨겨야함)" Binding="{Binding InstID}" Width="auto" Visibility="Hidden"/>
+                    <DataGridTextColumn Header="CreateInstDetSeq" Binding="{Binding CreateInstDetSeq}" Width="auto" Visibility="Hidden" />
+
+                    
+                    <DataGridTemplateColumn Header="품번">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding BuyerArticleNo, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" TextAlignment="Left"
+                                          Tag="{Binding ArticleID, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" VerticalAlignment="Center"  PreviewMouseDown="dgdMain_PreviewMouseDown"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.CellEditingTemplate>
+                            <DataTemplate>
+                                <TextBox x:Name="dgdBuyerArticleNo" Text="{Binding BuyerArticleNo, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+                                                      Foreground="Black"
+                                                     Tag="{Binding ArticleID, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                     KeyDown="dgdBuyerArticleNo_KeyDown" ></TextBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellEditingTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="품명">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Article}" TextAlignment="Left"
+                                          VerticalAlignment="Center"   PreviewMouseDown="dgdMain_PreviewMouseDown"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        --><!--<DataGridTemplateColumn.CellEditingTemplate>
+                            <DataTemplate>
+                                <TextBox x:Name="dgdArticle" Text="{Binding Article, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+                                                      Foreground="Black"
+                                                     Tag="{Binding ArticleID, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                     KeyDown="dgdArticle_KeyDown" ></TextBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellEditingTemplate>--><!--
+                        
+                    </DataGridTemplateColumn>
+
+
+
+                    <DataGridTemplateColumn Header="잔재로트No">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding JaturiLotID}" TextAlignment="Left"
+                                          VerticalAlignment="Center"   PreviewMouseDown="dgdMain_PreviewMouseDown"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="잔재규격">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding JaturiSpec}" TextAlignment="Left"
+                                          VerticalAlignment="Center"   PreviewMouseDown="dgdMain_PreviewMouseDown"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+
+                        <DataGridTemplateColumn.CellEditingTemplate>
+                            <DataTemplate>
+                                <TextBox Text="{Binding JaturiSpec, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" TextAlignment="Center" Foreground="Black"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellEditingTemplate>
+                        
+                    </DataGridTemplateColumn>
+
+                </DataGrid.Columns>
+            </DataGrid>
+
+
+            
+         
+            <Grid Grid.Row="18" Margin="1" Grid.ColumnSpan="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="0" Grid.ColumnSpan="3" Margin="1">
+                    <TextBlock x:Name="tblCount" Text="▶검색개수 : " />
+                </Grid>
+
+                <Button x:Name="btnConfirm" Grid.Column="4" Margin="1" Content="확인"
+                    Click="btnConfirm_Click"/>
+
+                <Button x:Name="btnCancel" Grid.Column="5" Margin="1" Content="취소"
+                    Click="btnCancel_Click"/>
+            </Grid>
+
+        </Grid>-->
+    </Grid>
+</Window>

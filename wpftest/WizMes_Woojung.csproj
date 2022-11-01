@@ -444,6 +444,12 @@
     <Compile Include="Product\Pop\ReFresh.xaml.cs">
       <DependentUpon>ReFresh.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Product\Pop\Win_pop_PlanInput_CreateInst.xaml.cs">
+      <DependentUpon>Win_pop_PlanInput_CreateInst.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Product\Pop\Win_pop_PlanInput_UseInst.xaml.cs">
+      <DependentUpon>Win_pop_PlanInput_UseInst.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Product\ProductData\Win_prd_MCArticleRunningGoal_U.xaml.cs">
       <DependentUpon>Win_prd_MCArticleRunningGoal_U.xaml</DependentUpon>
     </Compile>
@@ -950,6 +956,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Product\Pop\ReFresh.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Product\Pop\Win_pop_PlanInput_CreateInst.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Product\Pop\Win_pop_PlanInput_UseInst.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
