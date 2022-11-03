@@ -45,7 +45,7 @@ namespace WizMes_WooJung
         //private string LogConnectionString = "Data Source=wizis.iptime.org,20150;Initial Catalog=WizLog;UID=DBUser;PWD=Wizardis; Connection Timeout=0";
 
 #if DEBUG
-        private string ConnectionString = "Data Source=wizis.iptime.org,20150;Initial Catalog=MES_WooJung;UID=DBUser;PWD=Wizardis; Connection Timeout=180";
+        private string ConnectionString = "Data Source=wizis.iptime.org,20150;Initial Catalog=MES_Default;UID=DBUser;PWD=Wizardis; Connection Timeout=180";
         private string LogConnectionString = "Data Source=wizis.iptime.org,20150;Initial Catalog=WizLog;UID=DBUser;PWD=Wizardis; Connection Timeout=180";
 #else
         private string ConnectionString = "Data Source=" + LoadINI.server + ";Initial Catalog=" + LoadINI.Database + ";UID=DBUser;PWD=Wizardis; Connection Timeout= 0";
