@@ -2093,9 +2093,10 @@ namespace WizMes_WooJung
                     txtWorkMinute.Text = Math.Round(totalMinutes).ToString();
                 }
             }
-            catch
+            catch (Exception Ex)
             {
-
+                MessageBox.Show(Ex.Message);
+                return;
             }
 
         }
