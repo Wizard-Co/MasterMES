@@ -154,6 +154,8 @@ namespace WizMes_WooJung
         {
             try
             {
+                string ArticleID = null;
+
                 if (dgdOut.Items.Count > 0)
                 {
                     dgdOut.Items.Clear();
@@ -163,12 +165,21 @@ namespace WizMes_WooJung
                     dgdGonsu.Items.Clear();
                 }
 
+                if(chkBuyerArticleNo.IsChecked == true)
+                {
+                    ArticleID = txtBuyerArticleNoSearch.Tag.ToString();
+                } else if(CheckBoxArticleSearch.IsChecked == true)
+                {
+                    ArticleID = TextBoxArticleSearch.Tag.ToString();
+                }
+
+
                 DataSet ds = null;
                 Dictionary<string, object> sqlParameter = new Dictionary<string, object>();
                 sqlParameter.Clear();
                 sqlParameter.Add("FromDate", DatePickerStartDateSearch.SelectedDate == null ? "" : DatePickerStartDateSearch.SelectedDate.Value.ToString().Replace("-", ""));
                 sqlParameter.Add("ToDate", DatePickerEndDateSearch.SelectedDate == null ? "" : DatePickerEndDateSearch.SelectedDate.Value.ToString().Replace("-", ""));
-                sqlParameter.Add("ArticleNo", chkArticleNo.IsChecked == true && txtArticleNoSearch.Tag != null ? txtArticleNoSearch.Tag.ToString() : ""); //품번
+                sqlParameter.Add("ArticleNo", ArticleID != null ? ArticleID : ""); //품번
                 ds = DataStore.Instance.ProcedureToDataSet("xp_prd_sKPI_KPI", sqlParameter, false);
 
                 if (ds != null && ds.Tables.Count > 0)
@@ -191,7 +202,7 @@ namespace WizMes_WooJung
                                 Num = i + 1,
 
                                 GbnName = dr["GbnName"].ToString(),
-                                ArticleNo = dr["ARTICLENO"].ToString(),
+                                BuyerArticleNo = dr["BuyerArticleNo"].ToString(),
                                 Article = dr["article"].ToString(),
                                 WorkQty = Convert.ToDouble(dr["WorkQty"].ToString()),
                                 WorkTime = lib.returnNumStringOne(dr["WorkTime"].ToString()),
@@ -328,43 +339,43 @@ namespace WizMes_WooJung
             }
         }
 
-        private void lblArticleNo_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void lblBuyerArticleNo_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (chkArticleNo.IsChecked == true)
+            if (chkBuyerArticleNo.IsChecked == true)
             {
-                chkArticleNo.IsChecked = false;
+                chkBuyerArticleNo.IsChecked = false;
             }
             else
             {
-                chkArticleNo.IsChecked = true;
+                chkBuyerArticleNo.IsChecked = true;
             }
         }
         // 거래처 체크박스 이벤트
-        private void chkArticleNo_Checked(object sender, RoutedEventArgs e)
+        private void chkBuyerArticleNo_Checked(object sender, RoutedEventArgs e)
         {
-            chkArticleNo.IsChecked = true;
-            txtArticleNoSearch.IsEnabled = true;
-            btnArticleNoSearch.IsEnabled = true;
+            chkBuyerArticleNo.IsChecked = true;
+            txtBuyerArticleNoSearch.IsEnabled = true;
+            btnBuyerArticleNoSearch.IsEnabled = true;
         }
-        private void chkArticleNo_UnChecked(object sender, RoutedEventArgs e)
+        private void chkBuyerArticleNo_UnChecked(object sender, RoutedEventArgs e)
         {
-            chkArticleNo.IsChecked = false;
-            txtArticleNoSearch.IsEnabled = false;
-            btnArticleNoSearch.IsEnabled = false;
+            chkBuyerArticleNo.IsChecked = false;
+            txtBuyerArticleNoSearch.IsEnabled = false;
+            btnBuyerArticleNoSearch.IsEnabled = false;
         }
         // 거래처 텍스트박스 엔터 → 플러스파인더
-        private void txtArticleNoSearch_KeyDown(object sender, KeyEventArgs e)
+        private void txtBuyerArticleNoSearch_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                MainWindow.pf.ReturnCode(txtArticleNoSearch, 76, "");
+                MainWindow.pf.ReturnCode(txtBuyerArticleNoSearch, 76, "");
             }
         }
         // 거래처 플러스파인더 이벤트
-        private void btnArticleNoSearch_Click(object sender, RoutedEventArgs e)
+        private void btnBuyerArticleNoSearch_Click(object sender, RoutedEventArgs e)
         {
             // 거래처 : 0
-            MainWindow.pf.ReturnCode(txtArticleNoSearch, 76, "");
+            MainWindow.pf.ReturnCode(txtBuyerArticleNoSearch, 76, "");
         }
 
         //품명 라벨 클릭
@@ -442,7 +453,7 @@ namespace WizMes_WooJung
         public int Num { get; set; }
 
         public string GbnName { get; set; }
-        public string ArticleNo { get; internal set; }
+        public string BuyerArticleNo { get; internal set; }
         public string Article { get; internal set; }
         public double WorkQty { get; internal set; }
         public string WorkTime { get; internal set; }

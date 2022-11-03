@@ -858,7 +858,7 @@ namespace WizMes_WooJung
 
                         DataGridPatternProcess.Items.Add(winPatternAllProcess);
                     }
-                    else //flag=false 패턴공장 공정영이랑 winpp공정명 같으면(이미있으면) 
+                    else //flag=false 패턴공장 공정명이랑 winpp공정명 같으면(이미있으면) 
                     {
                         MessageBox.Show("같은 이름의 공정이 추가되어있습니다.");
                     }

@@ -51,7 +51,7 @@ namespace WizMes_WooJung
                 // 직책 폼으로 활성화
                 tblSrh.Text = "직책 검색";
                 tbkBuseoCount.Visibility = Visibility.Collapsed;
-                tbkJikChaekCount.Visibility = Visibility.Visible;
+                tbWooJungikChaekCount.Visibility = Visibility.Visible;
             }
         }
 
@@ -536,7 +536,7 @@ namespace WizMes_WooJung
                         }
 
                         // 2019.08.28 검색결과에 갯수 추가
-                        tbkJikChaekCount.Text = "▶검색 결과 : " + i + "건";
+                        tbWooJungikChaekCount.Text = "▶검색 결과 : " + i + "건";
                     }
                 }
             }
@@ -561,7 +561,7 @@ namespace WizMes_WooJung
                 txtJikChaekSrh.Visibility = Visibility.Hidden;
 
                 tbkBuseoCount.Visibility = Visibility.Visible;
-                tbkJikChaekCount.Visibility = Visibility.Collapsed;
+                tbWooJungikChaekCount.Visibility = Visibility.Collapsed;
             }
             else if (tabItemJikChaek.IsSelected == true)
             {
@@ -570,7 +570,7 @@ namespace WizMes_WooJung
                 txtJikChaekSrh.Visibility = Visibility.Visible;
 
                 tbkBuseoCount.Visibility = Visibility.Collapsed;
-                tbkJikChaekCount.Visibility = Visibility.Visible;
+                tbWooJungikChaekCount.Visibility = Visibility.Visible;
             }
         }
 
@@ -674,7 +674,7 @@ namespace WizMes_WooJung
                     {
                         sqlParameter.Add("sID", txtResablyID.Text);
                         sqlParameter.Add("sData", txtResably.Text);
-                        sqlParameter.Add("UseClss", chkJikChaekUseClss.IsChecked == true ? "*" : "");
+                        sqlParameter.Add("UseClss", chWooJungikChaekUseClss.IsChecked == true ? "*" : "");
 
                         if (strFlag.Equals("I"))
                         {

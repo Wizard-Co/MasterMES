@@ -438,6 +438,12 @@
     <Compile Include="Product\MachineSearch\Win_prd_RunningRate_Q.xaml.cs">
       <DependentUpon>Win_prd_RunningRate_Q.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Product\MachineSearch\Win_prd_sts_RunningRateDetail_Q.xaml.cs">
+      <DependentUpon>Win_prd_sts_RunningRateDetail_Q.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Product\MachineSearch\Win_prd_sts_RunningRate_Q.xaml.cs">
+      <DependentUpon>Win_prd_sts_RunningRate_Q.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Product\MachineSearch\Win_Prd_WorkLog_Q.xaml.cs">
       <DependentUpon>Win_Prd_WorkLog_Q.xaml</DependentUpon>
     </Compile>
@@ -447,11 +453,17 @@
     <Compile Include="Product\Pop\ReFresh.xaml.cs">
       <DependentUpon>ReFresh.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Product\Pop\Win_pop_AutoPlan.xaml.cs">
+      <DependentUpon>Win_pop_AutoPlan.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Product\ProductData\Win_prd_MCArticleRunningGoal_U.xaml.cs">
       <DependentUpon>Win_prd_MCArticleRunningGoal_U.xaml</DependentUpon>
     </Compile>
     <Compile Include="Product\ProductData\Win_prd_PlanInputArticleView_U.xaml.cs">
       <DependentUpon>Win_prd_PlanInputArticleView_U.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Product\ProductData\Win_prd_PlanInputAuto.xaml.cs">
+      <DependentUpon>Win_prd_PlanInputAuto.xaml</DependentUpon>
     </Compile>
     <Compile Include="Product\ProductData\Win_prd_PlanInputView_U.xaml.cs">
       <DependentUpon>Win_prd_PlanInputView_U.xaml</DependentUpon>
@@ -494,6 +506,9 @@
     </Compile>
     <Compile Include="Product\ProductSearch\Win_prd_RemainMove_Q.xaml.cs">
       <DependentUpon>Win_prd_RemainMove_Q.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Product\ProductSearch\Win_Prd_Workcall.xaml.cs">
+      <DependentUpon>Win_Prd_Workcall.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -948,6 +963,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Product\MachineSearch\Win_prd_sts_RunningRateDetail_Q.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Product\MachineSearch\Win_prd_sts_RunningRate_Q.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Product\MachineSearch\Win_Prd_WorkLog_Q.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -960,11 +983,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Product\Pop\Win_pop_AutoPlan.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Product\ProductData\Win_prd_MCArticleRunningGoal_U.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Product\ProductData\Win_prd_PlanInputArticleView_U.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Product\ProductData\Win_prd_PlanInputAuto.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1021,6 +1052,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Product\ProductSearch\Win_prd_RemainMove_Q.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Product\ProductSearch\Win_Prd_Workcall.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

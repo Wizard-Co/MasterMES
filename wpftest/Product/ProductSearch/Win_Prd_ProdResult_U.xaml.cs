@@ -332,6 +332,49 @@ namespace WizMes_WooJung
             }
         }
 
+        //최종거래처
+        private void lbInCustom_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (chkInCustom.IsChecked == true)
+            {
+                chkInCustom.IsChecked = false;
+            }
+            else
+            {
+                chkInCustom.IsChecked = true;
+            }
+        }
+
+        //최종거래처
+        private void chkInCustom_Checked(object sender, RoutedEventArgs e)
+        {
+            txtInCustom.IsEnabled = true;
+            btnPfInCustom.IsEnabled = true;
+            txtInCustom.Focus();
+        }
+
+        //최종거래처
+        private void chkInCustom_Unchecked(object sender, RoutedEventArgs e)
+        {
+            txtInCustom.IsEnabled = false;
+            btnPfInCustom.IsEnabled = false;
+        }
+
+        //최종거래처
+        private void txtInCustom_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                MainWindow.pf.ReturnCode(txtInCustom, 72, "");
+            }
+        }
+
+        //최종거래처
+        private void btnPfInCustom_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow.pf.ReturnCode(txtInCustom, 72, "");
+        }
+
         //거래처
         private void lblCustom_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -1067,6 +1110,8 @@ namespace WizMes_WooJung
                 sqlParameter.Add("ndefect", chkDefectWork.IsChecked == true ? 1 : 0);
                 sqlParameter.Add("nWorkerName", chkWorkerName.IsChecked == true ? 1 : 0);
                 sqlParameter.Add("sWorkerName", chkWorkerName.IsChecked == true ? txtWorkerNameSearch.Text : "");
+                sqlParameter.Add("ChkInCustom", chkInCustom.IsChecked == true ? 1 : 0);
+                sqlParameter.Add("InCustomID", chkInCustom.IsChecked == true ? (txtInCustom.Tag != null ? txtInCustom.Tag.ToString() : "") : "");
 
                 DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_prd_sWKResult_WPF", sqlParameter, true, "R");
 
@@ -1674,6 +1719,62 @@ namespace WizMes_WooJung
 
         #endregion
 
+        #region 작업시간 자동계산
+        private void txtStartTime_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                if (txtStartTime.Text != string.Empty && txtEndTime.Text != string.Empty && txtStartTime.Text.Length == 8)
+                {
+                    string SDate = txtStartTime.Text;
+                    string EDate = txtEndTime.Text;
+
+                    DateTime StartDate = Convert.ToDateTime(SDate);
+                    DateTime EndDate = Convert.ToDateTime(EDate);
+
+                    TimeSpan dateDiff = EndDate - StartDate;
+
+                    double totalMinutes = dateDiff.TotalMinutes;
+
+                    txtWorkMinute.Text = Math.Round(totalMinutes).ToString();
+                }
+            }
+            catch
+            {
+
+            }
+
+        }
+
+        private void txtEndTime_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                if (txtStartTime.Text != string.Empty && txtEndTime.Text != string.Empty && txtStartTime.Text.Length == 8)
+                {
+                    string SDate = txtStartTime.Text;
+                    string EDate = txtEndTime.Text;
+
+                    DateTime StartDate = Convert.ToDateTime(SDate);
+                    DateTime EndDate = Convert.ToDateTime(EDate);
+
+                    TimeSpan dateDiff = EndDate - StartDate;
+
+                    double totalMinutes = dateDiff.TotalMinutes;
+
+                    txtWorkMinute.Text = Math.Round(totalMinutes).ToString();
+                }
+            }
+            catch
+            {
+
+            }
+
+        }
+
+        #endregion
+
+
         #region 기타 메서드 모음
 
         // 천마리 콤마, 소수점 버리기
@@ -2070,65 +2171,9 @@ namespace WizMes_WooJung
             }
         }
 
-
         #endregion
 
-        #region 작업시간 자동계산
-        private void txtStartTime_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            try
-            {
-                if (txtStartTime.Text != string.Empty && txtEndTime.Text != string.Empty && txtStartTime.Text.Length == 8)
-                {
-                    string SDate = txtStartTime.Text;
-                    string EDate = txtEndTime.Text;
-
-                    DateTime StartDate = Convert.ToDateTime(SDate);
-                    DateTime EndDate = Convert.ToDateTime(EDate);
-
-                    TimeSpan dateDiff = EndDate - StartDate;
-
-                    double totalMinutes = dateDiff.TotalMinutes;
-
-                    txtWorkMinute.Text = Math.Round(totalMinutes).ToString();
-                }
-            }
-            catch (Exception Ex)
-            {
-                MessageBox.Show(Ex.Message);
-                return;
-            }
-
-        }
-
-        private void txtEndTime_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            try
-            {
-                if (txtStartTime.Text != string.Empty && txtEndTime.Text != string.Empty && txtStartTime.Text.Length == 8)
-                {
-                    string SDate = txtStartTime.Text;
-                    string EDate = txtEndTime.Text;
-
-                    DateTime StartDate = Convert.ToDateTime(SDate);
-                    DateTime EndDate = Convert.ToDateTime(EDate);
-
-                    TimeSpan dateDiff = EndDate - StartDate;
-
-                    double totalMinutes = dateDiff.TotalMinutes;
-
-                    txtWorkMinute.Text = Math.Round(totalMinutes).ToString();
-                }
-            }
-            catch
-            {
-
-            }
-
-        }
-
-        #endregion
-
+        
     }
 
     class Win_Prd_ProdResult_U_CodeView : BaseView

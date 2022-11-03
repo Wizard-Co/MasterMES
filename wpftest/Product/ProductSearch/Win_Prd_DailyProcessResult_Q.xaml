@@ -65,61 +65,85 @@
                 <Button x:Name="btnToday" Grid.Column="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="금일" Margin="1" Click="btnToday_Click"/>
             </Grid>
 
-            <Grid Grid.Column="2" Grid.Row="0">
+            <!--공정-->
+            <Grid Grid.Row="0" Grid.Column="2">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="65*" />
-                    <ColumnDefinition Width="105*" />
+                    <ColumnDefinition Width="75*" />
+                    <ColumnDefinition Width="90*" />
                     <ColumnDefinition Width="15*" />
                 </Grid.ColumnDefinitions>
-                <Label x:Name="lblProcess" Grid.Column="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" Margin="1" MouseLeftButtonDown="lblProcess_MouseLeftButtonDown">
-                    <StackPanel Orientation="Horizontal" Margin="5 0 0 0">
-                        <Viewbox>
-                            <CheckBox x:Name="chkProcess" Checked="chkProcess_Checked" Unchecked="chkProcess_Unchecked" VerticalAlignment="Center"/>
+                <Label x:Name="lblProcess" Grid.Column="0" 
+                       Style="{DynamicResource LabelSearch}"
+                       MouseLeftButtonUp="lblProcess_MouseLeftButtonDown">
+                    <StackPanel Style="{DynamicResource StackPanelInLabel}">
+                        <Viewbox Style="{DynamicResource ViewBoxSetMaxMinHeight}">
+                            <CheckBox x:Name="chkProcess" VerticalContentAlignment="Center" 
+                                      Checked="chkProcess_Checked" Unchecked="chkProcess_Unchecked"/>
                         </Viewbox>
-                        <TextBlock Text="공  정"/>
+                        <Viewbox Style="{DynamicResource ViewBoxSetMaxMinHeight}" >
+                            <TextBlock x:Name="tbkProcess" Text="공정" 
+                                       Style="{DynamicResource TextBlockInViewBoxSearch}"/>
+                        </Viewbox>
                     </StackPanel>
                 </Label>
-                <TextBox x:Name="txtProcess" Grid.Row="2" Grid.Column="1" Margin="1" KeyDown="txtProcess_KeyDown" IsEnabled="False"/>
+                <TextBox x:Name="txtProcess" Grid.Column="1" 
+                         Style="{DynamicResource TextBoxSearch}"/>
                 <Button x:Name="btnPfProcess" Grid.Row="2" Grid.Column="2" Margin="1" Click="btnPfProcess_Click" IsEnabled="False">
                     <Image Source="{DynamicResource btiPlusFind}" Style="{DynamicResource imgPlusFind}" />
                 </Button>
             </Grid>
 
-            <Grid Grid.Column="2" Grid.Row="1">
+            <!--작업자-->
+            <Grid Grid.Row="1" Grid.Column="2">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="65*" />
-                    <ColumnDefinition Width="105*" />
+                    <ColumnDefinition Width="75*" />
+                    <ColumnDefinition Width="90*" />
                     <ColumnDefinition Width="15*" />
                 </Grid.ColumnDefinitions>
-                <Label x:Name="lblPerson" Grid.Column="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" Margin="1" MouseLeftButtonDown="lblPerson_MouseLeftButtonDown">
-                    <StackPanel Orientation="Horizontal" Margin="5 0 0 0">
-                        <Viewbox>
-                            <CheckBox x:Name="chkPerson" Checked="chkPerson_Checked" Unchecked="chkPerson_Unchecked" VerticalAlignment="Center"/>
+                <Label x:Name="lblPerson" Grid.Column="0" 
+                       Style="{DynamicResource LabelSearch}"
+                       MouseLeftButtonUp="lblPerson_MouseLeftButtonDown">
+                    <StackPanel Style="{DynamicResource StackPanelInLabel}">
+                        <Viewbox Style="{DynamicResource ViewBoxSetMaxMinHeight}">
+                            <CheckBox x:Name="chkPerson" VerticalContentAlignment="Center" 
+                                      Checked="chkPerson_Checked" Unchecked="chkPerson_Unchecked"/>
                         </Viewbox>
-                        <TextBlock Text="작업자"/>
+                        <Viewbox Style="{DynamicResource ViewBoxSetMaxMinHeight}" >
+                            <TextBlock x:Name="tbkPerson" Text="작업자" 
+                                       Style="{DynamicResource TextBlockInViewBoxSearch}"/>
+                        </Viewbox>
                     </StackPanel>
                 </Label>
-                <TextBox x:Name="txtPerson" Grid.Row="2" Grid.Column="1" Margin="1" KeyDown="txtPerson_KeyDown" IsEnabled="False" />
+                <TextBox x:Name="txtPerson" Grid.Column="1" 
+                         Style="{DynamicResource TextBoxSearch}"/>
                 <Button x:Name="btnPfPerson" Grid.Row="2" Grid.Column="2" Margin="1" Click="btnPfPerson_Click" IsEnabled="False">
                     <Image Source="{DynamicResource btiPlusFind}" Style="{DynamicResource imgPlusFind}" />
                 </Button>
             </Grid>
 
-            <Grid Grid.Column="2" Grid.Row="2">
+            <!--품번-->
+            <Grid Grid.Row="2" Grid.Column="2">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="65*" />
-                    <ColumnDefinition Width="105*" />
+                    <ColumnDefinition Width="75*" />
+                    <ColumnDefinition Width="90*" />
                     <ColumnDefinition Width="15*" />
                 </Grid.ColumnDefinitions>
-                <Label x:Name="lblArticle" Grid.Column="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" Margin="1" MouseLeftButtonDown="lblArticle_MouseLeftButtonDown">
-                    <StackPanel Orientation="Horizontal" Margin="5 0 0 0">
-                        <Viewbox>
-                            <CheckBox x:Name="chkArticle" Checked="chkArticle_Checked" Unchecked="chkArticle_Unchecked" VerticalAlignment="Center"/>
+                <Label x:Name="lblArticle" Grid.Column="0" 
+                       Style="{DynamicResource LabelSearch}"
+                       MouseLeftButtonUp="lblArticle_MouseLeftButtonDown">
+                    <StackPanel Style="{DynamicResource StackPanelInLabel}">
+                        <Viewbox Style="{DynamicResource ViewBoxSetMaxMinHeight}">
+                            <CheckBox x:Name="chkArticle" VerticalContentAlignment="Center" 
+                                      Checked="chkArticle_Checked" Unchecked="chkArticle_Unchecked"/>
                         </Viewbox>
-                        <TextBlock Text="품  번"/>
+                        <Viewbox Style="{DynamicResource ViewBoxSetMaxMinHeight}" >
+                            <TextBlock x:Name="tbkArticle" Text="품번" 
+                                       Style="{DynamicResource TextBlockInViewBoxSearch}"/>
+                        </Viewbox>
                     </StackPanel>
                 </Label>
-                <TextBox x:Name="txtArticle" Grid.Row="2" Grid.Column="1" Margin="1" KeyDown="txtArticle_KeyDown" IsEnabled="False"/>
+                <TextBox x:Name="txtArticle" Grid.Column="1" 
+                         Style="{DynamicResource TextBoxSearch}"/>
                 <Button x:Name="btnPfArticle" Grid.Row="2" Grid.Column="2" Margin="1" Click="btnPfArticle_Click" IsEnabled="False">
                     <Image Source="{DynamicResource btiPlusFind}" Style="{DynamicResource imgPlusFind}" />
                 </Button>

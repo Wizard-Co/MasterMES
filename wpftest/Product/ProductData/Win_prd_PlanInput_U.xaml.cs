@@ -225,6 +225,49 @@ namespace WizMes_WooJung
 
         #region Header 검색조건 - 기타
 
+        //최종거래처
+        private void lbInCustom_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (chkInCustom.IsChecked == true)
+            {
+                chkInCustom.IsChecked = false;
+            }
+            else
+            {
+                chkInCustom.IsChecked = true;
+            }
+        }
+
+        //최종거래처
+        private void chkInCustom_Checked(object sender, RoutedEventArgs e)
+        {
+            txtInCustom.IsEnabled = true;
+            btnPfInCustom.IsEnabled = true;
+            txtInCustom.Focus();
+        }
+
+        //최종거래처
+        private void chkInCustom_Unchecked(object sender, RoutedEventArgs e)
+        {
+            txtInCustom.IsEnabled = false;
+            btnPfInCustom.IsEnabled = false;
+        }
+
+        //최종거래처
+        private void txtInCustom_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                MainWindow.pf.ReturnCode(txtInCustom, 72, "");
+            }
+        }
+
+        //최종거래처
+        private void btnPfInCustom_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow.pf.ReturnCode(txtInCustom, 72, "");
+        }
+
         //거래처
         private void lblCustom_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
@@ -303,6 +346,49 @@ namespace WizMes_WooJung
         private void btnPfArticle_Click(object sender, RoutedEventArgs e)
         {
             MainWindow.pf.ReturnCode(txtArticle, 77, "");
+        }
+
+        //품번
+        private void LabelBuyerArticleNoSearch_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (chkBuyerArticleNoSearch.IsChecked == true)
+            {
+                chkBuyerArticleNoSearch.IsChecked = false;
+            }
+            else
+            {
+                chkBuyerArticleNoSearch.IsChecked = true;
+            }
+        }
+
+        //품번
+        private void chkBuyerArticleNoSearch_Checked(object sender, RoutedEventArgs e)
+        {
+            txtBuyerArticleNoSearch.IsEnabled = true;
+            btnpfBuyerArticleNoSearch.IsEnabled = true;
+            txtBuyerArticleNoSearch.Focus();
+        }
+
+        //품번
+        private void chkBuyerArticleNoSearch_Unchecked(object sender, RoutedEventArgs e)
+        {
+            txtBuyerArticleNoSearch.IsEnabled = false;
+            btnpfBuyerArticleNoSearch.IsEnabled = false;
+        }
+
+        //품번
+        private void txtBuyerArticleNoSearch_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                MainWindow.pf.ReturnCode(txtBuyerArticleNoSearch, 76, txtBuyerArticleNoSearch.Text);
+            }
+        }
+
+        //품번
+        private void btnpfBuyerArticleNoSearch_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow.pf.ReturnCode(txtBuyerArticleNoSearch, 76, txtBuyerArticleNoSearch.Text);
         }
 
         //관리번호
@@ -482,8 +568,10 @@ namespace WizMes_WooJung
                 sqlParameter.Add("Order", chkOrder.IsChecked == true ? txtOrder.Text : "");
                 sqlParameter.Add("ChkIncPlComplete", chkPlanComplete.IsChecked == true ? 1 : 0);
                 sqlParameter.Add("ChkCloseClss", chkTheEnd.IsChecked == true ? 1 : 0);
-                sqlParameter.Add("ChkBuyerArticleNo", CheckBoxBuyerArticleNoSearch.IsChecked == true ? 1 : 0);
-                sqlParameter.Add("BuyerArticleNoID", CheckBoxBuyerArticleNoSearch.IsChecked == true ? (TextBoxBuyerArticleNoSearch.Tag != null ? TextBoxBuyerArticleNoSearch.Tag.ToString() : "") : "");
+                sqlParameter.Add("ChkBuyerArticleNo", chkBuyerArticleNoSearch.IsChecked == true ? 1 : 0);
+                sqlParameter.Add("BuyerArticleNoID", chkBuyerArticleNoSearch.IsChecked == true ? (txtBuyerArticleNoSearch.Tag != null ? txtBuyerArticleNoSearch.Tag.ToString() : "") : "");
+                sqlParameter.Add("ChkInCustom", chkInCustom.IsChecked == true ? 1 : 0);
+                sqlParameter.Add("InCustomID", chkInCustom.IsChecked == true ? (txtInCustom.Tag != null ? txtInCustom.Tag.ToString() : "") : "");
 
                 DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_PlanInput_sOrder", sqlParameter, true, "R");
 
@@ -1655,43 +1743,7 @@ namespace WizMes_WooJung
             }
         }
 
-        private void LabelBuyerArticleNoSearch_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            if(CheckBoxBuyerArticleNoSearch.IsChecked == true)
-            {
-                CheckBoxBuyerArticleNoSearch.IsChecked = false;
-            }
-            else
-            {
-                CheckBoxBuyerArticleNoSearch.IsChecked = true;
-            }
-        }
-
-        private void CheckBoxBuyerArticleNoSearch_Checked(object sender, RoutedEventArgs e)
-        {
-            TextBoxBuyerArticleNoSearch.IsEnabled = true;
-            ButtonBuyerArticleNoSearch.IsEnabled = true;
-            TextBoxBuyerArticleNoSearch.Focus();
-        }
-
-        private void CheckBoxBuyerArticleNoSearch_Unchecked(object sender, RoutedEventArgs e)
-        {
-            TextBoxBuyerArticleNoSearch.IsEnabled = false;
-            ButtonBuyerArticleNoSearch.IsEnabled = false;
-        }
-
-        private void TextBoxBuyerArticleNoSearch_KeyDown(object sender, KeyEventArgs e)
-        {
-            if(e.Key == Key.Enter)
-            {
-                MainWindow.pf.ReturnCode(TextBoxBuyerArticleNoSearch, 76, TextBoxBuyerArticleNoSearch.Text);
-            }
-        }
-
-        private void ButtonBuyerArticleNoSearch_Click(object sender, RoutedEventArgs e)
-        {
-            MainWindow.pf.ReturnCode(TextBoxBuyerArticleNoSearch, 76, TextBoxBuyerArticleNoSearch.Text);
-        }
+      
     }
 
     #region CodeView

@@ -300,7 +300,7 @@
                                     </Label>
                                     <TextBox x:Name="txtResably" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" Style="{DynamicResource TextBoxInputNecessary}" 
                                              Text="{Binding Resably}" KeyDown="txtResably_KeyDown"/>
-                                    <CheckBox Grid.Row="3" x:Name="chkJikChaekUseClss" Content="사용안함" Margin="10 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Left" >
+                                    <CheckBox Grid.Row="3" x:Name="chWooJungikChaekUseClss" Content="사용안함" Margin="10 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Left" >
                                         <CheckBox.Style>
                                             <Style TargetType="CheckBox">
                                                 <Style.Triggers>
@@ -321,7 +321,7 @@
                 </TabItem>
             </TabControl>
             <TextBlock x:Name="tbkBuseoCount" Grid.Row="1" Text="▶검색결과 : " Margin="1"/>
-            <TextBlock x:Name="tbkJikChaekCount" Grid.Row="1" Text="▶검색결과 : " Margin="1"/>
+            <TextBlock x:Name="tbWooJungikChaekCount" Grid.Row="1" Text="▶검색결과 : " Margin="1"/>
         </Grid>
     </Grid>
 </UserControl>

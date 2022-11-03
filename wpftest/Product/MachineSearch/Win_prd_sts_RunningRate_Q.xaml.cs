@@ -10,28 +10,27 @@ using WizMes_WooJung.PopUp;
 using WizMes_WooJung.PopUP;
 using System.Windows.Input;
 using System.Threading;
+using WPF.MDI;
 
 namespace WizMes_WooJung
 {
     /**************************************************************************************************
     '** System 명 : WizMES
     '** Author    : Wizard
-    '** 작성자    : 최준호
+    '** 작성자    : 김수정
     '** 내용      : 설비가동률 조회
-    '** 생성일자  : 2018.10~2019.2 월 사이
+    '** 생성일자  : 2022.09.23
     '** 변경일자  : 
     '**------------------------------------------------------------------------------------------------
     ''*************************************************************************************************
     ' 변경일자  , 변경자, 요청자    , 요구사항ID  , 요청 및 작업내용
     '**************************************************************************************************
-    ' ex) 2015.11.09, 박진성, 오영      ,S_201510_AFT_03 , 월별집계(가로) 순서 변경 : 합계/10월/9월/8월 순으로
-    ' 2019.06.25 , 최준호 , 최규환   , 일자선택에서 기간선택으로, 비가동시간 나오게(특정 동작시 나오도록)
     '**************************************************************************************************/
 
     /// <summary>
-    /// Win_prd_RunningRate_Q.xaml에 대한 상호 작용 논리
+    /// Win_prd_sts_RunningRate_Q.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class Win_prd_RunningRate_Q : UserControl
+    public partial class Win_prd_sts_RunningRate_Q : UserControl
     {
         string stDate = string.Empty;
         string stTime = string.Empty;
@@ -40,9 +39,10 @@ namespace WizMes_WooJung
         public DataGrid FilterGrid { get; set; }
         public DataTable FilterTable { get; set; }
 
-        ObservableCollection<Win_prd_RunningRate_Q_CodeView> ovcCollection = new ObservableCollection<Win_prd_RunningRate_Q_CodeView>();
+        ObservableCollection<Win_prd_sts_RunningRate_Q_CodeView> ovcCollection = new ObservableCollection<Win_prd_sts_RunningRate_Q_CodeView>();
+        Win_prd_sts_RunningRate_Q_CodeView RunningRate = new Win_prd_sts_RunningRate_Q_CodeView();
 
-        public Win_prd_RunningRate_Q()
+        public Win_prd_sts_RunningRate_Q()
         {
             InitializeComponent();
         }
@@ -283,7 +283,6 @@ namespace WizMes_WooJung
                 sqlParameter.Add("nChkArticleID", chkArticle.IsChecked == true ? 1 : 0);
                 sqlParameter.Add("sArticleID", chkArticle.IsChecked == true && txtArticle.Tag != null ? txtArticle.Tag.ToString() : "");
 
-                //DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_prd_sMCRunningRate_WPF_20201012", sqlParameter, false);
                 DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_prd_sMCRunningRate_WPF_20210517", sqlParameter, true, "R");
                 if (ds != null && ds.Tables.Count > 0)
                 {
@@ -300,24 +299,18 @@ namespace WizMes_WooJung
                         foreach (DataRow dr in drc)
                         {
                             i++;
-                            var dgdWorkRate = new Win_prd_RunningRate_Q_CodeView()
+                            var dgdWorkRate = new Win_prd_sts_RunningRate_Q_CodeView()
                             {
                                 Num = i,
-                                MCID = dr["MCID"].ToString(),
+                                Process = dr["Process"].ToString(),
+                                ProcessID = dr["ProcessID"].ToString(),
                                 MCName = dr["MCName"].ToString(),
+                                MCID = dr["MCID"].ToString(),
+                                BasicWorkTime = stringFormatN1(dr["DayBaseHour"]), //기본작업시간 
+                                RealWorkTime = stringFormatN1(dr["DayWorkHour"]), //실작업시간
+                                NoneWorkTime = stringFormatN1(dr["DayNonWorkHour"]), //비가동시간
+                                WorkRate = stringFormatN1(dr["DayWorkRate"]), //가동률
 
-                                CT = stringFormatN1(dr["CT"]),
-
-                                MonthWorkHour = stringFormatN1(dr["MonthWorkHour"]),
-                                MonthWorkQty = stringFormatN0(dr["MonthWorkQty"]),
-                                MonthGoalQty = stringFormatN0(dr["MonthGoalQty"]),
-                                MonthWorkRate = stringFormatN1(dr["MonthWorkRate"]),
-
-                                DayWorkHour = stringFormatN1(dr["DayWorkHour"]),
-                                DayNonWorkHour = stringFormatN1(dr["DayNonWorkHour"]),
-                                DayWorkQty = stringFormatN0(dr["DayWorkQty"]),
-                                DayGoalQty = stringFormatN0(dr["DayGoalQty"]),
-                                DayWorkRate = stringFormatN1(dr["DayWorkRate"]),
                             };
 
                             ovcCollection.Add(dgdWorkRate);
@@ -359,7 +352,7 @@ namespace WizMes_WooJung
                 int index = 0;
                 for (int i = 0; i < dataGrid.Items.Count; i++)
                 {
-                    var Rating = dataGrid.Items[i] as Win_prd_RunningRate_Q_CodeView;
+                    var Rating = dataGrid.Items[i] as Win_prd_sts_RunningRate_Q_CodeView;
 
                     
                     if (Rating != null)
@@ -367,20 +360,10 @@ namespace WizMes_WooJung
                         chartRunningRate.Labels[index] = Rating.MCName;
                         index++;
 
-                        if (Rating.MonthWorkRate != null
-                            && CheckConvertDouble(Rating.MonthWorkRate))
+                        if (Rating.WorkRate != null
+                            && CheckConvertDouble(Rating.WorkRate))
                         {
-                            chartRunningRate.chartRunningRate.Add(ConvertDouble(Rating.MonthWorkRate));
-                        }
-                        else
-                        {
-                            chartRunningRate.chartRunningRate.Add(0);
-                        }
-
-                        if (Rating.DayWorkRate != null
-                            && CheckConvertDouble(Rating.DayWorkRate))
-                        {
-                            chartRunningRate.chartGoalRate.Add(ConvertDouble(Rating.DayWorkRate));
+                            chartRunningRate.chartGoalRate.Add(ConvertDouble(Rating.WorkRate)); //GoalRate에 WorkRate 값을 추가 
                         }
                         else
                         {
@@ -389,19 +372,15 @@ namespace WizMes_WooJung
                     }
                 }
 
-                chartRunningRate.seriesCollection.Add(new ColumnSeries
-                {
-                    Values = chartRunningRate.chartRunningRate,
-                    //StackMode = StackMode.Values,
-                    DataLabels = true,
-                    Title = "월별 가동률"
-                });
-
                 chartRunningRate.seriesCollection.Add(new LineSeries
                 {
-                    Values = chartRunningRate.chartGoalRate,
-                    Title = "일별 가동률"
-                });
+                    Values = chartRunningRate.chartGoalRate,    // 시리즈컬렉션에 GoalRate 밸류 추가 
+                    DataLabels = true ,
+                    Title = "설비별 가동률"
+                }); ;
+
+
+
 
                 chartRunningRate.Formatter = value => value + "(%)";
                 this.DataContext = chartRunningRate;
@@ -414,9 +393,75 @@ namespace WizMes_WooJung
 
         #endregion
 
+        #region 더블클릭시 설비가동률 상세조회로 
+
+        private void dgdMain_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            // 넘길 데이터
+            var MC = dgdMain.SelectedItem as Win_prd_sts_RunningRate_Q_CodeView;
+
+            if (MC != null)
+            {
+                string ProcessID = MC.ProcessID;
+                string MCID = MC.MCID;
+                string SDate = dtpSDate.SelectedDate.Value.ToString("yyyyMMdd");
+                string EDate = dtpEDate.SelectedDate.Value.ToString("yyyyMMdd");
+
+                MainWindow.MCtemp.Clear();
+                MainWindow.MCtemp.Add(ProcessID);
+                MainWindow.MCtemp.Add(MCID);
+                MainWindow.MCtemp.Add(SDate);
+                MainWindow.MCtemp.Add(EDate);
+
+                int i = 0;
+                foreach (MenuViewModel mvm in MainWindow.mMenulist)
+                {
+                    if (mvm.Menu.Equals("설비가동률 상세조회"))
+                    {
+                        break;
+                    }
+                    i++;
+                }
+                try
+                {
+                    if (MainWindow.MainMdiContainer.Children.Contains(MainWindow.mMenulist[i].subProgramID as MdiChild))
+                    {
+                        (MainWindow.mMenulist[i].subProgramID as MdiChild).Focus();
+                    }
+                    else
+                    {
+                        Type type = Type.GetType("WizMes_WooJung." + MainWindow.mMenulist[i].ProgramID.Trim(), true);
+                        object uie = Activator.CreateInstance(type);
+
+                        MainWindow.mMenulist[i].subProgramID = new MdiChild()
+                        {
+                            Title = "WooJung [" + MainWindow.mMenulist[i].MenuID.Trim() + "] " + MainWindow.mMenulist[i].Menu.Trim() +
+                                    " (→" + MainWindow.mMenulist[i].ProgramID + ")",
+                            Height = SystemParameters.PrimaryScreenHeight * 0.8,
+                            MaxHeight = SystemParameters.PrimaryScreenHeight * 0.85,
+                            Width = SystemParameters.WorkArea.Width * 0.85,
+                            MaxWidth = SystemParameters.WorkArea.Width,
+                            Content = uie as UIElement,
+                            Tag = MainWindow.mMenulist[i]
+                        };
+
+                        Lib.Instance.AllMenuLogInsert(MainWindow.mMenulist[i].MenuID, MainWindow.mMenulist[i].Menu, MainWindow.mMenulist[i].subProgramID);
+                        MainWindow.MainMdiContainer.Children.Add(MainWindow.mMenulist[i].subProgramID as MdiChild);
+
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("해당 화면이 존재하지 않습니다.");
+                }
+            }
+        }
+        #endregion
+
         private void BtnNoWorking_Click(object sender, RoutedEventArgs e)
         {
-            var NoWorkingCode = dgdMain.SelectedItem as Win_prd_RunningRate_Q_CodeView;
+            var NoWorkingCode = dgdMain.SelectedItem as Win_prd_sts_RunningRate_Q_CodeView;
 
             string sDate = dtpSDate.SelectedDate.Value.ToString("yyyyMMdd");
             string eDate = dtpEDate.SelectedDate.Value.ToString("yyyyMMdd");
@@ -425,8 +470,8 @@ namespace WizMes_WooJung
 
             if (NoWorkingCode != null)
             {
-                if (NoWorkingCode.DayNonWorkHour == null
-                    || ConvertDouble(NoWorkingCode.DayNonWorkHour) == 0)
+                if (NoWorkingCode.NoneWorkTime == null
+                    || ConvertDouble(NoWorkingCode.NoneWorkTime) == 0)
                     MessageBox.Show("선택된 자료의 비가동 시간을 확인해보세요.");
                 else
                     NoWorking = new NoWorkInfo(sDate, eDate, NoWorkingCode.MCID);
@@ -444,7 +489,7 @@ namespace WizMes_WooJung
         {
             if (e.ClickCount == 2)
             {
-                var NoWorkingCode = dgdMain.SelectedItem as Win_prd_RunningRate_Q_CodeView;
+                var NoWorkingCode = dgdMain.SelectedItem as Win_prd_sts_RunningRate_Q_CodeView;
 
                 string sDate = dtpSDate.SelectedDate.Value.ToString("yyyyMMdd");
                 string eDate = dtpEDate.SelectedDate.Value.ToString("yyyyMMdd");
@@ -453,8 +498,8 @@ namespace WizMes_WooJung
 
                 if (NoWorkingCode != null)
                 {
-                    if (NoWorkingCode.DayNonWorkHour == null
-                        || ConvertDouble(NoWorkingCode.DayNonWorkHour) == 0)
+                    if (NoWorkingCode.NoneWorkTime == null
+                        || ConvertDouble(NoWorkingCode.NoneWorkTime) == 0)
                         MessageBox.Show("선택된 자료의 비가동 시간을 확인해보세요.");
                     else
                         NoWorking = new NoWorkInfo(sDate, eDate, NoWorkingCode.MCID);
@@ -469,10 +514,15 @@ namespace WizMes_WooJung
             }
         }
 
-        private void dgdMain_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        private void dgdMain_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //svrHeader.ScrollToVerticalOffset(e.VerticalOffset);
-            svrHeader.ScrollToHorizontalOffset(e.HorizontalOffset);
+            RunningRate = dgdMain.SelectedItem as Win_prd_sts_RunningRate_Q_CodeView;
+
+            if (RunningRate != null)
+            {
+                this.DataContext = RunningRate;
+                FillChartGraph(dgdMain);
+            }
         }
 
 
@@ -484,6 +534,7 @@ namespace WizMes_WooJung
             return string.Format("{0:N0}", obj);
         }
 
+        // 천마리 콤마, 소숫점 한자리 
         private string stringFormatN1(object obj)
         {
             return string.Format("{0:N1}", obj);
@@ -589,7 +640,7 @@ namespace WizMes_WooJung
 
     }
 
-    public class Win_prd_RunningRate_Q_CodeView : BaseView
+    public class Win_prd_sts_RunningRate_Q_CodeView : BaseView
     {
         public override string ToString()
         {
@@ -597,31 +648,14 @@ namespace WizMes_WooJung
         }
 
         public int Num { get; set; }
-        public string cls { get; set; }
-        public string ProcessID { get; set; }
         public string Process { get; set; }
-        public string Machineid { get; set; }
-        public string Machine { get; set; }
-        public string MachineNo { get; set; }
-        public string CT { get; set; }
-
-        public string MonthGoalQty { get; set; }
-        public string DayGoalQty { get; set; }
-
-        public string MonthWorkQty { get; set; }
-        public string DayWorkQty { get; set; }
-
-        public string MonthWorkRate { get; set; }
-        public string DayWorkRate { get; set; }
-
-        public string MonthWorkHour { get; set; }
-        public string MonthNonWorkHour { get; set; }
-
-        public string DayWorkHour { get; set; }
-        public string DayNonWorkHour { get; set; }
-
-        public string MCID { get; set; }
+        public string ProcessID { get; set; }
         public string MCName { get; set; }
+        public string MCID { get; set; }
+        public string BasicWorkTime { get; set; }
+        public string RealWorkTime { get; set; }
+        public string NoneWorkTime { get; set; }
+        public string WorkRate { get; set; }
 
     }
 

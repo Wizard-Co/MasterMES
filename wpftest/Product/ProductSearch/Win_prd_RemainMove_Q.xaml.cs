@@ -161,7 +161,49 @@ namespace WizMes_WooJung
             }
         }
 
-        
+
+        //품번
+        private void LabelBuyerArticleNoSearch_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (chkBuyerArticleNoSearch.IsChecked == true)
+            {
+                chkBuyerArticleNoSearch.IsChecked = false;
+            }
+            else
+            {
+                chkBuyerArticleNoSearch.IsChecked = true;
+            }
+        }
+
+        //품번
+        private void chkBuyerArticleNoSearch_Checked(object sender, RoutedEventArgs e)
+        {
+            txtBuyerArticleNoSearch.IsEnabled = true;
+            btnpfBuyerArticleNoSearch.IsEnabled = true;
+            txtBuyerArticleNoSearch.Focus();
+        }
+
+        //품번
+        private void chkBuyerArticleNoSearch_Unchecked(object sender, RoutedEventArgs e)
+        {
+            txtBuyerArticleNoSearch.IsEnabled = false;
+            btnpfBuyerArticleNoSearch.IsEnabled = false;
+        }
+
+        //품번
+        private void txtBuyerArticleNoSearch_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                MainWindow.pf.ReturnCode(txtBuyerArticleNoSearch, 76, txtBuyerArticleNoSearch.Text);
+            }
+        }
+
+        //품번
+        private void btnpfBuyerArticleNoSearch_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow.pf.ReturnCode(txtBuyerArticleNoSearch, 76, txtBuyerArticleNoSearch.Text);
+        }
 
         // 품명 검색
         private void lblArticle_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -191,12 +233,12 @@ namespace WizMes_WooJung
         {
             if (e.Key == Key.Enter)
             {
-                MainWindow.pf.ReturnCode(txtArticle, 76, "");
+                MainWindow.pf.ReturnCode(txtArticle, 77, "");
             }
         }
         private void btnPfArticle_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow.pf.ReturnCode(txtArticle, 76, "");
+            MainWindow.pf.ReturnCode(txtArticle, 77, "");
         }
 
         // 라벨
@@ -320,6 +362,8 @@ namespace WizMes_WooJung
                 sqlParameter.Add("EDate", dtpEDate.SelectedDate != null ? dtpEDate.SelectedDate.Value.ToString("yyyyMMdd") : "");
                 sqlParameter.Add("nArticleID", chkArticle.IsChecked == true ? 1: 0);
                 sqlParameter.Add("ArticleID", txtArticle.Tag != null ? txtArticle.Tag.ToString() : "");
+                sqlParameter.Add("ChkBuyerArticleNo", chkBuyerArticleNoSearch.IsChecked == true ? 1 : 0);
+                sqlParameter.Add("BuyerArticleNo", chkBuyerArticleNoSearch.IsChecked == true && txtBuyerArticleNoSearch.Tag != null ? txtBuyerArticleNoSearch.Tag.ToString() : "");
 
                 sqlParameter.Add("nLabelID", chkLabelID.IsChecked == true ? 1 : 0);
                 sqlParameter.Add("LabelID", chkLabelID.IsChecked == true && txtLabelID.Text.Trim().Equals("") == false ? txtLabelID.Text : "");

@@ -80,7 +80,38 @@
                         Click="btnToday_Click" />
             </Grid>
 
+            <!--최종거래처-->
             <Grid Grid.Row="0" Grid.Column="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="75*" />
+                    <ColumnDefinition Width="90*" />
+                    <ColumnDefinition Width="15*" />
+                </Grid.ColumnDefinitions>
+                <Label x:Name="lbInCustom" Grid.Column="0" 
+                       Style="{DynamicResource LabelSearch}"
+                       MouseLeftButtonUp="lbInCustom_MouseLeftButtonUp">
+                    <StackPanel Style="{DynamicResource StackPanelInLabel}">
+                        <Viewbox Style="{DynamicResource ViewBoxSetMaxMinHeight}">
+                            <CheckBox x:Name="chkInCustom" Checked="chkInCustom_Checked" 
+                                      Unchecked="chkInCustom_Unchecked" VerticalAlignment="Center"/>
+                        </Viewbox>
+                        <Viewbox Style="{DynamicResource ViewBoxSetMaxMinHeight}" >
+                            <TextBlock Text="최종거래처" 
+                                       Style="{DynamicResource TextBlockInViewBoxSearch}"/>
+                        </Viewbox>
+                    </StackPanel>
+                </Label>
+                <TextBox x:Name="txtInCustom" Grid.Column="1" 
+                         Style="{DynamicResource TextBoxSearch}"
+                         Keyboard.KeyDown="txtInCustom_KeyDown"/>
+                <Button x:Name="btnPfInCustom" Grid.Column="2" Margin="1" IsEnabled="False" 
+                        Click="btnPfInCustom_Click">
+                    <Image Source="{DynamicResource btiPlusFind}" />
+                </Button>
+            </Grid>
+
+            <!--거래처-->
+            <Grid Grid.Row="1" Grid.Column="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="75*" />
                     <ColumnDefinition Width="90*" />
@@ -109,7 +140,8 @@
                 </Button>
             </Grid>
             
-            <Grid Grid.Row="1" Grid.Column="2" Visibility="Hidden">
+            <!--품명-->
+            <Grid Grid.Row="2" Grid.Column="2" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="75*" />
                     <ColumnDefinition Width="90*" />
@@ -136,8 +168,9 @@
                     <Image Source="{DynamicResource btiPlusFind}" Style="{DynamicResource imgPlusFind}"/>
                 </Button>
             </Grid>
-
-            <Grid Grid.Column="2" Grid.Row="1" >
+            
+            <!--품번-->
+            <Grid  Grid.Row="3" Grid.Column="2" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="75*" />
                     <ColumnDefinition Width="90*" />
@@ -167,7 +200,8 @@
                 </Button>
             </Grid>
 
-            <Grid Grid.Row="2" Grid.Column="2">
+            <!--관리번호-->
+            <Grid Grid.Row="0" Grid.Column="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="75*" />
                     <ColumnDefinition Width="90*" />
@@ -190,7 +224,7 @@
                          Style="{DynamicResource TextBoxSearch}"/>
             </Grid>
 
-            <Grid Grid.Row="0" Grid.Column="3">
+            <Grid Grid.Row="1" Grid.Column="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="100*" />
                     <ColumnDefinition Width="65*" />
@@ -211,7 +245,7 @@
                 </Label>
             </Grid>
             
-            <Grid Grid.Row="1" Grid.Column="3">
+            <Grid Grid.Row="2" Grid.Column="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="100*" />
                     <ColumnDefinition Width="65*" />
@@ -232,7 +266,7 @@
                 </Label>
             </Grid>
             
-            <Grid Grid.Row="2" Grid.Column="3" >
+            <Grid Grid.Row="3" Grid.Column="3" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="95*" />
                     <ColumnDefinition Width="95*" />
@@ -488,6 +522,13 @@
                         <DataGridTextColumn Header="원자재투입예외관리" Width="auto" Binding="{Binding MtrExceptYN}" />
                         <DataGridTextColumn Header="출고예외관리" Width="auto" Binding="{Binding OutwareExceptYN}" />
                         <DataGridTextColumn Header="LotID" Width="auto" Binding="{Binding LotID}" />
+                        <DataGridTemplateColumn Header="진척률(%)" Width="auto" SortMemberPath="Progress">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Progress,StringFormat={}{0:#\,#}}" TextAlignment="Right"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>

@@ -87,7 +87,7 @@
                             <CheckBox x:Name="chkArticle" Checked="chkArticle_Checked" Unchecked="chkArticle_Unchecked" VerticalAlignment="Center"/>
                         </Viewbox>
                         <Viewbox Style="{DynamicResource ViewBoxSetMaxMinHeight}" >
-                            <TextBlock Text="품  번"
+                            <TextBlock Text="품     명"
                                        Style="{DynamicResource TextBlockInViewBoxSearch}"/>
                         </Viewbox>
                     </StackPanel>
@@ -101,7 +101,39 @@
                 </Button>
             </Grid>
 
-            <Grid Grid.Column="2" Grid.Row="1">
+            <!--품번-->
+            <Grid Grid.Row="1" Grid.Column="2"  >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="75*" />
+                    <ColumnDefinition Width="90*" />
+                    <ColumnDefinition Width="15*" />
+                </Grid.ColumnDefinitions>
+                <Label x:Name="LabelBuyerArticleNoSearch" Grid.Column="0" 
+                       Style="{DynamicResource LabelSearch}"
+                       MouseLeftButtonUp="LabelBuyerArticleNoSearch_MouseLeftButtonUp">
+                    <StackPanel Style="{DynamicResource StackPanelInLabel}">
+                        <Viewbox Style="{DynamicResource ViewBoxSetMaxMinHeight}">
+                            <CheckBox x:Name="chkBuyerArticleNoSearch" 
+                                      Checked="chkBuyerArticleNoSearch_Checked" 
+                                      Unchecked="chkBuyerArticleNoSearch_Unchecked" VerticalAlignment="Center"/>
+                        </Viewbox>
+                        <Viewbox Style="{DynamicResource ViewBoxSetMaxMinHeight}" >
+                            <TextBlock Text="품     번" 
+                                       Style="{DynamicResource TextBlockInViewBoxSearch}"/>
+                        </Viewbox>
+                    </StackPanel>
+                </Label>
+                <TextBox x:Name="txtBuyerArticleNoSearch" Grid.Column="1" 
+                         Style="{DynamicResource TextBoxSearch}"
+                         KeyDown="txtBuyerArticleNoSearch_KeyDown"/>
+                <Button x:Name="btnpfBuyerArticleNoSearch" Grid.Column="2" Margin="1" IsEnabled="False" 
+                        Click="btnpfBuyerArticleNoSearch_Click">
+                    <Image Source="{DynamicResource btiPlusFind}" />
+                </Button>
+            </Grid>
+
+
+            <Grid Grid.Column="2" Grid.Row="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="75*" />
                     <ColumnDefinition Width="90*" />

@@ -141,6 +141,49 @@ namespace WizMes_WooJung
             dtpEDate.SelectedDate = Lib.Instance.BringThisMonthDatetimeList()[1];
         }
 
+        //최종거래처
+        private void lbInCustom_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (chkInCustom.IsChecked == true)
+            {
+                chkInCustom.IsChecked = false;
+            }
+            else
+            {
+                chkInCustom.IsChecked = true;
+            }
+        }
+
+        //최종거래처
+        private void chkInCustom_Checked(object sender, RoutedEventArgs e)
+        {
+            txtInCustom.IsEnabled = true;
+            btnPfInCustom.IsEnabled = true;
+            txtInCustom.Focus();
+        }
+
+        //최종거래처
+        private void chkInCustom_Unchecked(object sender, RoutedEventArgs e)
+        {
+            txtInCustom.IsEnabled = false;
+            btnPfInCustom.IsEnabled = false;
+        }
+
+        //최종거래처
+        private void txtInCustom_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                MainWindow.pf.ReturnCode(txtInCustom, 72, "");
+            }
+        }
+
+        //최종거래처
+        private void btnPfInCustom_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow.pf.ReturnCode(txtInCustom, 72, "");
+        }
+
         //거래처
         private void lblCustom_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
@@ -550,9 +593,12 @@ namespace WizMes_WooJung
                 sqlParameter.Add("ChkOrder", chkOrder.IsChecked == true ? (rbnOrderID.IsChecked == true ? 1 : 2) : 0);
                 sqlParameter.Add("Order", chkOrder.IsChecked == true ? txtOrder.Text : "");
                 sqlParameter.Add("ChkPlanComplete", chkPlanComplete.IsChecked == true ? 1 : 0);
+
                 sqlParameter.Add("ChkTheEnd", chkTheEndSrh.IsChecked == true ? 1 : 0);
                 sqlParameter.Add("ChkBuyerArticleNo", CheckBoxBuyerArticleNoSearch.IsChecked == true ? 1 : 0);
                 sqlParameter.Add("BuyerArticleNoID", CheckBoxBuyerArticleNoSearch.IsChecked == true ? (TextBoxBuyerArticleNoSearch.Tag != null ? TextBoxBuyerArticleNoSearch.Tag.ToString() : "") : "");
+                sqlParameter.Add("ChkInCustom", chkInCustom.IsChecked == true ? 1 : 0);
+                sqlParameter.Add("InCustomID", chkInCustom.IsChecked == true ? (txtInCustom.Tag != null ? txtInCustom.Tag.ToString() : "") : "");
 
                 DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_prd_sPlanInput_WPF", sqlParameter, false);
 
@@ -603,6 +649,8 @@ namespace WizMes_WooJung
                             OutwareExceptYN = dr["OutwareExceptYN"].ToString(),
                             LotID = dr["LotID"].ToString(),
                             PlanTheEnd = dr["PlanTheEnd"].ToString(),
+                            Progress = dr["Progress"].ToString() + "%",               //진척률
+
                         };
 
                         //if (WinPlanOrder.MtrExceptYN.Equals("Y"))
@@ -2383,6 +2431,7 @@ namespace WizMes_WooJung
         public string LotID { get; set; }
         public string ArticleGrpName { get; set; }
         public string PlanTheEnd { get; set; }
+        public string Progress { get; set; }
 
         // 체크 되었는지 안되었는지
         public bool IsCheck { get; set; }
