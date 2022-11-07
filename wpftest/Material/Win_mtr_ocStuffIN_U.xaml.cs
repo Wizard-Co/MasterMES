@@ -3,24 +3,37 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Drawing.Printing;
-using System.Runtime.InteropServices;
+using System.Linq;
+using System.Printing;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
-using WizMes_WooJung.PopUp;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using Excel = Microsoft.Office.Interop.Excel;
+using System.Runtime.InteropServices;
 using WizMes_WooJung.PopUP;
+using System.Windows.Threading;
+using WizMes_WooJung.PopUp;
+using System.Threading;
+using WPF.MDI;
 
 namespace WizMes_WooJung
 {
     public partial class Win_mtr_ocStuffIN_U : UserControl
     {
-        string stDate = string.Empty;
-        string stTime = string.Empty;
 
         Lib lib = new Lib();
         string strBasisID = string.Empty;
         string InspectName = string.Empty;
         string AASS = string.Empty;
+
+        string LotIDSave = string.Empty;
 
         string strFlag = string.Empty;
         int rowNum = 0;
@@ -41,6 +54,7 @@ namespace WizMes_WooJung
         WizMes_WooJung.PopUp.NoticeMessage msg = new WizMes_WooJung.PopUp.NoticeMessage();
         bool printYN = true;
         bool doPass = true;
+
         public Win_mtr_ocStuffIN_U()
         {
             InitializeComponent();
@@ -49,11 +63,6 @@ namespace WizMes_WooJung
         // 폼 로드 됬을때
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            stDate = DateTime.Now.ToString("yyyyMMdd");
-            stTime = DateTime.Now.ToString("HHmm");
-
-            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
-
             // 입고일자 체크하기
             chkDateSrh.IsChecked = true;
             dtpSDateSrh.SelectedDate = DateTime.Today;
@@ -261,7 +270,7 @@ namespace WizMes_WooJung
         //            }
         //        }
         //    }
-
+         
         //    return ovcProductGrp;
         //}
 
@@ -629,7 +638,6 @@ namespace WizMes_WooJung
         // 닫기 버튼 이벤트
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
-            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             Lib.Instance.ChildMenuClose(this.ToString());
         }
 
@@ -719,7 +727,6 @@ namespace WizMes_WooJung
                 MessageBox.Show("해당 자료가 존재하지 않습니다.");
                 return;
             }
-            DataStore.Instance.InsertLogByForm(this.GetType().Name, "P");
             msg.Show();
             msg.Topmost = true;
             msg.Refresh();
@@ -969,7 +976,7 @@ namespace WizMes_WooJung
                 MessageBox.Show("해당 자료가 존재하지 않습니다.");
                 return;
             }
-            DataStore.Instance.InsertLogByForm(this.GetType().Name, "P");
+
             //msg.Show();
             //msg.Topmost = true;
             //msg.Refresh();
@@ -1196,7 +1203,7 @@ namespace WizMes_WooJung
                     workrange = pastesheet.Cells[copyLine + 1, 1];
                     workrange.Select();
                     pastesheet.Paste();
-
+                    
                     //pastesheet.Paste();
 
                 }
@@ -1278,7 +1285,6 @@ namespace WizMes_WooJung
             {
                 if (ExpExc.choice.Equals(dgdMain.Name))
                 {
-                    DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                     if (ExpExc.Check.Equals("Y"))
                         dt = Lib.Instance.DataGridToDTinHidden(dgdMain);
                     else
@@ -2056,7 +2062,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("sLotID", chkMtrLOTIDSrh.IsChecked == true && !txtMtrLOTIDSrh.Text.Trim().Equals("") ? txtMtrLOTIDSrh.Text : "");  //@escape함수제거
 
 
-                DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_StuffIN_sStuffIN", sqlParameter, true, "R");
+                DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_StuffIN_sStuffIN", sqlParameter, false);
 
                 if (ds != null && ds.Tables.Count > 0)
                 {
@@ -2249,7 +2255,7 @@ namespace WizMes_WooJung
                                 BuyerArticleNo = dr["BuyerArticleNo"].ToString(),
                                 mtrCustomLotno = dr["mtrCustomLotno"].ToString()
 
-
+                                
 
                             };
 
@@ -2258,6 +2264,9 @@ namespace WizMes_WooJung
                             OcStuffInSub.CustomInspectDate_CV = DatePickerFormat(OcStuffInSub.CustomInspectDate);
                             txtCustom.Tag = OcStuffInSub.CustomID;
 
+
+                            
+                            LotIDSave = OcStuffInSub.Lotid;
 
                             this.DataContext = OcStuffInSub;
 
@@ -2400,6 +2409,10 @@ namespace WizMes_WooJung
             sqlParameter.Clear();
             sqlParameter.Add("sStuffINID", StuffINID);
 
+
+
+
+
             try
             {
 
@@ -2414,7 +2427,7 @@ namespace WizMes_WooJung
 
                 List<KeyValue> list_Result = new List<KeyValue>();
                 list_Result = DataStore.Instance.ExecuteAllProcedureOutputGetCS(Prolist, ListParameter);
-                string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_StuffIN_dStuffIN", sqlParameter, "D");
+                string[] result = DataStore.Instance.ExecuteProcedure("xp_StuffIN_dStuffIN", sqlParameter, false);
 
                 if (list_Result[0].Equals("success"))
                 {
@@ -2721,7 +2734,7 @@ namespace WizMes_WooJung
                         ListParameter.Add(sqlParameter);
 
                         List<KeyValue> list_Result = new List<KeyValue>();
-                        list_Result = DataStore.Instance.ExecuteAllProcedureOutputGetCS_NewLog(Prolist, ListParameter,"C");
+                        list_Result = DataStore.Instance.ExecuteAllProcedureOutputGetCS(Prolist, ListParameter);
                         string sGetID = string.Empty;
 
                         if (list_Result[0].key.ToLower() == "success")
@@ -2764,11 +2777,11 @@ namespace WizMes_WooJung
                         sqlParameter.Add("sLOTID", txtLotID.Text != null && !txtLotID.Text.Trim().Equals("") ? txtLotID.Text : "");
                         sqlParameter.Add("mtrCustomLotno", txtmtrCustomLotno.Text != null && !txtmtrCustomLotno.Text.Trim().Equals("") ? txtmtrCustomLotno.Text : "");
 
-                        sqlParameter.Add("InspectYN", "Y"); // 2020.02.14 삼주 요청사항 : 입고할때 입고검수도 알아서 되게 해달라!!! 
+                        //sqlParameter.Add("InspectYN", "Y"); // 2020.02.14 삼주 요청사항 : 입고할때 입고검수도 알아서 되게 해달라!!! 
                         sqlParameter.Add("sUserID", MainWindow.CurrentUser);
 
 
-                        Procedure pro2 = new Procedure();
+                        Procedure pro2 = new Procedure();  
                         pro2.Name = "xp_StuffIN_iuStuffINSub";
                         pro2.OutputUseYN = "N";
                         pro2.OutputName = "REQ_ID";
@@ -2818,7 +2831,7 @@ namespace WizMes_WooJung
                     }
 
                     string[] Confirm = new string[2];
-                    Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew_NewLog(Prolist, ListParameter,"U");
+                    Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew(Prolist, ListParameter);
                     if (Confirm[0] != "success")
                     {
                         MessageBox.Show("[저장실패]\r\n" + Confirm[1].ToString());
@@ -3178,6 +3191,56 @@ namespace WizMes_WooJung
             else
             {
                 chkMtrLOTIDSrh.IsChecked = true;
+            }
+        }
+
+        //검사실적 바로가기
+        private void btnGoInsPectAuto_Click(object sender, RoutedEventArgs e)
+        {
+
+            // 재고현황(제품포함)
+            int i = 0;
+            foreach (MenuViewModel mvm in MainWindow.mMenulist)
+            {
+
+                if (mvm.Menu.Equals("검사실적 등록"))
+                {
+                    MainWindow.InstAutoLotID = LotIDSave;
+                    
+                    break;
+                }
+                i++;
+            }
+            try
+            {
+                if (MainWindow.MainMdiContainer.Children.Contains(MainWindow.mMenulist[i].subProgramID as MdiChild))
+                {
+                    (MainWindow.mMenulist[i].subProgramID as MdiChild).Focus();
+                }
+                else
+                {
+                    Type type = Type.GetType("WizMes_WooJung." + MainWindow.mMenulist[i].ProgramID.Trim(), true);
+                    object uie = Activator.CreateInstance(type);
+
+                    MainWindow.mMenulist[i].subProgramID = new MdiChild()
+                    {
+                        Title = "(주)우정 [" + MainWindow.mMenulist[i].MenuID.Trim() + "] " + MainWindow.mMenulist[i].Menu.Trim() + " (→" + MainWindow.mMenulist[i].ProgramID.Trim() + ")",
+                        Height = SystemParameters.PrimaryScreenHeight * 0.8,
+                        MaxHeight = SystemParameters.PrimaryScreenHeight * 0.85,
+                        Width = SystemParameters.WorkArea.Width * 0.85,
+                        MaxWidth = SystemParameters.WorkArea.Width,
+                        Content = uie as UIElement,
+                        Tag = MainWindow.mMenulist[i]
+                    };
+                    Lib.Instance.AllMenuLogInsert(MainWindow.mMenulist[i].MenuID, MainWindow.mMenulist[i].Menu, MainWindow.mMenulist[i].subProgramID);
+                    MainWindow.MainMdiContainer.Children.Add(MainWindow.mMenulist[i].subProgramID as MdiChild);
+                }
+
+                
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("해당 화면이 존재하지 않습니다.");
             }
         }
     }

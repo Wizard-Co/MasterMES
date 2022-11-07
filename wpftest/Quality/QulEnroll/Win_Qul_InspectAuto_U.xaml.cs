@@ -19,9 +19,6 @@ namespace WizMes_WooJung
     /// </summary>
     public partial class Win_Qul_InspectAuto_U : UserControl
     {
-        string stDate = string.Empty;
-        string stTime = string.Empty;
-
         //불량을 체크하는 리스트 
         List<DataRow> defectCheck1 = new List<DataRow>(); //sub1
         List<DataRow> defectCheck2 = new List<DataRow>(); //sub2
@@ -32,7 +29,7 @@ namespace WizMes_WooJung
         int DFCount3 = 0;
         int DFCount4 = 0;
         int DFCount5 = 0;
-
+        
         //검사성적서에는 5가지 수량 밖에 안나와서...  데이터 그리드에 값은 10까지 있지만.. 안 쓸 듯
         int DFCount6 = 0;
         int DFCount7 = 0;
@@ -40,7 +37,7 @@ namespace WizMes_WooJung
         int DFCount9 = 0;
         int DFCount10 = 0;
 
-
+        
         string strPoint = string.Empty;     //  1: 수입, 3:자주, 5:출하
         string strFlag = string.Empty;
 
@@ -71,6 +68,9 @@ namespace WizMes_WooJung
         string FullPath1 = string.Empty;
         string FullPath2 = string.Empty;
 
+        string GetInsAoutoLot = string.Empty;
+
+
         private FTP_EX _ftp = null;
         List<string[]> listFtpFile = new List<string[]>();
 
@@ -88,34 +88,70 @@ namespace WizMes_WooJung
         public Win_Qul_InspectAuto_U()
         {
             InitializeComponent();
+            //txtLotNO.Text = MainWindow.InstAutoLotID;
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            stDate = DateTime.Now.ToString("yyyyMMdd");
-            stTime = DateTime.Now.ToString("HHmm");
+            if(MainWindow.InstAutoLotID != "" )
+            {
+                txtLotNO.Text = MainWindow.InstAutoLotID;
+                //CantBtnControl();
+                 
+            
+                //////txtLotNO.Text =  GetInsAoutoLot;
+                //lib.UiLoading(sender);
+                //chkDate.IsChecked = true;
+                //btnToday_Click(null, null);
+                //SetComboBox();
+                //dtpInOutDate.SelectedDate = DateTime.Today;
+                //dtpInspectDate.SelectedDate = DateTime.Today;
 
-            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+                ///////////////
+                //CantBtnControl();
 
-            lib.UiLoading(sender);
-            tbnInspect.IsChecked = true;
-            chkDate.IsChecked = true;
-            btnToday_Click(null, null);
-            SetComboBox();
-            dtpInOutDate.SelectedDate = DateTime.Today;
-            dtpInspectDate.SelectedDate = DateTime.Today;
+                //tbnIncomeInspect.IsChecked = true;
+                //tbnIncomeInspect_Click(sender, e);
+                ////SetControlsWhenAdd();
+                //btnAdd_Click(sender, e);
+               
 
-            strPoint = "9"; //자주검사로 시작
+                //if (txtLotNO.Text != "")
+                //{
+                //    GetLotID(txtLotNO.Text, strPoint);
 
-            tbnIncomeInspect.IsChecked = false;
-            tbnProcessCycle.IsChecked = false;
-            tbnOutcomeInspect.IsChecked = false;
+                //}
+                
 
-            SetControlsToggleChangedHidden();
-            lblMilsheet.Visibility = Visibility.Hidden;
-            txtMilSheetNo.Visibility = Visibility.Hidden;
 
-            cboFML.SelectedIndex = 1;
+            }
+            else
+            {
+                lib.UiLoading(sender);
+
+                tbnInspect.IsChecked = true;
+                chkDate.IsChecked = true;
+                btnToday_Click(null, null);
+                SetComboBox();
+                dtpInOutDate.SelectedDate = DateTime.Today;
+                dtpInspectDate.SelectedDate = DateTime.Today;
+                txtInspectUserID.Text = MainWindow.CurrentPerson;
+                txtInspectUserID.Tag = MainWindow.CurrentPersonID;
+
+                strPoint = "9"; //자주검사로 시작
+
+                tbnIncomeInspect.IsChecked = false;
+                tbnProcessCycle.IsChecked = false;
+                tbnOutcomeInspect.IsChecked = false;
+
+                SetControlsToggleChangedHidden();
+                lblMilsheet.Visibility = Visibility.Hidden;
+                txtMilSheetNo.Visibility = Visibility.Hidden;
+
+                cboFML.SelectedIndex = 1;
+            }
+
+            btnPFArticleSrh.IsEnabled = false;
         }
 
         //
@@ -206,6 +242,8 @@ namespace WizMes_WooJung
             if (tbnIncomeInspect.IsChecked == true)
             {
                 strPoint = "1";     //  1: 수입, 3:공정, 5:출하, 9:자주
+
+                
                 tbnProcessCycle.IsChecked = false;
                 tbnInspect.IsChecked = false;
                 tbnOutcomeInspect.IsChecked = false;
@@ -244,7 +282,7 @@ namespace WizMes_WooJung
                 SetControlsToggleChangedHidden();
                 lblMilsheet.Visibility = Visibility.Hidden;
                 txtMilSheetNo.Visibility = Visibility.Hidden;
-
+                
                 cboFML.SelectedIndex = 1;
 
                 //공정순회의 경우 공정과 호기를 선택해야 하니까 .
@@ -438,6 +476,11 @@ namespace WizMes_WooJung
             txtInspectUserID.Tag = MainWindow.CurrentPersonID;
             txtArticleName.Text = "";
             txtArticleName.Tag = "";
+
+            
+            //txtLotNO.Text = GetInsAoutoLot;
+            //GetLotID(txtLotNO.Text, strPoint);
+
         }
 
         //추가
@@ -453,7 +496,7 @@ namespace WizMes_WooJung
                     strFlag = "I";
 
                     lblMsg.Visibility = Visibility.Visible;
-                    tbkMsg.Text = "자료 입력 중";
+                    tbkMsg.Text = "자료 입력 중";              
 
                     if (dgdMain.Items.Count > 0)
                     {
@@ -467,8 +510,8 @@ namespace WizMes_WooJung
                     dgdMain.IsHitTestVisible = false;
                     this.DataContext = null;
                     txtLotNO.Text = WinInsAuto.LotID;
+                    
                     SetControlsWhenAdd();
-
                 }
                 else
                 {
@@ -492,27 +535,35 @@ namespace WizMes_WooJung
                     Wh_Ar_SelectedLastIndex = 0;
                 }
 
+                
 
                 dgdMain.IsHitTestVisible = false;
                 this.DataContext = null;
                 SetControlsWhenAdd();
 
+                
+
                 //유지추가가 아니면 sub1 sub2 모두 비워줘야 한다.
                 if (dgdSub1.Items.Count > 0)
                 {
                     dgdSub1.Items.Clear();
-                }
-                if (dgdSub2.Items.Count > 0)
+                } 
+                if(dgdSub2.Items.Count > 0)
                 {
                     dgdSub2.Items.Clear();
                 }
 
+                
+                //txtLotNO.Text = txtLotNO.Text;
 
                 txtLotNO.Focus();
+                txtLotNO.Text = MainWindow.InstAutoLotID;
             }
 
             //이전 받아 온 데이터가 남아있어서 추가 누르면 비워주자. 
             cboEcoNO.ItemsSource = null;
+
+            MainWindow.InstAutoLotID = string.Empty; //데이터 넣고 비워줄까
         }
 
         //수정
@@ -567,7 +618,6 @@ namespace WizMes_WooJung
         //닫기
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
-            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             int i = 0;
             foreach (MenuViewModel mvm in MainWindow.mMenulist)
             {
@@ -653,7 +703,7 @@ namespace WizMes_WooJung
                     }
                 }
             }
-            DataStore.Instance.InsertLogByForm(this.GetType().Name, "P");
+
             msg.Show();
             msg.Topmost = true;
             msg.Refresh();
@@ -680,7 +730,7 @@ namespace WizMes_WooJung
             pastesheet = workbook.Sheets["Report"];
 
             var InspectInfo = dgdMain.SelectedItem as Win_Qul_InspectAuto_U_CodeView;
-            var InspectInfoSub1 = dgdSub1.SelectedItem as Win_Qul_InspectAuto_U_Sub_CodeView;
+            var InspectInfoSub1 = dgdSub1.SelectedItem as Win_Qul_InspectAuto_U_Sub_CodeView; 
             var IIS = InspectInfo.InspectQty;
 
             int copyLine = 0;
@@ -726,7 +776,7 @@ namespace WizMes_WooJung
             workrange.Value2 = (InspectInfoSub1 != null ? InspectInfoSub1.InsSampleQty : "");  // 왜 null이라는 걸까
             workrange.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
 
-
+            
             for (int j = 0; j < dgdSub2.Items.Count; j++)
             {
                 var WinInsAutoSub2 = dgdSub2.Items[j] as Win_Qul_InspectAuto_U_Sub_CodeView;
@@ -791,8 +841,8 @@ namespace WizMes_WooJung
             }
 
             //샘플 중 불량 수량
-            int total = count + DFCount1 + DFCount2 + DFCount3 + DFCount4 + DFCount5;
-
+           int total = count + DFCount1 + DFCount2 + DFCount3 + DFCount4 + DFCount5;
+            
             //불량수
             workrange = worksheet.get_Range("AN23", "AQ23");//셀 범위 지정
             workrange.Value2 = total;
@@ -805,9 +855,9 @@ namespace WizMes_WooJung
 
             insertline = 35;
 
-            for (int i = 0; i < NumCount; i++)
+            for(int i = 0; i < NumCount; i++)
             {
-                workrange = worksheet.get_Range("A" + (insertline + i), "B" + (insertline + i));//셀 범위 지정
+                workrange = worksheet.get_Range("A"+ (insertline + i), "B" + (insertline + i));//셀 범위 지정
                 workrange.Value2 = i + 1;
                 workrange.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
             }
@@ -832,7 +882,7 @@ namespace WizMes_WooJung
                 workrange.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
 
                 //규격
-                workrange = worksheet.get_Range("G" + Convert.ToInt32(insertline + i), "O" + Convert.ToInt32(insertline + i));
+                workrange = worksheet.get_Range("G" + Convert.ToInt32(insertline + i), "O" + Convert.ToInt32(insertline + i));    
                 workrange.Value2 = WinInsAutoSub.insItemName;
                 workrange.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter;
 
@@ -870,7 +920,7 @@ namespace WizMes_WooJung
                     {
                         workrange.Value2 = "불";
                     }
-                    else if (!defectCheck1[i][20].ToString().Equals("양호") && !defectCheck1[i][20].ToString().Equals(""))
+                    else if(!defectCheck1[i][20].ToString().Equals("양호") && !defectCheck1[i][20].ToString().Equals(""))
                     {
                         workrange.Value2 = "불";
                     }
@@ -1098,7 +1148,7 @@ namespace WizMes_WooJung
                 btnSearch.IsEnabled = true;
 
             }), System.Windows.Threading.DispatcherPriority.Background);
-
+            
         }
 
         //저장
@@ -1128,7 +1178,7 @@ namespace WizMes_WooJung
                     dgdSub1.SelectedIndex = 0;
                 }
 
-
+                
                 strFlag = string.Empty;  // 추가했는지, 수정했는지 알려면 맨 마지막에 flag 값을 비워야 한다.
             }
         }
@@ -1181,7 +1231,6 @@ namespace WizMes_WooJung
             {
                 if (ExpExc.choice.Equals(dgdMain.Name))
                 {
-                    DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                     if (ExpExc.Check.Equals("Y"))
                         dt = lib.DataGridToDTinHidden(dgdMain);
                     else
@@ -1259,15 +1308,15 @@ namespace WizMes_WooJung
             {
                 dgdMain.Items.Clear();
             }
-            if (dgdSub1.Items.Count > 0)
+            if(dgdSub1.Items.Count > 0)
             {
                 dgdSub1.Items.Clear();
             }
-            if (dgdSub2.Items.Count > 0)
+            if(dgdSub2.Items.Count > 0)
             {
                 dgdSub2.Items.Clear();
             }
-
+            
             try
             {
                 DataSet ds = null;
@@ -1276,12 +1325,12 @@ namespace WizMes_WooJung
                 sqlParameter.Add("InspectPoint", strPoint);
                 sqlParameter.Add("FromDate", chkDate.IsChecked == true ? dtpSDate.SelectedDate.Value.ToString("yyyyMMdd") : "");
                 sqlParameter.Add("ToDate", chkDate.IsChecked == true ? dtpEDate.SelectedDate.Value.ToString("yyyyMMdd") : "");
-                sqlParameter.Add("ArticleID", txtArticleSrh.Tag != null ? txtArticleSrh.Tag.ToString() : "");
-                sqlParameter.Add("nchkDefectYN", chkResultSrh.IsChecked == true ? 1 : 0);
+                sqlParameter.Add("ArticleID", chkArticleSrh.IsChecked == true ? txtArticleSrh.Tag.ToString() : "" );
+                sqlParameter.Add("nchkDefectYN", chkResultSrh.IsChecked==true ? 1 : 0);
                 sqlParameter.Add("sDefectYN", chkResultSrh.IsChecked == true ? cboResultSrh.SelectedValue.ToString() : "");
                 sqlParameter.Add("BuyerArticleNo", chkArticleNo.IsChecked == true ? txtArticleNo.Text : "");
                 sqlParameter.Add("BuyerArticleNme", chkArticleSrh.IsChecked == true && !txtArticleSrh.Text.Trim().Equals("") ? txtArticleSrh.Text : "");
-                ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_Inspect_sAutoInspect", sqlParameter, true, "R");
+                ds = DataStore.Instance.ProcedureToDataSet("xp_Inspect_sAutoInspect", sqlParameter, false);
 
                 if (ds != null && ds.Tables.Count > 0)
                 {
@@ -1379,7 +1428,7 @@ namespace WizMes_WooJung
                                 }
                             }
                             else if (strPoint.Equals("5"))
-                            {
+                            {                                
                                 if (WinQulInsAuto.OutCustomID.Replace(" ", "").Length > 0)
                                 {
                                     WinQulInsAuto.INOUTCustomID = WinQulInsAuto.OutCustomID;
@@ -1387,7 +1436,7 @@ namespace WizMes_WooJung
                                     WinQulInsAuto.INOUTCustomDate = WinQulInsAuto.OutDate_CV;
                                 }
                             }
-
+                            
                             dgdMain.Items.Add(WinQulInsAuto);
                             i++;
                         }
@@ -1419,7 +1468,7 @@ namespace WizMes_WooJung
                     tmpMachineID = WinInsAuto.MachineID;
 
                     txtArticleName.Tag = WinInsAuto.ArticleID;
-
+                    
                     this.DataContext = WinInsAuto;
 
 
@@ -1473,7 +1522,7 @@ namespace WizMes_WooJung
                 sqlParameter.Clear();
                 sqlParameter.Add("InspectID", strID);
                 sqlParameter.Add("InspectBasisID", "");
-                sqlParameter.Add("InsType", strType);
+                sqlParameter.Add("InsType", strType);                
                 ds = DataStore.Instance.ProcedureToDataSet("xp_Inspect_sAutoInspectSub", sqlParameter, false);
 
                 if (ds != null && ds.Tables.Count > 0)
@@ -1547,7 +1596,7 @@ namespace WizMes_WooJung
                             //{
                             //    dgdSub2.Items.Add(WinQulInsAutoSub);
                             //}
-
+                            
 
                             if (strType.Equals("1"))
                             {
@@ -1564,7 +1613,7 @@ namespace WizMes_WooJung
                                 double value1 = 0.0;
                                 double value2 = 0.0;
                                 double value3 = 0.0;
-
+                                
                                 if (!WinQulInsAutoSub.SpecMax.ToString().Equals(""))
                                 {
                                     maxValue = Convert.ToDouble(WinQulInsAutoSub.SpecMax.ToString());
@@ -1636,7 +1685,7 @@ namespace WizMes_WooJung
                 sqlParameter.Clear();
                 sqlParameter.Add("InspectID", strID);
 
-                string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_Inspect_DAutoInspect", sqlParameter, "D");
+                string[] result = DataStore.Instance.ExecuteProcedure("xp_Inspect_DAutoInspect", sqlParameter, false);
 
                 if (result[0].Equals("success"))
                 {
@@ -1698,23 +1747,23 @@ namespace WizMes_WooJung
                     sqlParameter.Add("sProcessID", cboProcess.SelectedValue == null ? "" : cboProcess.SelectedValue.ToString());
                     sqlParameter.Add("InspectPoint", strPoint);
 
-                    sqlParameter.Add("ImportSecYN", chkImportSecYN.IsChecked == true ? "Y" : "N");
+                    sqlParameter.Add("ImportSecYN", chkImportSecYN.IsChecked==true ? "Y" : "N");
                     sqlParameter.Add("ImportlawYN", chkImportSecYN.IsChecked == true ? "Y" : "N");
                     sqlParameter.Add("ImportImpYN", chkImportSecYN.IsChecked == true ? "Y" : "N");
                     sqlParameter.Add("ImportNorYN", chkImportSecYN.IsChecked == true ? "Y" : "N");
-                    sqlParameter.Add("IRELevel", cboIRELevel.SelectedValue != null ?
+                    sqlParameter.Add("IRELevel", cboIRELevel.SelectedValue !=null ?
                         cboIRELevel.SelectedValue.ToString() : "");
 
                     sqlParameter.Add("InpCustomID", (strPoint.Equals("1") && txtInOutCustom.Tag != null) ? txtInOutCustom.Tag.ToString() : "");
-                    sqlParameter.Add("InpDate", strPoint.Equals("1") ?
+                    sqlParameter.Add("InpDate", strPoint.Equals("1") ? 
                         dtpInOutDate.SelectedDate.Value.ToString("yyyyMMdd") : "");
-                    sqlParameter.Add("OutCustomID", (strPoint.Equals("5") && txtInOutCustom.Tag != null) ? txtInOutCustom.Tag.ToString() : "");
+                    sqlParameter.Add("OutCustomID", (strPoint.Equals("5") && txtInOutCustom.Tag != null) ? txtInOutCustom.Tag.ToString() : "") ;
                     sqlParameter.Add("OutDate", strPoint.Equals("5") ?
                         dtpInOutDate.SelectedDate.Value.ToString("yyyyMMdd") : "");
-                    sqlParameter.Add("MachineID", cboMachine.SelectedValue != null ?
+                    sqlParameter.Add("MachineID", cboMachine.SelectedValue !=null ?
                         cboMachine.SelectedValue.ToString() : "");
 
-                    sqlParameter.Add("BuyerModelID", txtBuyerModel.Tag != null ? txtBuyerModel.Tag.ToString() : "");
+                    sqlParameter.Add("BuyerModelID", txtBuyerModel.Tag !=null ? txtBuyerModel.Tag.ToString() : "");
                     sqlParameter.Add("FMLGubun", cboFML.SelectedValue == null ? "" : cboFML.SelectedValue.ToString());
                     sqlParameter.Add("TotalDefectQty", lib.CheckNullZero(txtTotalDefectQty.Text));
                     sqlParameter.Add("MilSheetNo", txtMilSheetNo.Text);
@@ -1736,7 +1785,7 @@ namespace WizMes_WooJung
 
                         Prolist.Add(pro1);
                         ListParameter.Add(sqlParameter);
-
+                        
                         for (int i = 0; i < dgdSub1.Items.Count; i++)
                         {
                             WinInsAutoSub = dgdSub1.Items[i] as Win_Qul_InspectAuto_U_Sub_CodeView;
@@ -1837,11 +1886,11 @@ namespace WizMes_WooJung
                                 }
                                 else if (j == 4)
                                 {
-                                    sqlParameter.Add("InspectValue", WinInsAutoSub.InspectValue5 != "" ? lib.CheckNullZero(WinInsAutoSub.InspectValue5) : "0");
+                                    sqlParameter.Add("InspectValue", WinInsAutoSub.InspectValue5 != "" ?  lib.CheckNullZero(WinInsAutoSub.InspectValue5) : "0");
                                 }
                                 else if (j == 5)
                                 {
-                                    sqlParameter.Add("InspectValue", WinInsAutoSub.InspectValue6 != "" ? lib.CheckNullZero(WinInsAutoSub.InspectValue6) : "0");
+                                    sqlParameter.Add("InspectValue", WinInsAutoSub.InspectValue6 != "" ?  lib.CheckNullZero(WinInsAutoSub.InspectValue6) : "0");
                                 }
                                 else if (j == 6)
                                 {
@@ -1872,7 +1921,7 @@ namespace WizMes_WooJung
                         }
 
                         List<KeyValue> list_Result = new List<KeyValue>();
-                        list_Result = DataStore.Instance.ExecuteAllProcedureOutputGetCS_NewLog(Prolist, ListParameter,"C");
+                        list_Result = DataStore.Instance.ExecuteAllProcedureOutputGetCS(Prolist, ListParameter);
                         string sGetID = string.Empty;
 
                         if (list_Result[0].key.ToLower() == "success")
@@ -1898,7 +1947,7 @@ namespace WizMes_WooJung
                                     {
                                         if (!txtSKetch.Text.Equals(string.Empty)) { txtSKetch.Tag = "/ImageData/AutoInspect/" + sGetID; }
                                         if (!txtFile.Text.Equals(string.Empty)) { txtFile.Tag = "/ImageData/AutoInspect/" + sGetID; }
-
+                                        
                                         AttachYesNo = true;
                                     }
                                     else
@@ -1921,14 +1970,14 @@ namespace WizMes_WooJung
                     #region 수정
 
                     else if (strFlag.Equals("U"))
-                    {
+                    {                      
                         sqlParameter.Add("UpdateUserID", MainWindow.CurrentUser);
 
-                        string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_Inspect_uAutoInspect", sqlParameter, "U");
+                        string[] result = DataStore.Instance.ExecuteProcedure("xp_Inspect_uAutoInspect", sqlParameter, false);
                         if (!result[0].Equals("success"))
                         {
                             flag = false;
-                            MessageBox.Show("실패 , 사유 : " + result[1]);
+                            MessageBox.Show("실패 , 사유 : "+result[1]);
                         }
                         else
                         {
@@ -2021,7 +2070,7 @@ namespace WizMes_WooJung
 
                                     if (j == 0)
                                     {
-                                        sqlParameter.Add("InspectValue", lib.CheckNullZero(WinInsAutoSub.InspectValue1.Replace(",", "")));
+                                        sqlParameter.Add("InspectValue", lib.CheckNullZero(WinInsAutoSub.InspectValue1.Replace(",","")));
                                     }
                                     else if (j == 1)
                                     {
@@ -2093,7 +2142,7 @@ namespace WizMes_WooJung
                                     {
                                         if (!txtSKetch.Text.Equals(string.Empty)) { txtSKetch.Tag = "/ImageData/AutoInspect/" + txtinspectID.Text; }
                                         if (!txtFile.Text.Equals(string.Empty)) { txtFile.Tag = "/ImageData/AutoInspect/" + txtinspectID.Text; }
-
+                                        
                                         AttachYesNo = true;
                                     }
                                     else
@@ -2142,14 +2191,14 @@ namespace WizMes_WooJung
             //    return flag;
             //}
 
-            if ((txtLotNO.Text.Length <= 0 || txtLotNO.Text.Equals("")) && (txtArticleName.Text.Length <= 0 || txtArticleName.Text.Equals("")))
+            if((txtLotNO.Text.Length <= 0 || txtLotNO.Text.Equals("")) && (txtArticleName.Text.Length <= 0 || txtArticleName.Text.Equals("")))
             {
                 MessageBox.Show("LotNO 또는 품명이 입력되지 않았습니다. LotNO가 없다면 품명을 입력해주세요.");
                 flag = false;
                 return flag;
             }
 
-
+                       
             if (cboEcoNO.SelectedValue == null)
             {
                 MessageBox.Show("EO-금형-순번이 선택되지 않았습니다.");
@@ -2158,7 +2207,7 @@ namespace WizMes_WooJung
             }
 
             //입고, 출하 검사시에는 공정, 호기를 선택하지 않는다. Hidden시킬 것이니까 그게 아닐 경우에만 checkdata
-            if (tbnIncomeInspect.IsChecked != true && tbnOutcomeInspect.IsChecked != true)
+            if(tbnIncomeInspect.IsChecked != true && tbnOutcomeInspect.IsChecked != true)
             {
                 if (cboProcess.SelectedValue == null)
                 {
@@ -2413,7 +2462,7 @@ namespace WizMes_WooJung
                             var WinEcoNo = new CodeView()
                             {
                                 code_id = dr[1].ToString().Trim(),
-                                code_name = dr[0].ToString().Trim() + "-" + dr[1].ToString().Trim() + "-" + dr[2].ToString().Trim()
+                                code_name = dr[0].ToString().Trim()+"-"+dr[1].ToString().Trim()+"-"+ dr[2].ToString().Trim()
                             };
 
                             setCollection.Add(WinEcoNo);
@@ -2527,7 +2576,7 @@ namespace WizMes_WooJung
                             //EO-금형-순번 콤보박스 선택시, 그에 해당하는 공정을 찾아 셀렉트인덱스 시켜준다.
                             //(하나의 품명에 여러 공정 검사기준이 있을 수 있으므로, GLS는 공정별로 관리한다.)
                             string sql = "select InspectBasisID, ProcessID from mt_InspectAutoBasis";
-                            sql += " where InspectBasisID = " + strBasisID;
+                                   sql += " where InspectBasisID = " + strBasisID;
 
                             try
                             {
@@ -2586,7 +2635,7 @@ namespace WizMes_WooJung
                                 int k = 0;
                                 for (int j = 0; j < One.Count; j++)
                                 {
-                                    var subdg = One[j];
+                                    var subdg = One[j];                                    
                                     if (dgr1.SubSeq == subdg.SubSeq)
                                     {
                                         dgr1.InspectText1 = subdg.InspectText1;
@@ -2676,7 +2725,7 @@ namespace WizMes_WooJung
                                 }
                             }
                         }
-
+                        
                     }
                 }
                 catch (Exception ex)
@@ -2687,7 +2736,7 @@ namespace WizMes_WooJung
                 {
                     DataStore.Instance.CloseConnection();
                 }
-            }
+            }            
         }
 
         private ObservableCollection<Win_Qul_InspectAuto_U_Sub_CodeView> win_Qul_InspectAuto_U_Sub_CodeViewsByU(string strType)
@@ -2825,20 +2874,20 @@ namespace WizMes_WooJung
                                 SubSeq = dr["SubSeq"].ToString(),
                                 insType = dr["insType"].ToString(),
                                 insItemName = dr["insItemName"].ToString(),
-                                InsSampleQty = dr["InsSampleQty"].ToString(),
+                                InsSampleQty = dr["InsSampleQty"].ToString(),                                
                                 ValueCount = 0,
-
+                                
                                 InsTPSpecMax = dr["InsTPSpecMax"].ToString(),
                                 InsTPSpecMin = dr["InsTPSpecMin"].ToString()
                             };
 
-                            if (WinQulInsAutoByBasis.insType.Replace(" ", "").Equals("1"))
+                            if (WinQulInsAutoByBasis.insType.Replace(" ","").Equals("1"))
                             {
                                 i++;
                                 WinQulInsAutoByBasis.Num = i;
                                 WinQulInsAutoByBasis.insSpec = dr["InsTPSpec"].ToString();
                                 WinQulInsAutoByBasis.SpecMax = dr["InsTPSpecMax"].ToString();
-                                WinQulInsAutoByBasis.SpecMin = dr["InsTPSpecMin"].ToString();
+                                WinQulInsAutoByBasis.SpecMin = dr["InsTPSpecMin"].ToString();                                
 
                                 dgdSub1.Items.Add(WinQulInsAutoByBasis);
                             }
@@ -2850,8 +2899,8 @@ namespace WizMes_WooJung
                                 if (dr["InspectCycleGubun"].ToString().Replace(" ", "").Equals("1"))
                                 {
                                     WinQulInsAutoByBasis.Spec_CV = dr["insRaSpec"].ToString()
-                                        + "(-" + dr["InsRaSpecMin"].ToString() + "~ +"
-                                        + dr["insRASpecMax"].ToString() + ")";
+                                        +"(-"+ dr["InsRaSpecMin"].ToString()+"~ +"
+                                        + dr["insRASpecMax"].ToString()+")";
                                     WinQulInsAutoByBasis.insSpec = dr["insRaSpec"].ToString();
                                     WinQulInsAutoByBasis.SpecMax = lib.returnNumStringTwo(dr["insRASpecMax"].ToString());
                                     WinQulInsAutoByBasis.SpecMin = lib.returnNumStringTwo(dr["InsRaSpecMin"].ToString());
@@ -2875,7 +2924,7 @@ namespace WizMes_WooJung
                                     WinQulInsAutoByBasis.insSpec = dr["insRaSpec"].ToString();
                                     WinQulInsAutoByBasis.SpecMax = lib.returnNumStringTwo(dr["insRASpecMax"].ToString());
                                     WinQulInsAutoByBasis.SpecMin = lib.returnNumStringTwo(dr["InsRaSpecMin"].ToString());
-                                }
+                                }                                
 
 
                                 dgdSub2.Items.Add(WinQulInsAutoByBasis);
@@ -2936,7 +2985,7 @@ namespace WizMes_WooJung
                 case "10":
                     lastColcount = dgdSub1.Columns.IndexOf(dgdtpeText10);
                     break;
-            }
+            }             
 
             int startColcount = dgdSub1.Columns.IndexOf(dgdtpeText1);
             int sub2StartColunt = dgdSub2.Columns.IndexOf(dgdtpeValue1);
@@ -3018,7 +3067,7 @@ namespace WizMes_WooJung
 
                 if (rowCount > 0)
                 {
-                    dgdSub1.SelectedIndex = rowCount - 1;
+                    dgdSub1.SelectedIndex = rowCount-1;
                     dgdSub1.CurrentCell = new DataGridCellInfo(dgdSub1.Items[rowCount - 1], dgdSub1.Columns[colCount]);
                 }
             }
@@ -3256,14 +3305,14 @@ namespace WizMes_WooJung
         //
         private void InspectText1_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (lblMsg.Visibility == Visibility.Visible)
+            if (lblMsg.Visibility==Visibility.Visible)
             {
                 WinInsAutoSub = dgdSub1.CurrentItem as Win_Qul_InspectAuto_U_Sub_CodeView;
 
                 if (WinInsAutoSub != null)
                 {
                     TextBox tb1 = sender as TextBox;
-
+                    
                     if (tb1 != null)
                     {
                         WinInsAutoSub.InspectText1 = tb1.Text;
@@ -3295,7 +3344,7 @@ namespace WizMes_WooJung
                         else
                         {
                             WinInsAutoSub.InspectText2 = tb1.Text;
-                        }
+                        }                        
                     }
 
                     sender = tb1;
@@ -3567,7 +3616,7 @@ namespace WizMes_WooJung
                         else
                         {
                             WinInsAutoSub.InspectValue2 = tb1.Text;
-                        }
+                        }                        
                     }
                     sender = tb1;
                 }
@@ -3793,7 +3842,7 @@ namespace WizMes_WooJung
         #endregion
 
         #endregion
-
+               
         //
         private void txtLotNO_KeyDown(object sender, KeyEventArgs e)
         {
@@ -3805,8 +3854,8 @@ namespace WizMes_WooJung
                 //{
                 //    SetEcoNoCombo(txtArticleName.Tag.ToString(), strPoint);
                 //}
-
-            }
+                
+            }            
         }
 
         //
@@ -3826,7 +3875,7 @@ namespace WizMes_WooJung
             try
             {
                 Dictionary<string, object> sqlParameter = new Dictionary<string, object>();
-                sqlParameter.Add("LotNo", LotNo.Replace(" ", ""));
+                sqlParameter.Add("LotNo", LotNo.Replace(" ",""));
                 sqlParameter.Add("InspectPoint", Point);
                 sqlParameter.Add("ArticleID", txtArticleName.Tag != null ? txtArticleName.Tag.ToString() : "");
 
@@ -3888,6 +3937,7 @@ namespace WizMes_WooJung
             finally
             {
                 DataStore.Instance.CloseConnection();
+                //MainWindow.InstAutoLotID = string.Empty;
             }
         }
 
@@ -3910,7 +3960,7 @@ namespace WizMes_WooJung
                 if (WinSubAuto != null)
                 {
                     WinSubAuto.ValueCount = 0;
-                    if (WinSubAuto.InspectText1 != null && WinSubAuto.InspectText1.Replace(" ", "").Length > 0)
+                    if (WinSubAuto.InspectText1 != null && WinSubAuto.InspectText1.Replace(" ","").Length > 0)
                     {
                         sub1Count++;
                         if (!WinSubAuto.InspectText1.Equals("양호"))
@@ -3920,7 +3970,7 @@ namespace WizMes_WooJung
                                 strDefectYN = "Y";
                                 Flag = false;
                             }
-
+                            
                             defectCount++;
                         }
                         WinSubAuto.ValueCount++;
@@ -4060,7 +4110,7 @@ namespace WizMes_WooJung
             for (int i = 0; i < dgdSub2.Items.Count; i++)
             {
                 var WinSubAuto = dgdSub2.Items[i] as Win_Qul_InspectAuto_U_Sub_CodeView;
-
+                
                 if (lib.IsNumOrAnother(WinSubAuto.SpecMin) &&
                             lib.IsNumOrAnother(WinSubAuto.SpecMax))
                 {
@@ -4355,7 +4405,7 @@ namespace WizMes_WooJung
             //        btnUpdate_Click(btnUpdate, null);
             //}
         }
-
+        
         private void DataGrid_SizeChange(object sender, SizeChangedEventArgs e)
         {
             DataGrid dgs = sender as DataGrid;
@@ -4645,9 +4695,9 @@ namespace WizMes_WooJung
             }
         }
 
+        
 
-
-
+        
 
 
         /// <summary>
@@ -4735,14 +4785,14 @@ namespace WizMes_WooJung
 
         private void Value1Text_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
+            if(e.Key == Key.Enter)
             {
                 WinInsAutoSub = dgdSub2.CurrentItem as Win_Qul_InspectAuto_U_Sub_CodeView;
                 double maxValue = Convert.ToDouble(WinInsAutoSub.SpecMax);
                 double minValue = Convert.ToDouble(WinInsAutoSub.SpecMin);
                 double value1 = Convert.ToDouble(WinInsAutoSub.InspectValue1);
 
-                if (!(value1 >= minValue && value1 <= maxValue))
+                if(!(value1 >= minValue && value1 <= maxValue)) 
                 {
                     WinInsAutoSub.ValueDefect1 = "true";
                 }
@@ -4750,9 +4800,9 @@ namespace WizMes_WooJung
                 {
                     WinInsAutoSub.ValueDefect1 = "";
                 }
-
+                
             }
-
+            
         }
 
         private void Value2Text_KeyDown(object sender, KeyEventArgs e)

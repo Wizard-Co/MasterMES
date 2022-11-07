@@ -200,10 +200,13 @@
                         </Viewbox>
 
                     </StackPanel>
+                    
                 </Label>
                 <TextBox x:Name="txtMtrLOTIDSrh" Grid.Column="1" Style="{DynamicResource TextBoxSearch}" IsEnabled="False" 
                          KeyDown="txtMtrLOTIDSrh_KeyDown"/>
+                
             </Grid>
+            <Button x:Name="btnGoInsPectAuto" Grid.Column="3" Grid.Row="11"  Content="검사실적 바로가기" Click="btnGoInsPectAuto_Click"/>
             <!--스크랩 처리 : 좌우 공백을 위해 열 나눔-->
             <Grid Grid.Row="0" Grid.Column="3" Grid.RowSpan="4" Visibility="Hidden">
                 <Grid.ColumnDefinitions>
@@ -364,6 +367,7 @@
                                   VerticalContentAlignment="Center" Checked="AllCheck_Checked"
                                   Unchecked="AllCheck_Unchecked"/>
                     </StackPanel>
+                    
                     <DataGrid x:Name="dgdMain" Grid.Row="1" Margin="1" SelectionChanged="dgdMain_SelectionChanged"  Style="{StaticResource DataGridSet1}">
                         <DataGrid.RowStyle>
                             <Style TargetType="DataGridRow">
@@ -791,7 +795,7 @@
                         </Label>
                         <TextBox x:Name="txtLotID" Grid.Row="11" Grid.Column="1"  Style="{DynamicResource TextBoxInputArea}" Foreground="#b7b7b7"
                                  Text="{Binding Lotid}" IsHitTestVisible="False"></TextBox>
-
+                        
                         <Label Grid.Row="12" Grid.Column="0"  ToolTip="입고처 로트번호" Style="{DynamicResource LabelInputArea}" >
                             <Viewbox Style="{DynamicResource ViewBoxSetMaxMinHeight}">
                                 <TextBlock  Text="입고처로트번호" Style="{DynamicResource TextBlockInViewBoxInput}"/>

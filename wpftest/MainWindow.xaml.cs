@@ -18,7 +18,7 @@ namespace WizMes_WooJung
     {
         public static string mainStDate = string.Empty;
         public static string mainStTime = string.Empty;
-
+        public static string InstAutoLotID = string.Empty;
 
         public static List<MenuViewModel> mMenulist = new List<MenuViewModel>();
         public static MdiContainer MainMdiContainer = new MdiContainer();
