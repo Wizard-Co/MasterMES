@@ -1671,6 +1671,38 @@ namespace WizMes_WooJung
             return row;
         }
 
+        public DataGridRow GetRow(int index, DataGrid GridView1, string a)
+        {
+            DataGridRow row = (DataGridRow)GridView1.ItemContainerGenerator.ContainerFromIndex(index);
+
+            if (row == null)
+            {
+                GridView1.UpdateLayout();
+                GridView1.ScrollIntoView(GridView1.Items[index]);
+                WaitFor(TimeSpan.Zero, DispatcherPriority.SystemIdle);
+                row = (DataGridRow)GridView1.ItemContainerGenerator.ContainerFromIndex(index);
+            }
+            return row;
+        }
+        public static void WaitFor(TimeSpan time, DispatcherPriority priority)
+        {
+            DispatcherTimer timer = new DispatcherTimer(priority);
+            timer.Tick += new EventHandler(OnDispatched);
+            timer.Interval = time;
+            DispatcherFrame dispatcherFrame = new DispatcherFrame(false);
+            timer.Tag = dispatcherFrame;
+            timer.Start();
+            Dispatcher.PushFrame(dispatcherFrame);
+        }
+        public static void OnDispatched(object sender, EventArgs args)
+        {
+            DispatcherTimer timer = (DispatcherTimer)sender;
+            timer.Tick -= new EventHandler(OnDispatched);
+            timer.Stop();
+            DispatcherFrame frame = (DispatcherFrame)timer.Tag;
+            frame.Continue = false;
+        }
+
         /// <summary>
         /// 의존적 컨트롤의 하위 Control 정보 접근
         /// </summary>

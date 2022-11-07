@@ -294,7 +294,7 @@
                     </StackPanel>
                 </Label>
                 <TextBox x:Name="txtArticleSrh" Grid.Column="1" KeyDown="txtArticleSrh_KeyDown" Style="{DynamicResource TextBoxSearch_Q}"/>
-                <Button x:Name="btnPFArticleSrh"  Grid.Column="2" Click="btnPFArticleSrh_Click"  >
+                <Button x:Name="btnPFArticleSrh" Grid.Column="2" Click="btnPFArticleSrh_Click" >
                     <Image Source="{DynamicResource btiPlusFind}" Style="{DynamicResource imgPlusFind}"/>
                 </Button>
             </Grid>

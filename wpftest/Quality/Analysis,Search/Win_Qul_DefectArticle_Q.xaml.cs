@@ -1094,7 +1094,7 @@ namespace WizMes_WooJung
 
                 for (int i = 0; i < TargetCount; i++)
                 {
-                    DataGridRow dgr = lib.GetRow(i, PieChartProductValue);
+                    DataGridRow dgr = lib.GetRow(i, PieChartProductValue, "");
                     var ViewReceiver = dgr.Item as Win_Qul_DefectArticle_Q_ModelOccupy_CodeView;
 
 
@@ -1453,7 +1453,7 @@ namespace WizMes_WooJung
 
                 for (int i = 0; i < TargetCount; i++)
                 {
-                    DataGridRow dgr = lib.GetRow(i, PieChartTypeValue);
+                    DataGridRow dgr = lib.GetRow(i, PieChartTypeValue,"");
                     var ViewReceiver = dgr.Item as Win_Qul_DefectArticle_Q_DefectType_CodeView;
 
                     double value = 0.0;
