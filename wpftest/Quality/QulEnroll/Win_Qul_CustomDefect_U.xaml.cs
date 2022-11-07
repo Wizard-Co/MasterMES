@@ -78,7 +78,7 @@ namespace WizMes_WooJung
             dtpFromDate.Text = DateTime.Now.ToString("yyyy-MM-dd");
             dtpToDate.Text = DateTime.Now.ToString("yyyy-MM-dd");
             rbnOccurDay.IsChecked = true;
-            rbnChoice1.IsChecked = true;
+            rbnChoice2.IsChecked = true;
 
             txtCustomer.IsEnabled = false;
             btnCustomer.IsEnabled = false;
@@ -825,7 +825,7 @@ namespace WizMes_WooJung
             this.cboDvlYN_InGroupBox.ItemsSource = dt.DefaultView;
             this.cboDvlYN_InGroupBox.DisplayMemberPath = "display";
             this.cboDvlYN_InGroupBox.SelectedValuePath = "value";
-            this.cboDvlYN_InGroupBox.SelectedIndex = 0;
+            this.cboDvlYN_InGroupBox.SelectedIndex = chkIndex;
 
             ////////////////////////////////////////////////////////////////////////////////////
 
@@ -1659,7 +1659,7 @@ namespace WizMes_WooJung
             txtCorrContent.Text = string.Empty;
 
             cboCloseYN_InGroupBox.SelectedIndex = 0;
-            cboDvlYN_InGroupBox.SelectedIndex = 0;
+            cboDvlYN_InGroupBox.SelectedIndex = chkIndex;
 
             //5. 파일 박스.
             txtAttFile1.Text = string.Empty;
@@ -2755,16 +2755,22 @@ namespace WizMes_WooJung
             rbnActionDay.IsChecked = true;
         }
 
+        private int chkIndex = 1;
+
         private void rbnChoice1_Click(object sender, RoutedEventArgs e)
         {
             rbnChoice1.IsChecked = true;
             rbnChoice2.IsChecked = false;
+
+            chkIndex = 0;
         }
 
         private void rbnChoice2_Click(object sender, RoutedEventArgs e)
         {
             rbnChoice1.IsChecked = false;
             rbnChoice2.IsChecked = true;
+            
+            chkIndex = 1;
         }
     }
 

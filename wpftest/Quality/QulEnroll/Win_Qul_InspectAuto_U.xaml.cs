@@ -1730,7 +1730,7 @@ namespace WizMes_WooJung
                     sqlParameter.Add("LotID", txtLotNO.Text);
 
                     sqlParameter.Add("InspectQty", lib.CheckNullZero(txtInspectQty.Text));
-                    sqlParameter.Add("ECONo", cboEcoNO.SelectedValue.ToString());
+                    sqlParameter.Add("ECONo", cboEcoNO.SelectedValue != null ? cboEcoNO.SelectedValue.ToString() : "");
                     sqlParameter.Add("Comments", txtComments.Text);
                     sqlParameter.Add("InspectLevel", cboInspectClss.SelectedValue.ToString());
                     sqlParameter.Add("SketchPath", "");  // txtSKetch.Tag != null ? txtSKetch.Tag.ToString() :
@@ -2191,20 +2191,20 @@ namespace WizMes_WooJung
             //    return flag;
             //}
 
-            if((txtLotNO.Text.Length <= 0 || txtLotNO.Text.Equals("")) && (txtArticleName.Text.Length <= 0 || txtArticleName.Text.Equals("")))
-            {
-                MessageBox.Show("LotNO 또는 품명이 입력되지 않았습니다. LotNO가 없다면 품명을 입력해주세요.");
-                flag = false;
-                return flag;
-            }
+            //if((txtLotNO.Text.Length <= 0 || txtLotNO.Text.Equals("")) && (txtArticleName.Text.Length <= 0 || txtArticleName.Text.Equals("")))
+            //{
+            //    MessageBox.Show("LotNO 또는 품명이 입력되지 않았습니다. LotNO가 없다면 품명을 입력해주세요.");
+            //    flag = false;
+            //    return flag;
+            //}
 
                        
-            if (cboEcoNO.SelectedValue == null)
-            {
-                MessageBox.Show("EO-금형-순번이 선택되지 않았습니다.");
-                flag = false;
-                return flag;
-            }
+            //if (cboEcoNO.SelectedValue == null)
+            //{
+            //    MessageBox.Show("EO-금형-순번이 선택되지 않았습니다.");
+            //    flag = false;
+            //    return flag;
+            //}
 
             //입고, 출하 검사시에는 공정, 호기를 선택하지 않는다. Hidden시킬 것이니까 그게 아닐 경우에만 checkdata
             if(tbnIncomeInspect.IsChecked != true && tbnOutcomeInspect.IsChecked != true)

@@ -48,6 +48,22 @@ namespace WizMes_WooJung
             dgdMain.IsEnabled = true;
             grdInput.IsHitTestVisible = false;
             lblMsg.Visibility = Visibility.Hidden;
+
+            re_Search(0);
+        }
+
+        private void re_Search(int selectedIndex)
+        {
+            FillGrid();
+
+            if (dgdMain.Items.Count > 0)
+            {
+                dgdMain.SelectedIndex = selectedIndex;
+            }
+            else
+            {
+                this.DataContext = null;
+            }
         }
 
         /// <summary>
@@ -132,6 +148,8 @@ namespace WizMes_WooJung
         {
             try
             {
+                dgdMain.Items.Clear();
+
                 Dictionary<string, object> sqlParameter = new Dictionary<string, object>();
                 sqlParameter.Add("nChkCompany", 0);
                 sqlParameter.Add("sCompanyID", "");

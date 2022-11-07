@@ -370,25 +370,25 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Button x:Name="btnAdd" Grid.Column="1"  Click="btnAdd_Click" Margin="1">
+                    <Button x:Name="btnAdd" Grid.Column="0"  Click="btnAdd_Click" Margin="1">
                         <StackPanel Orientation="Horizontal" >
                             <Image Source="{DynamicResource btiInsert}" Style="{DynamicResource imgSize}" VerticalAlignment="Center"/>
                             <TextBlock Text="{Binding Source={StaticResource tblInsert},Mode=OneWay,Path=Text}" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
-                    <Button x:Name="btnUpdate" Grid.Column="2" Click="btnUpdate_Click" Margin="1">
+                    <Button x:Name="btnUpdate" Grid.Column="1" Click="btnUpdate_Click" Margin="1">
                         <StackPanel Orientation="Horizontal" >
                             <Image Source="{DynamicResource btiUpdate}" Style="{DynamicResource imgSize}" VerticalAlignment="Center"/>
                             <TextBlock Text="{Binding Source={StaticResource tblUpdate},Mode=OneWay,Path=Text}" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
-                    <Button x:Name="btnDelete" Grid.Column="3"  Click="btnDelete_Click" Margin="1">
+                    <Button x:Name="btnDelete" Grid.Column="2"  Click="btnDelete_Click" Margin="1">
                         <StackPanel Orientation="Horizontal" >
                             <Image Source="{DynamicResource btiDelete}" Style="{DynamicResource imgSize}" VerticalAlignment="Center"/>
                             <TextBlock Text="{Binding Source={StaticResource tblDelete},Mode=OneWay,Path=Text}" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
-                    <Button x:Name="btnClose" Grid.Column="4" Click="btnClose_Click" Margin="1">
+                    <Button x:Name="btnClose" Grid.Column="3" Click="btnClose_Click" Margin="1">
                         <StackPanel Orientation="Horizontal" >
                             <Image Source="{DynamicResource btiClose}" Style="{DynamicResource imgSize}" VerticalAlignment="Center"/>
                             <TextBlock Text="{Binding Source={StaticResource tblClose},Mode=OneWay,Path=Text}" VerticalAlignment="Center"/>
