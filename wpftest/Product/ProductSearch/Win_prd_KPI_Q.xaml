@@ -202,7 +202,7 @@
                       Style="{DynamicResource DataGridSet1}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="GBN" Width="0" MinWidth="0" Binding="{Binding gbn}" FontSize="20" />
-                        <DataGridTextColumn Header="품번" Width="*" MinWidth="150" Binding="{Binding ArticleNo}" 
+                        <DataGridTextColumn Header="품번" Width="*" MinWidth="150" Binding="{Binding BuyerArticleNo}" 
                                         ElementStyle="{StaticResource DataGridCellLeft}" FontSize="20" />
                         <DataGridTextColumn Header="품명" Width="*" MinWidth="150" Binding="{Binding Article}" 
                                         ElementStyle="{StaticResource DataGridCellLeft}" FontSize="20" />
@@ -211,7 +211,7 @@
                         <DataGridTextColumn Header="소요시간" MinWidth="150" Width="*" Binding="{Binding WorkTime, StringFormat='#,##0'}" 
                                         ElementStyle="{StaticResource DataGridCellRight}" FontSize="20" />
                         <DataGridTextColumn Header="검사자수" MinWidth="150" Width="*" Binding="{Binding Worker, StringFormat='#,##0'}" 
-                                        ElementStyle="{StaticResource DataGridCellRight}" FontSize="20" />
+                                        ElementStyle="{StaticResource DataGridCellRight}" FontSize="20" Visibility="Hidden"/>
                         <DataGridTextColumn Header="시간당생산량(EA/Hr)" MinWidth="150" Width="*" Binding="{Binding WorkQtyPerHour, StringFormat='#,##0'}" 
                                         ElementStyle="{StaticResource DataGridCellRight}" FontSize="20" />
 
@@ -223,7 +223,7 @@
                 <DataGrid x:Name="dgdOut" Grid.Row="1" IsReadOnly="True" 
                       Style="{DynamicResource DataGridSet1}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="품번" Width="*" MinWidth="150" Binding="{Binding ArticleNo}" 
+                        <DataGridTextColumn Header="품번" Width="*" MinWidth="150" Binding="{Binding BuyerArticleNo}" 
                                         ElementStyle="{StaticResource DataGridCellLeft}" FontSize="20"  />
                         <DataGridTextColumn Header="품명" Width="*" MinWidth="150" Binding="{Binding Article}" 
                                         ElementStyle="{StaticResource DataGridCellLeft}" FontSize="20" />
