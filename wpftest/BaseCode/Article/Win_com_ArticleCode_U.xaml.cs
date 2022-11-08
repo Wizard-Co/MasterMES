@@ -1409,13 +1409,6 @@ namespace WizMes_WooJung
                             }
                         }
 
-                        //if (listFtpFile.Count == 0)
-                        //{
-                        //    MessageBox.Show("이미지어디감?");
-                        //    flag = false;
-                        //    return flag;
-
-                        //}
 
                         if (listFtpFile.Count > 0)
                         {
