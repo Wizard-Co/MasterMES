@@ -343,7 +343,7 @@ namespace WizMes_WooJung
                     lvcChart.Series.Clear();
                 }
 
-                ChartInfoMCRunningRate chartRunningRate = new ChartInfoMCRunningRate();
+                sts_ChartInfoMCRunningRate chartRunningRate = new sts_ChartInfoMCRunningRate();
                 chartRunningRate.seriesCollection = new SeriesCollection();
                 chartRunningRate.chartRunningRate = new ChartValues<double>();
                 chartRunningRate.chartGoalRate = new ChartValues<double>();
@@ -659,7 +659,7 @@ namespace WizMes_WooJung
 
     }
 
-    public class ChartInfoMCRunningRate
+    public class sts_ChartInfoMCRunningRate 
     {
         public SeriesCollection seriesCollection { get; set; }
         public string[] Labels { get; set; }

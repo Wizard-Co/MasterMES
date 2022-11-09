@@ -265,41 +265,6 @@ namespace WizMes_WooJung.PopUp
 
         #endregion
 
-        #region 데이터 그리드 체크박스 이벤트
-
-        // 팝업창 체크박스 이벤트
-        private void CHK_Click_Sub(object sender, RoutedEventArgs e)
-        {
-            //CheckBox chkSender = sender as CheckBox;
-            //var MoveSub = chkSender.DataContext as Win_mtr_Move_U_CodeViewSub;
-
-            //if (MoveSub != null)
-            //{
-            //    if (chkSender.IsChecked == true)
-            //    {
-            //        MoveSub.Chk = true;
-            //        MoveSub.FontColor = true;
-
-            //        if (ovcMoveSub.Contains(MoveSub) == false)
-            //        {
-            //            ovcMoveSub.Add(MoveSub);
-            //        }
-            //    }
-            //    else
-            //    {
-            //        MoveSub.Chk = false;
-            //        MoveSub.FontColor = false;
-
-            //        if (ovcMoveSub.Contains(MoveSub) == true)
-            //        {
-            //            ovcMoveSub.Remove(MoveSub);
-            //        }
-            //    }
-            //}
-        }
-
-        #endregion // 데이터 그리드 체크박스 이벤트
-
         #region 전체 선택 체크박스 이벤트
 
         // 전체 선택 체크박스 체크 이벤트

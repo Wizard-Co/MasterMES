@@ -6,12 +6,12 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Windows;
 using System.Windows.Controls;
-using WizMes_KJ.PopUp;
-using WizMes_KJ.PopUP;
+using WizMes_WooJung.PopUp;
+using WizMes_WooJung.PopUP;
 using System.Windows.Input;
 using System.Threading;
 
-namespace WizMes_KJ
+namespace WizMes_WooJung
 {
     /**************************************************************************************************
     '** System 명 : WizMES
