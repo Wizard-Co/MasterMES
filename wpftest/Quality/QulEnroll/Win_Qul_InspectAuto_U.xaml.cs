@@ -1359,6 +1359,7 @@ namespace WizMes_WooJung
                                 BuyerModelID = dr["BuyerModelID"].ToString(),
                                 Comments = dr["Comments"].ToString(),
                                 DefectYN = dr["DefectYN"].ToString(),
+                                DefectYNGbn = dr["DefectYNGbn"].ToString(),
                                 ECONo = dr["ECONo"].ToString(),
                                 FMLGubun = dr["FMLGubun"].ToString(),
                                 FMLGubunName = dr["FMLGubunName"].ToString(),
@@ -4923,7 +4924,7 @@ namespace WizMes_WooJung
         public string InspectBasisID { get; set; }
         public string ProcessID { get; set; }
         public string DefectYN { get; set; }
-
+        public string DefectYNGbn { get; set; }
         public string Process { get; set; }
         public string BuyerArticleNo { get; set; }
         public string InspectPoint { get; set; }

@@ -789,12 +789,12 @@
                         <DataGridTextColumn Header="품번" Binding="{Binding BuyerArticleNo}"/>
                         <DataGridTextColumn Header="품명" Binding="{Binding Article}"/>
 
-
-                        <DataGridTextColumn Header="검사구분" Binding="{Binding InspectGubun}" Visibility="Hidden"/>
-                        <DataGridTextColumn Header="LOTNO" Binding="{Binding LotID}" />
+                            <DataGridTextColumn Header="거래처" Binding="{Binding InOutCustom}"/>
+                            <DataGridTextColumn Header="거래처ID" Binding="{Binding INOutCustomID}" Visibility="Hidden"/>
+                            <DataGridTextColumn Header="검사구분" Binding="{Binding InspectGubun}" Visibility="Hidden"/>
+                        
                         <DataGridTextColumn Header="검사수량" Binding="{Binding InspectQty}" ElementStyle="{StaticResource DataGridCellRight}"/>
-                        <DataGridTextColumn Header="검사기준번호" Binding="{Binding InspectBasisID}" ElementStyle="{StaticResource DataGridCellCenter}"/>
-                        <DataGridTextColumn Header="특이사항" Binding="{Binding Comments}"/>
+                        
 
                         <DataGridTextColumn Header="검사수준" Binding="{Binding InspectLevel}" ElementStyle="{StaticResource DataGridCellRight}"/>
                         <DataGridTextColumn Header="검사자" Binding="{Binding Name}"/>
@@ -804,13 +804,12 @@
 
                         <DataGridTextColumn Header="파일명" Binding="{Binding AttachedFile}"/>
                         <DataGridTextColumn Header="공정" Binding="{Binding Process}"/>
-                        <DataGridTextColumn Header="불합격" Binding="{Binding DefectYN}" ElementStyle="{StaticResource DataGridCellCenter}"/>
+                        <DataGridTextColumn Header="판정결과" Binding="{Binding DefectYNGbn}" ElementStyle="{StaticResource DataGridCellCenter}"/>
                         <DataGridTextColumn Header="InspectBasisID" Binding="{Binding InspectBasisID}" Visibility="Hidden"/>
                         <DataGridTextColumn Header="InspectBasisIDSeq" Binding="{Binding InspectBasisIDSeq}" Visibility="Hidden"/>
 
                         <DataGridTextColumn Header="MachineID" Binding="{Binding MachineID}" Visibility="Hidden"/>
-                        <DataGridTextColumn Header="거래처" Binding="{Binding InOutCustom}"/>
-                        <DataGridTextColumn Header="거래처ID" Binding="{Binding INOutCustomID}" Visibility="Hidden"/>
+                        
                         <DataGridTextColumn Header="입출고일자" Binding="{Binding INOutDate}"/>
                         <DataGridTextColumn Header="품질위험도" Binding="{Binding IRELevelName}"/>
 
@@ -828,6 +827,9 @@
                         <DataGridTextColumn Header="MilSheetNo" Binding="{Binding MilSheetNo}" Visibility="Hidden"/>
                         <DataGridTextColumn Header="INOUTCustomDate" Binding="{Binding INOUTCustomDate}" Visibility="Hidden"/>
                         <DataGridTextColumn Header="기준일자" Binding="{Binding MoldNo}" Visibility="Hidden"/>
+                            <DataGridTextColumn Header="LOTNO" Binding="{Binding LotID}" />
+                            <DataGridTextColumn Header="검사기준번호" Binding="{Binding InspectBasisID}" ElementStyle="{StaticResource DataGridCellCenter}"/>
+                            <DataGridTextColumn Header="특이사항" Binding="{Binding Comments}"/>
                         </DataGrid.Columns>
                     
                 </DataGrid>
@@ -1042,7 +1044,7 @@
                                       SelectedValue="{Binding FMLGubun}"/>
 
                             <Label Grid.Column="6" Grid.Row="5" Style="{DynamicResource LabelInputArea}">
-                                <TextBlock Text="검사항목 수" />
+                                <TextBlock Text="검사수량" />
                             </Label>
                             <Label Grid.Column="7" Grid.Row="5" Style="{DynamicResource LabelInputArea}">
                                 <TextBlock Text="판정결과" />
