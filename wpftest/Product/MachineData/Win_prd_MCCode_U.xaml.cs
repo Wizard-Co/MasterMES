@@ -1173,7 +1173,7 @@ namespace WizMes_WooJung
         {
             bool flag = true;
 
-            if (txtMCName.Text.Length <= 0 || txtMCName.Tag.ToString().Trim().Equals("") || txtMCName.Tag == null)
+            if (txtMCName.Text.Length <= 0 || txtMCName.Text.ToString().Trim().Equals("") || txtMCName.Text == null)
             {
                 MessageBox.Show("설비명이 입력되지 않았습니다.");
                 flag = false;
