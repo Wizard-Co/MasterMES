@@ -12,6 +12,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using WizMes_WooJung.PopUP;
+using WizMes_WooJung.PopUp;
 
 namespace WizMes_WooJung
 {
@@ -296,20 +297,29 @@ namespace WizMes_WooJung
             Dispatcher.BeginInvoke(new Action(() =>
 
             {
-                Thread.Sleep(2000);
+                try
+                {
+                    rowNum = 0;
+                    using (Loading lw = new Loading(FillGrid))
+                    {
+                        lw.ShowDialog();
+                        if (dgdMain.Items.Count <= 0)
+                        {
+                            this.DataContext = null;
+                            MessageBox.Show("조회된 내용이 없습니다.");
+                        }
+                        else
+                        {
+                            dgdMain.SelectedIndex = rowNum;
+                        }
 
-                //로직
-                rowNum = 0;
-                re_Search(rowNum);
-
-            }), System.Windows.Threading.DispatcherPriority.Background);
-
-
-
-            Dispatcher.BeginInvoke(new Action(() =>
-
-            {
-                btnSearch.IsEnabled = true;
+                        btnSearch.IsEnabled = true;
+                    }
+                }
+                catch (Exception ee)
+                {
+                    MessageBox.Show("예외처리 - " + ee.ToString());
+                }
 
             }), System.Windows.Threading.DispatcherPriority.Background);
         }

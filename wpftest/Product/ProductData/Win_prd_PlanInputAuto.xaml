@@ -180,17 +180,18 @@
                     <ColumnDefinition Width="90*" />
                     <ColumnDefinition Width="15*" />
                 </Grid.ColumnDefinitions>
-                <Label x:Name="lblOrderIDSrh" Grid.Column="0"
-                           MouseLeftButtonUp="lblOrderIDSrh_MouseLeftButtonUp" Style="{DynamicResource LabelSearch}">
+                <Label x:Name="lblOrderIDSrh" Grid.Column="0" 
+                       Style="{DynamicResource LabelSearch}"
+                       MouseLeftButtonUp="lblOrderIDSrh_MouseLeftButtonUp">
                     <StackPanel Style="{DynamicResource StackPanelInLabel}">
                         <Viewbox Style="{DynamicResource ViewBoxSetMaxMinHeight}">
-                            <CheckBox x:Name="chkOrderIDSrh" Checked="chkOrderIDSrh_Checked" 
-                                          Unchecked="chkOrderIDSrh_Unchecked" VerticalAlignment="Center"/>
+                            <CheckBox x:Name="chkOrderIDSrh" VerticalContentAlignment="Center" 
+                                      Checked="chkOrderIDSrh_Checked" Unchecked="chkOrderIDSrh_Unchecked"/>
                         </Viewbox>
-                        <Viewbox Style="{DynamicResource ViewBoxSetMaxMinHeight}">
-                            <TextBlock x:Name="tbkOrderSrh" Text=" 관리번호" Style="{DynamicResource TextBlockInViewBoxSearch}" />
+                        <Viewbox Style="{DynamicResource ViewBoxSetMaxMinHeight}" >
+                            <TextBlock x:Name="tbkOrderSrh" Text="관리번호" 
+                                       Style="{DynamicResource TextBlockInViewBoxSearch}"/>
                         </Viewbox>
-
                     </StackPanel>
                 </Label>
                 <TextBox x:Name="txtOrderIDSrh" Grid.Column="1" Style="{DynamicResource TextBoxSearch}" IsEnabled="False" />
@@ -295,8 +296,8 @@
                     </Button>
 
                     <!--주간생산계획생성-->
-                    <Button x:Name="btnWeekPlan" Grid.ColumnSpan="2" Grid.Column="0" Content="생산계획 편성" Margin="1" 
-                    Click="btnWeekPlan_Click" Background="Azure"/>
+                    <Button x:Name="btnAutoPlan" Grid.ColumnSpan="2" Grid.Column="0" Content="생산계획 편성" Margin="1" 
+                    Click="btnAutoPlan_Click" Background="Azure"/>
 
                 </Grid>
             </Grid>
@@ -326,7 +327,7 @@
                         <DataGridTextColumn Header="수주일자" Width="auto" Binding="{Binding AcptDate}" />
                         <DataGridTextColumn Header="품번" Width="auto" Binding="{Binding BuyerArticleNo}" />
                         <DataGridTextColumn Header="품명" Width="auto" Binding="{Binding Article}" />
-                        <DataGridTextColumn Header="관리번호" Width="auto" Binding="{Binding OrderID}" />
+                        <DataGridTextColumn Header="관리번호" Width="auto" Binding="{Binding OrderNo}" />
                         <DataGridTextColumn Header="납기일" Width="auto" Binding="{Binding DvlyDate}" />
                         <DataGridTextColumn Header="수주량" Width="auto" Binding="{Binding OrderQty}" />
                         <DataGridTextColumn Header="누계계획량" Width="auto" Binding="{Binding SumInstQty}" />
@@ -389,7 +390,7 @@
                             </ScrollViewer>
                         </Grid>
                         <DataGrid Grid.Row="1" x:Name="dgdSub" HeadersVisibility="None" ScrollViewer.PanningMode="VerticalFirst"
-                      ScrollViewer.CanContentScroll="False" VerticalScrollBarVisibility="Visible" AutoGenerateColumns="False"
+                      ScrollViewer.CanContentScroll="False" VerticalScrollBarVisibility="Visible" AutoGenerateColumns="False" 
                       >
                             <DataGrid.RowStyle>
                                 <Style TargetType="DataGridRow">
@@ -418,25 +419,10 @@
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <DataGridTemplateColumn x:Name="ArticleID" Width="*">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding ArticleID}" VerticalAlignment="Center" TextAlignment="Center" Padding="5 0" />
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-
                                 <DataGridTemplateColumn x:Name="Article" Width="*">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding Article}" VerticalAlignment="Center" TextAlignment="Center" Padding="5 0" />
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-                                <DataGridTemplateColumn x:Name="ProcessID" Width="*">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding ProcessID}" VerticalAlignment="Center" TextAlignment="Right" Padding="5 0 3 0" />
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
@@ -451,6 +437,20 @@
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding OrderQty}" VerticalAlignment="Center" TextAlignment="Right" Padding="5 0 3 0" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn x:Name="InstQty" Width="*">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding InstQty}" VerticalAlignment="Center" TextAlignment="Right" Padding="5 0 3 0" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn x:Name="StartDate" Width="*">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding StartDate}" VerticalAlignment="Center" TextAlignment="Right" Padding="5 0 3 0" />
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>

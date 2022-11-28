@@ -28,6 +28,9 @@ namespace WizMes_WooJung
     public partial class Win_Prd_Workcall : UserControl
     {
         int rowNum = 0;
+        string stDate = string.Empty;
+        string stTime = string.Empty;
+
         Lib lib = new Lib();
         Win_Prd_Workcall_CodeView Call = new Win_Prd_Workcall_CodeView();
 
@@ -38,6 +41,11 @@ namespace WizMes_WooJung
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             SetComboBox();
             chkDateSrh.IsChecked = true;
 
@@ -238,8 +246,6 @@ namespace WizMes_WooJung
             Dispatcher.BeginInvoke(new Action(() =>
 
             {
-                Thread.Sleep(2000);
-
                 //로직
                 using (Loading lw = new Loading(re_search))
                 {
@@ -262,6 +268,7 @@ namespace WizMes_WooJung
         // 닫기버튼
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             Lib.Instance.ChildMenuClose(this.ToString());
         }
 
@@ -282,7 +289,7 @@ namespace WizMes_WooJung
                     Dictionary<string, int> outputParam = new Dictionary<string, int>();
                     outputParam.Add("OutMessage", 200);
 
-                    Dictionary<string, string> dicResult = DataStore.Instance.ExecuteProcedureOutputNoTran("xp_prd_dWorkCall", sqlParameter, outputParam, true);
+                    Dictionary<string, string> dicResult = DataStore.Instance.ExecuteProcedureOutputNoTran_NewLog("xp_prd_dWorkCall", sqlParameter, outputParam, true, "D");
                     string result = dicResult["OutMessage"];
 
                     if (result.Equals(""))
@@ -312,7 +319,7 @@ namespace WizMes_WooJung
             string Name = string.Empty;
 
             string[] lst = new string[2];
-            lst[0] = "일 생산 집계";
+            lst[0] = "현장호출 ";
             lst[1] = dgdMain.Name;
 
             ExportExcelxaml ExpExc = new ExportExcelxaml(lst);
@@ -323,6 +330,7 @@ namespace WizMes_WooJung
             {
                 if (ExpExc.choice.Equals(dgdMain.Name))
                 {
+                    DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                     if (ExpExc.Check.Equals("Y"))
                         dt = Lib.Instance.DataGridToDTinHidden(dgdMain);
                     else
@@ -412,7 +420,7 @@ namespace WizMes_WooJung
             this.cboRespondState.DisplayMemberPath = "code_name";
             this.cboRespondState.SelectedValuePath = "code_id";
 
-            //호출사유 콤보박스 
+            //호출사유 콤보박스
             ObservableCollection<CodeView> ovcCallReason = ComboBoxUtil.Instance.GetCMCode_SetComboBox("PRDCallReason", "");
             this.cboCallReason.ItemsSource = ovcCallReason;
             this.cboCallReason.DisplayMemberPath = "code_name";
@@ -460,7 +468,7 @@ namespace WizMes_WooJung
                 sqlParameter.Add("chkCallReason", chkCallReason.IsChecked == true ? 1: 0);
                 sqlParameter.Add("CallReason", chkCallReason.IsChecked == true && cboCallReason.SelectedValue != null ? cboCallReason.SelectedValue.ToString() : "");
 
-                DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_prd_sWorkCall", sqlParameter, false); //2021-05-19
+                DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_prd_sWorkCall", sqlParameter, true, "R"); 
                 if (ds != null && ds.Tables.Count > 0)
                 {
                     DataTable dt = ds.Tables[0];

@@ -352,25 +352,32 @@ namespace WizMes_WooJung
             Dispatcher.BeginInvoke(new Action(() =>
 
             {
-                Thread.Sleep(2000);
+                try
+                {
+                    rowNum = 0;
+                    using (Loading lw = new Loading(FillGrid))
+                    {
+                        lw.ShowDialog();
+                        
+                        if (dgdInpsect.Items.Count <= 0)
+                        {
+                            this.DataContext = null;
+                            MessageBox.Show("조회된 내용이 없습니다.");
+                        }
+                        else
+                        {
+                            dgdInpsect.SelectedIndex = rowNum;
+                        }
 
-                //로직
-                rowNum = 0;
-                re_Search(rowNum);
+                        btnSearch.IsEnabled = true;
+                    }
+                }
+                catch (Exception ee)
+                {
+                    MessageBox.Show("예외처리 - " + ee.ToString());
+                }
 
             }), System.Windows.Threading.DispatcherPriority.Background);
-
-
-
-            Dispatcher.BeginInvoke(new Action(() =>
-
-            {
-                btnSearch.IsEnabled = true;
-
-            }), System.Windows.Threading.DispatcherPriority.Background);
-
-            
-
 
         }
 
@@ -1680,7 +1687,7 @@ namespace WizMes_WooJung
 
                 MainWindow.mMenulist[k].subProgramID = new MdiChild()
                 {
-                    Title = "WizMes_WooJung [" + MainWindow.mMenulist[k].MenuID.Trim() + "] " + MainWindow.mMenulist[k].Menu.Trim() +
+                    Title = "(주)WooJung [" + MainWindow.mMenulist[k].MenuID.Trim() + "] " + MainWindow.mMenulist[k].Menu.Trim() +
                             " (→" + MainWindow.mMenulist[k].ProgramID + ")",
                     Height = SystemParameters.PrimaryScreenHeight * 0.8,
                     MaxHeight = SystemParameters.PrimaryScreenHeight * 0.85,

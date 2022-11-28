@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WizMes_WooJung.PopUP;
+using WizMes_WooJung.PopUp;
 
 namespace WizMes_WooJung
 {
@@ -165,10 +166,11 @@ namespace WizMes_WooJung
                     dgdGonsu.Items.Clear();
                 }
 
-                if(chkBuyerArticleNo.IsChecked == true)
+                if (chkBuyerArticleNo.IsChecked == true)
                 {
                     ArticleID = txtBuyerArticleNoSearch.Tag.ToString();
-                } else if(CheckBoxArticleSearch.IsChecked == true)
+                }
+                else if (CheckBoxArticleSearch.IsChecked == true)
                 {
                     ArticleID = TextBoxArticleSearch.Tag.ToString();
                 }
@@ -202,7 +204,7 @@ namespace WizMes_WooJung
                                 Num = i + 1,
 
                                 GbnName = dr["GbnName"].ToString(),
-                                BuyerArticleNo = dr["BuyerArticleNo"].ToString(),
+                                ArticleNo = dr["ARTICLENO"].ToString(),
                                 Article = dr["article"].ToString(),
                                 WorkQty = Convert.ToDouble(dr["WorkQty"].ToString()),
                                 WorkTime = lib.returnNumStringOne(dr["WorkTime"].ToString()),
@@ -252,16 +254,34 @@ namespace WizMes_WooJung
 
         private void btnSearch_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                rowNum = 0;
-                re_Search(rowNum);
+            //검색버튼 비활성화
+            btnSearch.IsEnabled = false;
 
-            }
-            catch (Exception ee)
+            Dispatcher.BeginInvoke(new Action(() =>
+
             {
-                MessageBox.Show("오류지점 - " + ee.ToString());
-            }
+                try
+                {
+                    rowNum = 0;
+                    using (Loading lw = new Loading(FillGrid))
+                    {
+                        lw.ShowDialog();
+                        
+                        if (dgdGonsu.Items.Count <= 0 || dgdOut.Items.Count <= 0)
+                        {
+                            MessageBox.Show("조회된 내용이 없습니다.");
+                        }
+                        btnSearch.IsEnabled = true;
+                    }
+                }
+                catch (Exception ee)
+                {
+                    MessageBox.Show("예외처리 - " + ee.ToString());
+                }
+
+            }), System.Windows.Threading.DispatcherPriority.Background);
+
+
         }
 
         private void btiClose_Click(object sender, RoutedEventArgs e)
@@ -453,7 +473,7 @@ namespace WizMes_WooJung
         public int Num { get; set; }
 
         public string GbnName { get; set; }
-        public string BuyerArticleNo { get; internal set; }
+        public string ArticleNo { get; internal set; }
         public string Article { get; internal set; }
         public double WorkQty { get; internal set; }
         public string WorkTime { get; internal set; }

@@ -145,8 +145,6 @@ namespace WizMes_WooJung
             Dispatcher.BeginInvoke(new Action(() =>
 
             {
-                Thread.Sleep(2000);
-
                 //로직
                 rowNum = 0;
                 re_Search(rowNum);

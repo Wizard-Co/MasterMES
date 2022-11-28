@@ -1,13 +1,13 @@
 ﻿/**
  * 
- * @details 생산계획편성 
- * @author 김수정
- * @date 2022-09
+ * @details 주간생산계획 작성
+ * @author 정승학
+ * @date 2019-07-30
  * @version 1.0
  * 
  * @section MODIFYINFO 수정정보
  * - 수정일        - 수정자       : 수정내역
-
+ * - 2000-01-01    - 정승학       : -----
  * 
  * 
  * */
@@ -36,6 +36,8 @@ namespace WizMes_WooJung
 
         Lib lib = new Lib();
         int rowNum = 0;
+        string stDate = string.Empty;
+        string stTime = string.Empty;
 
         public Win_prd_PlanInputAuto()
         {
@@ -44,6 +46,11 @@ namespace WizMes_WooJung
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
+
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+
             Lib.Instance.UiLoading(sender);
             dtpSDate.SelectedDate = DateTime.Today;
             dtpEDate.SelectedDate = DateTime.Today;
@@ -351,15 +358,16 @@ namespace WizMes_WooJung
 
         #region 생산계획편성 
         
-        private void btnWeekPlan_Click(object sender, RoutedEventArgs e)
+        private void btnAutoPlan_Click(object sender, RoutedEventArgs e)
         {
-            Win_pop_AutoPlan AutoPlan = new Win_pop_AutoPlan(lstAutoPlan);
+            var Auto = dgdMain.SelectedItem as Win_prd_PlanInputAuto_CodeView;
 
-            var Auto = new Win_prd_PlanInputAuto_CodeView();
-            lstAutoPlan.Add(Auto);
+            
 
+            Win_pop_AutoPlan AutoPlan = null;
+
+            AutoPlan = new Win_pop_AutoPlan();
             AutoPlan.ShowDialog();
-
 
         }
         #endregion
@@ -376,8 +384,6 @@ namespace WizMes_WooJung
             Dispatcher.BeginInvoke(new Action(() =>
 
             {
-                Thread.Sleep(2000);
-
                 try
                 {
                     rowNum = 0;
@@ -385,6 +391,13 @@ namespace WizMes_WooJung
                     {
                         lw.ShowDialog();
                         dgdMain.SelectedIndex = rowNum;
+
+                        if (dgdMain.Items.Count <= 0)
+                        {
+                            MessageBox.Show("조회된 내용이 없습니다.");
+                        }
+
+                        btnSearch.IsEnabled = true;
                     }
                 }
                 catch (Exception ee)
@@ -396,17 +409,19 @@ namespace WizMes_WooJung
 
 
 
-            Dispatcher.BeginInvoke(new Action(() =>
+            //Dispatcher.BeginInvoke(new Action(() =>
 
-            {
-                btnSearch.IsEnabled = true;
+            //{
+            //    btnSearch.IsEnabled = true;
+                
 
-            }), System.Windows.Threading.DispatcherPriority.Background);
+            //}), System.Windows.Threading.DispatcherPriority.Background);
         }
 
         //닫기
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             Lib.Instance.ChildMenuClose(this.ToString());
         }
 
@@ -455,6 +470,7 @@ namespace WizMes_WooJung
             {
                 if (ExpExc.choice.Equals(dgdMain.Name))
                 {
+                    DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                     if (ExpExc.Check.Equals("Y"))
                         dt = Lib.Instance.DataGridToDTinHidden(dgdMain);
                     else
@@ -625,7 +641,7 @@ namespace WizMes_WooJung
         /// <summary>
         /// 실삭제
         /// </summary>
-        /// <param name="AutoPlan"></param>
+        /// <param name="WinMcRunning"></param>
         /// <returns></returns>
         private bool DeleteData(string strOrderNo)
         {
@@ -636,7 +652,7 @@ namespace WizMes_WooJung
             sqlParameter.Add("YYYY", strOrderNo);
 
 
-            string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_PlanInput_dAutoPlan", sqlParameter, "D");
+            string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_MachineGoal_dMachineGoalAll", sqlParameter, "D");
             DataStore.Instance.CloseConnection();
 
             if (result[0].Equals("success"))
@@ -707,31 +723,6 @@ namespace WizMes_WooJung
         public double NonePlanQty { get; set; }         //미계획량
         public string CustomID { get; set; }
 
-
-
-        public Win_prd_PlanInputAuto_CodeView Clone()
-        {
-            return (Win_prd_PlanInputAuto_CodeView)this.MemberwiseClone();
-        }
-
-        public void Copy(Win_prd_PlanInputAuto_CodeView Auto)
-        {
-            this.Num = Auto.Num;
-            this.InstDate = Auto.InstDate;
-            this.InstID = Auto.InstID;
-            this.AcptDate = Auto.AcptDate;
-            this.ArticleID = Auto.ArticleID;
-            this.Article = Auto.Article;
-            this.BuyerArticleNo = Auto.BuyerArticleNo;
-            this.OrderID = Auto.OrderID;
-            this.OrderQty = Auto.OrderQty;
-            this.DvlyDate = Auto.DvlyDate;
-            this.SumInstQty = Auto.SumInstQty;
-            this.PlanQty = Auto.PlanQty;
-            this.CustomID = Auto.CustomID;
-     
-
-        }
 
     }
 

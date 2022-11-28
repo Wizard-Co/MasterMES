@@ -378,8 +378,6 @@ namespace WizMes_WooJung
             Dispatcher.BeginInvoke(new Action(() =>
 
             {
-                Thread.Sleep(2000);
-
                 //로직
                 using (Loading lw = new Loading(re_Search))
                 {
@@ -553,7 +551,7 @@ namespace WizMes_WooJung
                 {
                     FillGridProcessMachine();
 
-                    if (dgdByProcess.Items.Count == 1)
+                    if (dgdByProcess.Items.Count <= 0)
                     {
                         MessageBox.Show("조회된 데이터가 없습니다.");
                         return;
@@ -563,7 +561,7 @@ namespace WizMes_WooJung
                 {
                     FillGridArticle();
 
-                    if (dgdByArticle.Items.Count == 1)
+                    if (dgdByArticle.Items.Count <= 0)
                     {
                         MessageBox.Show("조회된 데이터가 없습니다.");
                         return;
@@ -573,7 +571,7 @@ namespace WizMes_WooJung
                 {
                     FillGridWorker();
 
-                    if (dgdByWorker.Items.Count == 1)
+                    if (dgdByWorker.Items.Count <= 0)
                     {
                         MessageBox.Show("조회된 데이터가 없습니다.");
                         return;
@@ -583,7 +581,7 @@ namespace WizMes_WooJung
                 {
                     FillGrid_ThisMonth();
 
-                    if (DataGridThisMonth.Items.Count == 0)
+                    if (DataGridThisMonth.Items.Count <= 0)
                     {
                         MessageBox.Show("조회된 데이터가 없습니다.");
                         return;

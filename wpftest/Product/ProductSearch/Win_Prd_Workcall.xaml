@@ -32,14 +32,18 @@
                     <ColumnDefinition Width="65*" />
                     <ColumnDefinition Width="85*" />
                 </Grid.ColumnDefinitions>
-                <Label x:Name="lblDateSrh" Grid.Column="0" Margin="1" VerticalContentAlignment="Center"
-                       HorizontalContentAlignment="Left" MouseLeftButtonDown="lblDateSrh_MouseLeftButtonDown">
-                    <StackPanel Orientation="Horizontal" Margin="5 0 0 0">
-                        <Viewbox VerticalAlignment="Center">
-                            <CheckBox x:Name="chkDateSrh" Checked="chkDateSrh_Checked"
-                                      Unchecked="chkDateSrh_Unchecked" VerticalAlignment="Center"/>
+                <Label x:Name="lblDateSrh" Grid.Column="0" 
+                       Style="{DynamicResource LabelSearch}"
+                       MouseLeftButtonUp="lblDateSrh_MouseLeftButtonDown">
+                    <StackPanel Style="{DynamicResource StackPanelInLabel}">
+                        <Viewbox Style="{DynamicResource ViewBoxSetMaxMinHeight}">
+                            <CheckBox x:Name="chkDateSrh" VerticalContentAlignment="Center" 
+                                      Checked="chkDateSrh_Checked" Unchecked="chkDateSrh_Unchecked"/>
                         </Viewbox>
-                        <TextBlock Text="현장호출일" VerticalAlignment="Center" />
+                        <Viewbox Style="{DynamicResource ViewBoxSetMaxMinHeight}" >
+                            <TextBlock x:Name="tbkDate" Text="현장호출일" 
+                                       Style="{DynamicResource TextBlockInViewBoxSearch}"/>
+                        </Viewbox>
                     </StackPanel>
                 </Label>
                 <DatePicker x:Name="dtpSDate" Grid.Column="1" Margin="1" 
@@ -59,10 +63,10 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Button x:Name="btnLastMonth" Grid.Column="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="전월" Margin="1" Click="btnLastMonth_Click"/>
-                <Button x:Name="btnThisMonth" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="금월" Margin="1" Click="btnThisMonth_Click" />
-                <Button x:Name="btnYesterDay" Grid.Column="2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="전일" Margin="1" Click="btnYesterDay_Click"/>
-                <Button x:Name="btnToday" Grid.Column="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="금일" Margin="1" Click="btnToday_Click"/>
+                <Button x:Name="btnLastMonth" Grid.Column="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="전월" Click="btnLastMonth_Click"/>
+                <Button x:Name="btnThisMonth" Grid.Column="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="금월"  Click="btnThisMonth_Click" />
+                <Button x:Name="btnYesterDay" Grid.Column="2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="전일"  Click="btnYesterDay_Click"/>
+                <Button x:Name="btnToday" Grid.Column="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="금일"  Click="btnToday_Click"/>
             </Grid>
 
             <!--공정-->
@@ -81,7 +85,7 @@
                                       Checked="chkProcess_Checked" Unchecked="chkProcess_Unchecked"/>
                         </Viewbox>
                         <Viewbox Style="{DynamicResource ViewBoxSetMaxMinHeight}" >
-                            <TextBlock x:Name="tbkProcess" Text="공정" 
+                            <TextBlock x:Name="tbkProcess" Text="공       정" 
                                        Style="{DynamicResource TextBlockInViewBoxSearch}"/>
                         </Viewbox>
                     </StackPanel>
@@ -107,7 +111,7 @@
                                       Checked="chkMachine_Checked" Unchecked="chkMachine_Unchecked"/>
                         </Viewbox>
                         <Viewbox Style="{DynamicResource ViewBoxSetMaxMinHeight}" >
-                            <TextBlock x:Name="tbkMachine" Text="호기" 
+                            <TextBlock x:Name="tbkMachine" Text="호       기" 
                                        Style="{DynamicResource TextBlockInViewBoxSearch}"/>
                         </Viewbox>
                     </StackPanel>
@@ -154,7 +158,7 @@
                                       Checked="chkCallPerson_Checked" Unchecked="chkCallPerson_Unchecked"/>
                         </Viewbox>
                         <Viewbox Style="{DynamicResource ViewBoxSetMaxMinHeight}" >
-                            <TextBlock x:Name="tbkCallPerson" Text="호출자" 
+                            <TextBlock x:Name="tbkCallPerson" Text="호  출  자" 
                                        Style="{DynamicResource TextBlockInViewBoxSearch}"/>
                         </Viewbox>
                     </StackPanel>

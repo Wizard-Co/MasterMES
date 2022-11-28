@@ -332,8 +332,6 @@ namespace WizMes_WooJung
             Dispatcher.BeginInvoke(new Action(() =>
 
             {
-                Thread.Sleep(2000);
-
                 //로직
                 strFlag = string.Empty;
                 btnNewMCEvalCal.IsEnabled = true;
@@ -439,7 +437,7 @@ namespace WizMes_WooJung
 
                 MainWindow.mMenulist[k].subProgramID = new MdiChild()
                 {
-                    Title = "WizMes_WooJung [" + MainWindow.mMenulist[k].MenuID.Trim() + "] " + MainWindow.mMenulist[k].Menu.Trim() + 
+                    Title = "(주)WooJung [" + MainWindow.mMenulist[k].MenuID.Trim() + "] " + MainWindow.mMenulist[k].Menu.Trim() + 
                             " (→" + MainWindow.mMenulist[k].ProgramID + ")",
                     Height = SystemParameters.PrimaryScreenHeight * 0.8,
                     MaxHeight = SystemParameters.PrimaryScreenHeight * 0.85,

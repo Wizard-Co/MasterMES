@@ -15,14 +15,11 @@ namespace WizMes_WooJung.PopUp
     public partial class Win_pop_AutoPlan : Window
     {
         int rowNum = 0;
+        string stDate = string.Empty;
+        string stTime = string.Empty;
 
-        public string InstID = "";
-
+        string InstID = ""; // 작업지시 PK
         Lib lib = new Lib();
-
-        public Win_prd_PlanInputAuto AutoPlan = new Win_prd_PlanInputAuto();
-
-        public List<Win_prd_PlanInputAuto_CodeView> lstAutoPlan = new List<Win_prd_PlanInputAuto_CodeView>();
 
 
 
@@ -31,62 +28,40 @@ namespace WizMes_WooJung.PopUp
             InitializeComponent();
         }
 
-        public Win_pop_AutoPlan(List<Win_prd_PlanInputAuto_CodeView> lstAutoPlan)
+        private void AutoPlan_Loaded(object sender, RoutedEventArgs e)
         {
-            InitializeComponent();
+            stDate = DateTime.Now.ToString("yyyyMMdd");
+            stTime = DateTime.Now.ToString("HHmm");
 
-            this.lstAutoPlan = lstAutoPlan;
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
+            Lib.Instance.UiLoading(sender);
         }
 
-        public Win_pop_AutoPlan(string InstID)
-        {
-            InitializeComponent();
-
-            this.InstID = InstID;
-
-        }
-
-        // 콤보박스셋팅
-        private void ComboBoxSetting()
-        {
-            
-
-        }
-
-        private void MoveSub_Loaded(object sender, RoutedEventArgs e)
-        {
-            ComboBoxSetting();
-
-            FillGrid();
-        }
-
-        #region 주요 버튼 이벤트 - 확인, 닫기, 검색
+        #region 버튼 이벤트 -  닫기, 검색
 
         public List<Win_mtr_LotStockControl_U_CodeView> lstLotStock = new List<Win_mtr_LotStockControl_U_CodeView>();
 
-        //확인
-        private void btnConfirm_Click(object sender, RoutedEventArgs e)
-        {
-            for (int i = 0; i < dgdMain.Items.Count; i++)
-            {
-                var main = dgdMain.Items[i] as Win_mtr_LotStockControl_U_CodeView;
-
-                if (main != null && main.Chk == true)
-                {
-                    lstLotStock.Add(main);
-
-                }
-
-            }
-
-            this.DialogResult = true;
-
-        }
 
         //닫기
-        private void btnCancel_Click(object sender, RoutedEventArgs e)
+        private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "E");
             this.Close();
+        }
+
+        private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                using (Loading lw = new Loading(SaveData))
+                {
+                    lw.ShowDialog();
+                }
+            }
+            catch (Exception ee)
+            {
+                MessageBox.Show("예외처리 - " + ee.ToString());
+            }
         }
 
         //검색
@@ -95,10 +70,22 @@ namespace WizMes_WooJung.PopUp
             Dispatcher.BeginInvoke(new Action(() =>
 
             {
-                Thread.Sleep(2000);
-
                 //로직
-                re_Search(rowNum);
+                using (Loading lw = new Loading(re_Search))
+                {
+                    lw.ShowDialog();
+                }
+
+                if (dgdMain.Items.Count == 0)
+                {
+                    dgdPattern.Items.Clear();
+
+                    MessageBox.Show("조회된 데이터가 없습니다.");
+                }
+                else
+                {
+                    dgdMain.SelectedIndex = 0;
+                }
 
             }), System.Windows.Threading.DispatcherPriority.Background);
 
@@ -124,7 +111,7 @@ namespace WizMes_WooJung.PopUp
 
         #region 주요 메서드 모음
 
-        private void re_Search(int rowNum)
+        private void re_Search()
         {
             FillGrid();
 
@@ -140,12 +127,17 @@ namespace WizMes_WooJung.PopUp
             }
         }
 
-        #region 조회
+        #region 조회 - 생성대상조회 
         private void FillGrid()
         {
             if (dgdMain.Items.Count > 0)
             {
                 dgdMain.Items.Clear();
+            }
+            if (dgdPattern.Items.Count > 0)
+            {
+                dgdPattern.Items.Clear();
+
             }
 
             try
@@ -183,14 +175,24 @@ namespace WizMes_WooJung.PopUp
                         {
                             i++;
 
-                            var AutoPlan = new Win_prd_PlanInputAuto_CodeView()
+                            var AutoPlan = new Win_prd_AutoPlan_CodeView()
                             {
-                            
-
+                                AcptDate = dr["AcptDate"].ToString(),
+                                KCustom = dr["KCustom"].ToString(),
+                                BuyerArticleNo = dr["BuyerArticleNo"].ToString(),
+                                Article = dr["Article"].ToString(),
+                                ArticleID = dr["ArticleID"].ToString(),
+                                OrderNo = dr["OrderNo"].ToString(),
+                                OrderID = dr["OrderID"].ToString(),
+                                DvlyDate =dr["DvlyDate"].ToString(),
+                                OrderQty = dr["OrderQty"].ToString(),
+                                OrderInstQy = dr["OrderInstQy"].ToString(),
+                                notOrderInstQty = dr["notOrderInstQty"].ToString(),
+                                OrderSeq = dr["OrderSeq"].ToString(),
 
                             };
 
-                            //dgdMain.Items.Add();
+                            dgdMain.Items.Add(AutoPlan);
                         }
                         //tbkCount.Text = "▶ 검색결과 : " + i.ToString() + " 건";
                     }
@@ -211,35 +213,173 @@ namespace WizMes_WooJung.PopUp
 
         #endregion
 
-        #region 생산계획편성
+
+        #region 생산계획편성 - 편성처리 
         //
-        private void btnAutoPlan_Click()
+        private void SaveData()
         {
+            if (dgdPattern.Items.Count > 0)
+            {
+                dgdPattern.Items.Clear();
+
+            }
+            bool flag = false;
+            List<Procedure> Prolist = new List<Procedure>();
+            List<Dictionary<string, object>> ListParameter = new List<Dictionary<string, object>>();
+            var AutoPlan = dgdMain.SelectedItem as Win_prd_AutoPlan_CodeView;
+
+            if (AutoPlan != null)
+            {
+                try
+                {
+                    if (CheckData(AutoPlan.ArticleID))
+                    {
+                        Dictionary<string, object> sqlParameter = new Dictionary<string, object>();
+
+                        sqlParameter.Clear();
+
+                        sqlParameter.Add("InstID", "");
+                        //sqlParameter.Add("InstDate", AutoPlan.AcptDate);
+                        sqlParameter.Add("InstDate", DateTime.Now.ToString("yyyyMMdd"));
+                        sqlParameter.Add("OrderID", AutoPlan.OrderID);
+                        sqlParameter.Add("OrderSeq", AutoPlan.OrderSeq);
+                        sqlParameter.Add("InstRoll", "0");
+                        sqlParameter.Add("InstQty", AutoPlan.notOrderInstQty.Replace(",", ""));
+                        sqlParameter.Add("ExpectDate", AutoPlan.DvlyDate);
+                        sqlParameter.Add("PersonID", MainWindow.CurrentUser);
+                        sqlParameter.Add("Remark", "");
+                        sqlParameter.Add("MtrExceptYN", "N");
+                        sqlParameter.Add("OutwareExceptYN", "N");
+                        sqlParameter.Add("CreateUserID", MainWindow.CurrentUser);
+                        sqlParameter.Add("AutoPlanYN", chkAutoInput.IsChecked == true ? "Y" : "N");
+
+                        Procedure pro1 = new Procedure();
+                        pro1.Name = "xp_PlanInput_iAutoPlan";
+                        pro1.OutputUseYN = "Y";
+                        pro1.OutputName = "InstID";
+                        pro1.OutputLength = "12";
+
+                        Prolist.Add(pro1);
+                        ListParameter.Add(sqlParameter);
+
+                        for (int i = 0; i < dgdPattern.Items.Count; i++)
+                        {
+                            var AutoPattern = dgdPattern.Items[i] as Win_prd_AutoPattern_CodeView;
+                            sqlParameter = new Dictionary<string, object>();
+                            sqlParameter.Add("InstID", "");
+                            sqlParameter.Add("InstDate", DateTime.Now.ToString("yyyyMMdd"));
+                            sqlParameter.Add("ProcSeq", AutoPattern.PatternSeq);
+                            sqlParameter.Add("ArticleID", AutoPattern.ArticleID);
+                            sqlParameter.Add("ProcessID", AutoPattern.ProcessID);
+
+                            sqlParameter.Add("InstRemark", "");
+                            sqlParameter.Add("InstQty", AutoPlan.notOrderInstQty.Replace(",", "")); //내일오면 이거 메인그리드 미계획량으로 바꾸자 
+                            sqlParameter.Add("StartDate", DateTime.Now.ToString("yyyyMMdd"));
+                            sqlParameter.Add("EndDate", AutoPattern.EndDate == null ? "" : AutoPattern.EndDate);
+                            sqlParameter.Add("Remark", AutoPattern.Remark == null ? "" : AutoPattern.Remark);
+
+                            sqlParameter.Add("MachineID", AutoPattern.MachineID == null ? "" : AutoPattern.MachineID);
+                            sqlParameter.Add("MtrExceptYN", AutoPattern.MtrExceptYN == null ? "" : AutoPattern.MtrExceptYN);
+                            sqlParameter.Add("FirstInFirstOutYN", AutoPattern.FirstInFirstOutYN == null ? "" : AutoPattern.FirstInFirstOutYN);
+                            sqlParameter.Add("CreateUserID", MainWindow.CurrentUser);
+                            sqlParameter.Add("AutoPlanYN", chkAutoInput.IsChecked == true ? "Y" : "N");
+
+                            Procedure pro2 = new Procedure();
+                            pro2.Name = "xp_PlanInput_iAutoPlanSub";
+                            pro2.OutputUseYN = "N";
+                            pro2.OutputName = "InstID";
+                            pro2.OutputLength = "12";
+
+                            Prolist.Add(pro2);
+                            ListParameter.Add(sqlParameter);
+                        }
+
+                        List<KeyValue> list_Result = new List<KeyValue>();
+                        list_Result = DataStore.Instance.ExecuteAllProcedureOutputGetCS_NewLog(Prolist, ListParameter, "C");
+                        string sGetID = string.Empty;
+
+                        if (list_Result[0].key.ToLower() == "success")
+                        {
+                            list_Result.RemoveAt(0);
+                            for (int i = 0; i < list_Result.Count; i++)
+                            {
+                                KeyValue kv = list_Result[i];
+                                if (kv.key == "InstID")
+                                {
+                                    InstID = kv.value;
+                                    sGetID = kv.value;
+                                    flag = true;
+                                }
+                            }
+
+                            if (flag && chkAutoInput.IsChecked == true)
+                            {
+                                UpdatePattern(AutoPlan.OrderID, AutoPlan.ArticleID);
+                            }
+
+                            MessageBox.Show("편성이 완료 되었습니다");
+                            re_Search();
+                        }
+                        else
+                        {
+                            MessageBox.Show("[저장실패]\r\n" + list_Result[0].value.ToString());
+                            flag = false;
+                            
+                        }
+                    }
+                   
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("오류 발생, 오류 내용 : " + ex.ToString());
+                }
+                finally
+                {
+                    DataStore.Instance.CloseConnection();
+                }
+
+            } else
+            {
+                MessageBox.Show("대상을 선택 해주세요");
+            }
+
+        }
+        #endregion
+
+        #region UpdatePattern
+        //
+        private bool UpdatePattern(string strOrderID, string strArticleID)
+        {
+            bool flag = false;
+            List<Procedure> Prolist = new List<Procedure>();
+            List<Dictionary<string, object>> ListParameter = new List<Dictionary<string, object>>();
 
             try
             {
-                // 대상조회된거 선택한 셀 정보들 넣기 
                 Dictionary<string, object> sqlParameter = new Dictionary<string, object>();
                 sqlParameter.Clear();
-                sqlParameter.Add("InstID", ""); 
-                sqlParameter.Add("InstDate", MainWindow.CurrentUser);
-                sqlParameter.Add("OrderID", MainWindow.CurrentUser);
-                sqlParameter.Add("OrderSeq", MainWindow.CurrentUser);
-                sqlParameter.Add("InstRoll", MainWindow.CurrentUser);
-                sqlParameter.Add("InstQty", MainWindow.CurrentUser);
-                sqlParameter.Add("ExpectDate", MainWindow.CurrentUser);
-                sqlParameter.Add("PersonID", MainWindow.CurrentUser);
-                sqlParameter.Add("Remark", MainWindow.CurrentUser);
-                sqlParameter.Add("MtrExceptYN", MainWindow.CurrentUser);
-                sqlParameter.Add("OutwareExceptYN", MainWindow.CurrentUser);
-                sqlParameter.Add("CreateUserID", MainWindow.CurrentUser);
-                sqlParameter.Add("AutoPlanYN", MainWindow.CurrentUser);
+                sqlParameter.Add("OrderID", strOrderID);
+                sqlParameter.Add("ArticleID", strArticleID);
+                sqlParameter.Add("PatternID", "");
+                sqlParameter.Add("StuffCloseClss", "");
+                sqlParameter.Add("LastUpdateUserID", MainWindow.CurrentUser);
 
-                string[] result = DataStore.Instance.ExecuteProcedure("xp_PlanInput_iAutoPlan", sqlParameter, false);
+                Procedure pro1 = new Procedure();
+                pro1.Name = "xp_PlanInput_uOrderPatternID";
+                pro1.OutputUseYN = "N";
+                pro1.OutputName = "OrderID";
+                pro1.OutputLength = "10";
 
-                if (result[0].Equals("success"))
+                Prolist.Add(pro1);
+                ListParameter.Add(sqlParameter);
+
+                string[] Confirm = new string[2];
+                Confirm = DataStore.Instance.ExecuteAllProcedureOutputNew(Prolist, ListParameter);
+                if (Confirm[0] != "success")
                 {
-                    //MessageBox.Show("성공ㅇㅅㅇ");
+                    MessageBox.Show("[저장실패]\r\n" + Confirm[1].ToString());
+                    flag = false;
+                    //return false;
                 }
             }
             catch (Exception ex)
@@ -251,15 +391,69 @@ namespace WizMes_WooJung.PopUp
                 DataStore.Instance.CloseConnection();
             }
 
+            return flag;
         }
         #endregion
 
+
         #region 유효성 검사
 
-        private bool CheckData()
+        private bool CheckData(string sArticleID)
         {
             bool flag = true;
 
+            try
+            {
+                Dictionary<string, object> sqlParameter = new Dictionary<string, object>();
+                sqlParameter.Clear();
+                sqlParameter.Add("ArticleID", sArticleID);
+                sqlParameter.Add("sOutMessage", "");
+            
+                DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_prd_sAutoPattern", sqlParameter, true, "R");
+
+                if (ds != null && ds.Tables.Count > 0)
+                {
+                    DataTable dt = ds.Tables[0];
+                    int i = 0;
+
+                    if (dt.Rows.Count > 0)
+                    {
+                        DataRowCollection drc = dt.Rows;
+
+                        foreach (DataRow dr in drc)
+                        {
+                            i++;
+
+                            var Pattern = new Win_prd_AutoPattern_CodeView()
+                            {
+                                PatternSeq = dr["PatternSeq"].ToString(),
+                                ProcessID = dr["ProcessID"].ToString(),
+                                Process = dr["Process"].ToString(),
+                                Qty = dr["Qty"].ToString(),
+                                ArticleID = dr["ArticleID"].ToString(),
+                                Article = dr["Article"].ToString(),
+                                BuyerArticleNo = dr["BuyerArticleNo"].ToString(),
+                                LVL = dr["LVL"].ToString(),
+                                ChildBuyerArticleNo = dr["ChildBuyerArticleNo"].ToString(),
+                             
+                            };
+
+                            dgdPattern.Items.Add(Pattern);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show("오류 발생, 오류 내용 : " + ex.ToString());
+                MessageBox.Show("품목코드에 공정패턴이 없습니다" + " : " + ex.ToString());
+                flag = false;
+                return flag;
+            }
+            finally
+            {
+                DataStore.Instance.CloseConnection();
+            }
             return flag;
         }
 
@@ -409,33 +603,7 @@ namespace WizMes_WooJung.PopUp
 
         #endregion // 기타 메서드
 
-        // 메인 그리드 더블클릭시 선택한걸로!!
-        private void dgdMain_PreviewMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            //if (e.ClickCount == 2)
-            //{
-            //    btnConfirm_Click(null, null);
-            //}
-        }
 
-        private void chkReq_Click(object sender, RoutedEventArgs e)
-        {
-            CheckBox chkSender = sender as CheckBox;
-            var LotStock = chkSender.DataContext as Win_prd_PlanInputAuto_CodeView;
-
-            if (LotStock != null)
-            {
-                //if (chkSender.IsChecked == true)
-                //{
-                //    LotStock.Chk = true;
-                //}
-                //else
-                //{
-                //    LotStock.Chk = false;
-                //}
-
-            }
-        }
 
 
         //2021-05-29(2021-07-12 해제도 추가)
@@ -466,5 +634,40 @@ namespace WizMes_WooJung.PopUp
 
     }
 
+    public class Win_prd_AutoPlan_CodeView
+    {
+        public int Num { get; set; }
+        public string AcptDate { get; set; }            
+        public string KCustom { get; set; }           
+        public string BuyerArticleNo { get; set; }          
+        public string ArticleID { get; set; }          
+        public string Article { get; set; }            
+        public string OrderNo { get; set; }     
+        public string OrderID { get; set; }             
+        public string OrderSeq { get; set; }             
+        public string DvlyDate { get; set; }          
+        public string OrderQty { get; set; }            //수주량
+        public string OrderInstQy { get; set; }         //계획량
+        public string notOrderInstQty { get; set; }     //미계획량 
+    }
 
+    public class Win_prd_AutoPattern_CodeView
+    {
+        public string PatternSeq { get; set; }
+        public string ProcessID { get; set; }
+        public string Process { get; set; }
+        public string Qty { get; set; }
+        public string ArticleID { get; set; }
+        public string Article { get; set; }
+        public string BuyerArticleNo { get; set; }
+        public string LVL { get; set; }
+        public string ChildBuyerArticleNo { get; set; }            
+        public string InstQty { get; set; }            
+        public string StartDate { get; set; }            
+        public string EndDate { get; set; }            
+        public string Remark { get; set; }            
+        public string MachineID { get; set; }            
+        public string MtrExceptYN { get; set; }            
+        public string FirstInFirstOutYN { get; set; }            
+    }
 }

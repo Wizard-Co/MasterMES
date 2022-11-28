@@ -151,8 +151,6 @@ namespace WizMes_WooJung
             Dispatcher.BeginInvoke(new Action(() =>
 
             {
-                Thread.Sleep(2000);
-
                 //로직
                 if (dgdRepairQ.Items.Count > 0)
                 {

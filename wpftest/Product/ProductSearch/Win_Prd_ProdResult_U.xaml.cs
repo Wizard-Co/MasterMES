@@ -748,8 +748,6 @@ namespace WizMes_WooJung
             Dispatcher.BeginInvoke(new Action(() =>
 
             {
-                Thread.Sleep(2000);
-
                 //로직
                 rowNum = 0;
                 using (Loading lw = new Loading(re_Search))

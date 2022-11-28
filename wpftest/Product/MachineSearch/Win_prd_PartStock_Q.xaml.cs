@@ -246,8 +246,6 @@ namespace WizMes_WooJung
             Dispatcher.BeginInvoke(new Action(() =>
 
             {
-                Thread.Sleep(2000);
-
                 //로직
                 if (dgdMcStock.Items.Count > 0)
                 {

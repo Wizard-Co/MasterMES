@@ -311,6 +311,50 @@ namespace WizMes_WooJung
             MainWindow.pf.ReturnCode(txtCustom, (int)Defind_CodeFind.DCF_CUSTOM, "");
         }
 
+        //품번
+        private void LabelBuyerArticleNoSearch_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (CheckBoxBuyerArticleNoSearch.IsChecked == true)
+            {
+                CheckBoxBuyerArticleNoSearch.IsChecked = false;
+            }
+            else
+            {
+                CheckBoxBuyerArticleNoSearch.IsChecked = true;
+            }
+        }
+
+        
+        //품번
+        private void CheckBoxBuyerArticleNoSearch_Checked(object sender, RoutedEventArgs e)
+        {
+            TextBoxBuyerArticleNoSearch.IsEnabled = true;
+            ButtonBuyerArticleNoSearch.IsEnabled = true;
+            TextBoxBuyerArticleNoSearch.Focus();
+        }
+
+        //품번
+        private void CheckBoxBuyerArticleNoSearch_Unchecked(object sender, RoutedEventArgs e)
+        {
+            TextBoxBuyerArticleNoSearch.IsEnabled = false;
+            ButtonBuyerArticleNoSearch.IsEnabled = false;
+        }
+
+        //품번
+        private void TextBoxBuyerArticleNoSearch_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                MainWindow.pf.ReturnCode(TextBoxBuyerArticleNoSearch, 76, TextBoxBuyerArticleNoSearch.Text);
+            }
+        }
+
+        //품번
+        private void ButtonBuyerArticleNoSearch_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow.pf.ReturnCode(TextBoxBuyerArticleNoSearch, 76, TextBoxBuyerArticleNoSearch.Text);
+        }
+
         //품명
         private void lblArticle_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
@@ -346,49 +390,6 @@ namespace WizMes_WooJung
         private void btnPfArticle_Click(object sender, RoutedEventArgs e)
         {
             MainWindow.pf.ReturnCode(txtArticle, 77, "");
-        }
-
-        //품번
-        private void LabelBuyerArticleNoSearch_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            if (chkBuyerArticleNoSearch.IsChecked == true)
-            {
-                chkBuyerArticleNoSearch.IsChecked = false;
-            }
-            else
-            {
-                chkBuyerArticleNoSearch.IsChecked = true;
-            }
-        }
-
-        //품번
-        private void chkBuyerArticleNoSearch_Checked(object sender, RoutedEventArgs e)
-        {
-            txtBuyerArticleNoSearch.IsEnabled = true;
-            btnpfBuyerArticleNoSearch.IsEnabled = true;
-            txtBuyerArticleNoSearch.Focus();
-        }
-
-        //품번
-        private void chkBuyerArticleNoSearch_Unchecked(object sender, RoutedEventArgs e)
-        {
-            txtBuyerArticleNoSearch.IsEnabled = false;
-            btnpfBuyerArticleNoSearch.IsEnabled = false;
-        }
-
-        //품번
-        private void txtBuyerArticleNoSearch_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-            {
-                MainWindow.pf.ReturnCode(txtBuyerArticleNoSearch, 76, txtBuyerArticleNoSearch.Text);
-            }
-        }
-
-        //품번
-        private void btnpfBuyerArticleNoSearch_Click(object sender, RoutedEventArgs e)
-        {
-            MainWindow.pf.ReturnCode(txtBuyerArticleNoSearch, 76, txtBuyerArticleNoSearch.Text);
         }
 
         //관리번호
@@ -473,8 +474,6 @@ namespace WizMes_WooJung
             Dispatcher.BeginInvoke(new Action(() =>
 
             {
-                Thread.Sleep(2000);
-
                 //로직
                 using (Loading lw = new Loading(re_Search))
                 {
@@ -568,8 +567,8 @@ namespace WizMes_WooJung
                 sqlParameter.Add("Order", chkOrder.IsChecked == true ? txtOrder.Text : "");
                 sqlParameter.Add("ChkIncPlComplete", chkPlanComplete.IsChecked == true ? 1 : 0);
                 sqlParameter.Add("ChkCloseClss", chkTheEnd.IsChecked == true ? 1 : 0);
-                sqlParameter.Add("ChkBuyerArticleNo", chkBuyerArticleNoSearch.IsChecked == true ? 1 : 0);
-                sqlParameter.Add("BuyerArticleNoID", chkBuyerArticleNoSearch.IsChecked == true ? (txtBuyerArticleNoSearch.Tag != null ? txtBuyerArticleNoSearch.Tag.ToString() : "") : "");
+                sqlParameter.Add("ChkBuyerArticleNo", CheckBoxBuyerArticleNoSearch.IsChecked == true ? 1 : 0);
+                sqlParameter.Add("BuyerArticleNoID", CheckBoxBuyerArticleNoSearch.IsChecked == true ? (TextBoxBuyerArticleNoSearch.Tag != null ? TextBoxBuyerArticleNoSearch.Tag.ToString() : "") : "");
                 sqlParameter.Add("ChkInCustom", chkInCustom.IsChecked == true ? 1 : 0);
                 sqlParameter.Add("InCustomID", chkInCustom.IsChecked == true ? (txtInCustom.Tag != null ? txtInCustom.Tag.ToString() : "") : "");
 
@@ -676,8 +675,8 @@ namespace WizMes_WooJung
                             DataRowCollection drc = dt.Rows;
 
 
-                            // ChildBuyerArticleNo 중복 안되도록
-                            string ChildBA = "";
+
+  
                             foreach (DataRow dr in drc)
                             {
                                 var WinPlanArticle = new Win_prd_PlanArticleOne_CodeView()
@@ -697,15 +696,6 @@ namespace WizMes_WooJung
                                     ChildBuyerArticleNo = dr["ChildBuyerArticleNo"].ToString(),
                                 };
 
-                                // ChildBuyerArticleNo 중복 안되도록
-                                if (ChildBA.Trim().Equals(WinPlanArticle.ChildBuyerArticleNo))
-                                {
-                                    WinPlanArticle.ChildBuyerArticleNo = "";
-                                }
-                                else
-                                {
-                                    ChildBA = WinPlanArticle.ChildBuyerArticleNo;
-                                }
 
                                 // 날짜 세팅
                                 WinPlanArticle.StartDate_CV = DatePickerFormat(WinPlanArticle.StartDate);
@@ -1133,7 +1123,7 @@ namespace WizMes_WooJung
                         {
                             MessageBox.Show("[저장실패]\r\n" + list_Result[0].value.ToString());
                             flag = false;
-                            //return false;
+                            
                         }
                     }
                 }
@@ -1743,7 +1733,7 @@ namespace WizMes_WooJung
             }
         }
 
-      
+       
     }
 
     #region CodeView

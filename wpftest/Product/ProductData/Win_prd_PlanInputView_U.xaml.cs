@@ -38,10 +38,12 @@ namespace WizMes_WooJung
         System.Data.DataTable DT;
         Lib lib = new Lib();
 
+        ObservableCollection<Win_prd_PlanInputView_U_CodeView> ovcPlanView = new ObservableCollection<Win_prd_PlanInputView_U_CodeView>();
         Win_prd_PlanInputView_U_CodeView WinPlanView = new Win_prd_PlanInputView_U_CodeView();
         Win_prd_PlanInputView_U_Sub_CodeView WinPlanSub = new Win_prd_PlanInputView_U_Sub_CodeView();
 
         int rowNum = 0;
+        int count = 0;
 
         // 인쇄 미리보기 인지 아닌지
         private bool preview_click = false;
@@ -335,8 +337,6 @@ namespace WizMes_WooJung
             Dispatcher.BeginInvoke(new Action(() =>
 
             {
-                Thread.Sleep(2000);
-
                 //로직
                 using (Loading lw = new Loading(FillGrid))
                 {
@@ -370,48 +370,27 @@ namespace WizMes_WooJung
         //삭제
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
-            string OutMessage = string.Empty;
+            var InputView = dgdMain.SelectedItem as Win_prd_PlanInputView_U_CodeView;
 
-            MessageBoxResult MesResult = MessageBox.Show("선택하신 항목을 선택자료를 삭제하시겠습니까?", "확인", MessageBoxButton.YesNo);
-            switch (MesResult)
+            if (InputView != null)
             {
-                case MessageBoxResult.Yes:
-                    Dictionary<string, object> sqlParameter = new Dictionary<string, object>();
-                    sqlParameter.Add("InstID", WinPlanView.InstID);
-                    sqlParameter.Add("OutMessage", "");
-
-                    Dictionary<string, int> outputParam = new Dictionary<string, int>();
-                    outputParam.Add("OutMessage", 200);
-
-                    Dictionary<string, string> dicResult = DataStore.Instance.ExecuteProcedureOutputNoTran("xp_PlanInput_dPlanInput", sqlParameter, outputParam, true);
-                    string result = dicResult["OutMessage"];
-
-                    if (result.Equals(""))
+                if (MessageBox.Show("선택한 항목을 삭제하시겠습니까?", "삭제 전 확인", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                {
+                    beDelete();
+                    if (dgdMain.Items.Count == 0)
                     {
-                        using (Loading lw = new Loading(FillGrid))
-                        {
-                            lw.ShowDialog();
-                        }
-
-                        if (dgdMain.Items.Count == 0)
-                        {
-                            dgdSub.Items.Clear();
-
-                            MessageBox.Show("조회된 데이터가 없습니다.");
-                            return;
-                        }
-
-                        dgdMain.SelectedIndex = 0;
+                        this.DataContext = null;
+                        MessageBox.Show("조회된 데이터가 없습니다.");
+                        return;
                     }
-                    else
-                    {
-                        MessageBox.Show(result);
-                    }
-                    break;
-                case MessageBoxResult.No:
+                }
 
-                    break;
             }
+            else
+            {
+                MessageBox.Show("삭제할 데이터를 선택해주세요.");
+            }
+      
         }
 
         //닫기
@@ -435,7 +414,7 @@ namespace WizMes_WooJung
             //PnlListPrint.IsOpen = true;
 
             // 체크된것 갯수 세기
-            int count = 0;
+            
             for (int i = 0; i < dgdMain.Items.Count; i++)
             {
                 var Main = dgdMain.Items[i] as Win_prd_PlanInputView_U_CodeView;
@@ -853,6 +832,22 @@ namespace WizMes_WooJung
             }
         }
 
+        private void beDelete()
+        {
+            foreach (Win_prd_PlanInputView_U_CodeView PlanView in ovcPlanView)
+            {
+
+                if (PlanView != null)
+                {
+                    if (DeleteData(PlanView.InstID))
+                    {
+                        rowNum = 0;
+                        FillGrid();
+                    }
+                }
+            }
+        }
+
         //취소
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
@@ -974,6 +969,43 @@ namespace WizMes_WooJung
 
             return flag;
         }
+
+        //삭제 
+        private bool DeleteData(string InstID)
+        {
+            bool flag = false;
+
+            try
+            {
+                Dictionary<string, object> sqlParameter = new Dictionary<string, object>();
+                sqlParameter.Clear();
+                sqlParameter.Add("InstID", InstID);
+                sqlParameter.Add("OutMessage", "");
+
+                string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_PlanInput_dPlanInput", sqlParameter, "D");
+
+                if (result[0].Equals("success"))
+                {
+                    //MessageBox.Show("성공 *^^*");
+                    flag = true;
+                }
+                else
+                {
+                    MessageBox.Show("삭제 실패, 실패 이유 : " + result[1]);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("오류 발생, 오류 내용 : " + ex.ToString());
+            }
+            finally
+            {
+                DataStore.Instance.CloseConnection();
+            }
+
+            return flag;
+        }
+
 
         #region 하단 입력을 위한 이벤트
 
@@ -2140,12 +2172,33 @@ namespace WizMes_WooJung
         // 메인 데이터그리드 체크박스 이벤트
         private void chkC_Checked(object sender, RoutedEventArgs e)
         {
+
             CheckBox chkSender = sender as CheckBox;
             var Main = chkSender.DataContext as Win_prd_PlanInputView_U_CodeView;
+
             if (Main != null)
             {
-                Main.IsCheck = true;
+                if (chkSender.IsChecked == true)
+                {
+                    Main.IsCheck = true;
+
+                    if (ovcPlanView.Contains(Main) == false)
+                    {
+                        ovcPlanView.Add(Main);
+                    }
+                }
+                else
+                {
+                    Main.IsCheck = false;
+
+                    if (ovcPlanView.Contains(Main) == true)
+                    {
+                        ovcPlanView.Remove(Main);
+                    }
+                }
+
             }
+
         }
 
         private void chkC_Unchecked(object sender, RoutedEventArgs e)
