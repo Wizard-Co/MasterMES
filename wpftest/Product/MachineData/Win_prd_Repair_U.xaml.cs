@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WizMes_WooJung.PopUP;
+using WizMes_WooJung.PopUp;
 using WPF.MDI;
 
 namespace WizMes_WooJung
@@ -267,20 +268,30 @@ namespace WizMes_WooJung
             Dispatcher.BeginInvoke(new Action(() =>
 
             {
-                //로직
-                numRowCount = 0;
-                re_Search(numRowCount);
+                try
+                {
+                    int rowNum = 0;
+                    using (Loading lw = new Loading(FillGrid))
+                    {
+                        lw.ShowDialog();
+                        if (dgdMCRepair.Items.Count <= 0)
+                        {
+                            MessageBox.Show("조회된 내용이 없습니다.");
+                        }
+                        else
+                        {
+                            dgdMCRepair.SelectedIndex = rowNum;
+                        }
+
+                        btnSearch.IsEnabled = true;
+                    }
+                }
+                catch (Exception ee)
+                {
+                    MessageBox.Show("예외처리 - " + ee.ToString());
+                }
 
             }), System.Windows.Threading.DispatcherPriority.Background);
-
-
-
-            Dispatcher.BeginInvoke(new Action(() =>
-
-            {
-                btnSearch.IsEnabled = true;
-
-            }), System.Windows.Threading.DispatcherPriority.Background); 
 
         }
 

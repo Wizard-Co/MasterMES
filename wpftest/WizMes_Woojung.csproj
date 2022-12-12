@@ -447,6 +447,9 @@
     <Compile Include="Product\MachineSearch\Win_Prd_WorkLog_Q.xaml.cs">
       <DependentUpon>Win_Prd_WorkLog_Q.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Product\MoldData\Win_dvl_Molding_U.xaml.cs">
+      <DependentUpon>Win_dvl_Molding_U.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Product\Pop\NoWorkInfo.xaml.cs">
       <DependentUpon>NoWorkInfo.xaml</DependentUpon>
     </Compile>
@@ -972,6 +975,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Product\MachineSearch\Win_Prd_WorkLog_Q.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Product\MoldData\Win_dvl_Molding_U.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

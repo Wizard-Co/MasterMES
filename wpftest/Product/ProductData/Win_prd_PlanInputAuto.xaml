@@ -84,7 +84,7 @@
             </Grid>
 
             <!--거래처-->
-            <Grid Grid.Row="0" Grid.Column="2">
+            <Grid Grid.Row="1" Grid.Column="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="75*" />
                     <ColumnDefinition Width="90*" />
@@ -114,7 +114,7 @@
             </Grid>
 
             <!--품명-->
-            <Grid Grid.Row="1" Grid.Column="2">
+            <Grid Grid.Row="2" Grid.Column="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="75*" />
                     <ColumnDefinition Width="90*" />
@@ -143,7 +143,7 @@
             </Grid>
 
             <!--품번-->
-            <Grid Grid.Column="2" Grid.Row="2" >
+            <Grid Grid.Column="2" Grid.Row="3" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="75*" />
                     <ColumnDefinition Width="90*" />
@@ -174,7 +174,7 @@
             </Grid>
 
             <!--관리번호-->
-            <Grid Grid.Row="3" Grid.Column="2" >
+            <Grid Grid.Row="0" Grid.Column="3" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="75*" />
                     <ColumnDefinition Width="90*" />
@@ -194,11 +194,11 @@
                         </Viewbox>
                     </StackPanel>
                 </Label>
-                <TextBox x:Name="txtOrderIDSrh" Grid.Column="1" Style="{DynamicResource TextBoxSearch}" IsEnabled="False" />
+                <TextBox x:Name="txtOrderIDSrh" Grid.Column="1" Style="{DynamicResource TextBoxSearch}" IsEnabled="False" Keyboard.KeyDown="txtOrderID_KeyDown" />
             </Grid>
 
-            <!--거래처-->
-            <Grid Grid.Row="0" Grid.Column="3">
+            <!--최종거래처-->
+            <Grid Grid.Row="0" Grid.Column="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="75*" />
                     <ColumnDefinition Width="90*" />
@@ -214,7 +214,7 @@
                                       Unchecked="chkEndCustom_Unchecked" VerticalAlignment="Center"/>
                         </Viewbox>
                         <Viewbox Style="{DynamicResource ViewBoxSetMaxMinHeight}">
-                            <TextBlock Text="최종고객사" 
+                            <TextBlock Text="최종거래처" 
                                        Style="{DynamicResource TextBlockInViewBoxSearch}"/>
                         </Viewbox>
                     </StackPanel>
@@ -327,11 +327,11 @@
                         <DataGridTextColumn Header="수주일자" Width="auto" Binding="{Binding AcptDate}" />
                         <DataGridTextColumn Header="품번" Width="auto" Binding="{Binding BuyerArticleNo}" />
                         <DataGridTextColumn Header="품명" Width="auto" Binding="{Binding Article}" />
-                        <DataGridTextColumn Header="관리번호" Width="auto" Binding="{Binding OrderNo}" />
+                        <DataGridTextColumn Header="관리번호" Width="auto" Binding="{Binding OrderID}" />
                         <DataGridTextColumn Header="납기일" Width="auto" Binding="{Binding DvlyDate}" />
                         <DataGridTextColumn Header="수주량" Width="auto" Binding="{Binding OrderQty}" />
+                        <DataGridTextColumn Header="계획량" Width="auto" Binding="{Binding OrderInstQty}" />
                         <DataGridTextColumn Header="누계계획량" Width="auto" Binding="{Binding SumInstQty}" />
-                        <DataGridTextColumn Header="계획량" Width="auto" Binding="{Binding PlanQty}" />
                         <DataGridTextColumn Header="미계획량" Width="auto" Binding="{Binding NonePlanQty}" />
                     </DataGrid.Columns>
                 </DataGrid>
@@ -390,7 +390,7 @@
                             </ScrollViewer>
                         </Grid>
                         <DataGrid Grid.Row="1" x:Name="dgdSub" HeadersVisibility="None" ScrollViewer.PanningMode="VerticalFirst"
-                      ScrollViewer.CanContentScroll="False" VerticalScrollBarVisibility="Visible" AutoGenerateColumns="False" 
+                      ScrollViewer.CanContentScroll="False" VerticalScrollBarVisibility="Hidden" AutoGenerateColumns="False" 
                       >
                             <DataGrid.RowStyle>
                                 <Style TargetType="DataGridRow">
@@ -458,7 +458,7 @@
                                 <DataGridTemplateColumn x:Name="EndDate" Width="*">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding EndDate}" VerticalAlignment="Center" TextAlignment="Left" Padding="5 0" />
+                                            <TextBlock Text="{Binding EndDate}" VerticalAlignment="Center" TextAlignment="Right" Padding="5 0 3 0" />
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>

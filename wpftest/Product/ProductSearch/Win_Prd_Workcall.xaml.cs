@@ -32,6 +32,7 @@ namespace WizMes_WooJung
         string stTime = string.Empty;
 
         Lib lib = new Lib();
+        ObservableCollection<Win_Prd_Workcall_CodeView> ovcCall = new ObservableCollection<Win_Prd_Workcall_CodeView>();
         Win_Prd_Workcall_CodeView Call = new Win_Prd_Workcall_CodeView();
 
         public Win_Prd_Workcall()
@@ -275,40 +276,25 @@ namespace WizMes_WooJung
         //삭제
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
-            string OutMessage = string.Empty;
+            var InputView = dgdMain.SelectedItem as Win_Prd_Workcall_CodeView;
 
-            MessageBoxResult MesResult = MessageBox.Show("선택하신 항목을 선택자료를 삭제하시겠습니까?", "확인", MessageBoxButton.YesNo);
-            switch (MesResult)
+            if (InputView != null)
             {
-                case MessageBoxResult.Yes:
-
-                    Dictionary<string, object> sqlParameter = new Dictionary<string, object>();
-                    sqlParameter.Add("InstID", Call.Num);
-                    sqlParameter.Add("OutMessage", "");
-
-                    Dictionary<string, int> outputParam = new Dictionary<string, int>();
-                    outputParam.Add("OutMessage", 200);
-
-                    Dictionary<string, string> dicResult = DataStore.Instance.ExecuteProcedureOutputNoTran_NewLog("xp_prd_dWorkCall", sqlParameter, outputParam, true, "D");
-                    string result = dicResult["OutMessage"];
-
-                    if (result.Equals(""))
+                if (MessageBox.Show("선택한 항목을 삭제하시겠습니까?", "삭제 전 확인", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                {
+                    beDelete();
+                    if (dgdMain.Items.Count == 0)
                     {
-                        using (Loading lw = new Loading(FillGrid))
-                        {
-                            lw.ShowDialog();
-                        }
-
-                        dgdMain.SelectedIndex = 0;
+                        this.DataContext = null;
+                        MessageBox.Show("조회된 데이터가 없습니다.");
+                        return;
                     }
-                    else
-                    {
-                        MessageBox.Show(result);
-                    }
-                    break;
-                case MessageBoxResult.No:
+                }
 
-                    break;
+            }
+            else
+            {
+                MessageBox.Show("삭제할 데이터를 선택해주세요.");
             }
         }
 
@@ -359,20 +345,23 @@ namespace WizMes_WooJung
         private void chkC_Checked(object sender, RoutedEventArgs e)
         {
             CheckBox chkSender = sender as CheckBox;
-            var Main = chkSender.DataContext as Win_prd_PlanInputView_U_CodeView;
+            var Main = chkSender.DataContext as Win_Prd_Workcall_CodeView;
             if (Main != null)
             {
                 Main.IsCheck = true;
+                ovcCall.Add(Main);
+
             }
         }
 
         private void chkC_Unchecked(object sender, RoutedEventArgs e)
         {
             CheckBox chkSender = sender as CheckBox;
-            var Main = chkSender.DataContext as Win_prd_PlanInputView_U_CodeView;
+            var Main = chkSender.DataContext as Win_Prd_Workcall_CodeView;
             if (Main != null)
             {
                 Main.IsCheck = false;
+                ovcCall.Remove(Main);
             }
         }
 
@@ -492,6 +481,7 @@ namespace WizMes_WooJung
                                 Num = i.ToString(),
 
                                 CallDate = dr["CallDate"].ToString(),
+                                WorkCallID = dr["WorkCallID"].ToString(),
                                 ProcessID = dr["processID"].ToString(),
                                 Process = dr["Process"].ToString(),
                                 MachineID = dr["MachineID"].ToString(),
@@ -543,6 +533,59 @@ namespace WizMes_WooJung
         }
 
         #endregion // 조회 메서드
+
+        #region 삭제 
+        private void beDelete()
+        {
+            foreach (Win_Prd_Workcall_CodeView WorkCall in ovcCall)
+            {
+
+                if (WorkCall != null)
+                {
+                    if (DeleteData(WorkCall.WorkCallID))
+                    {
+                        rowNum = 0;
+                        FillGrid();
+                    }
+                }
+            }
+        }
+
+        private bool DeleteData(string WorkCallID)
+        {
+            bool flag = false;
+
+            try
+            {
+                Dictionary<string, object> sqlParameter = new Dictionary<string, object>();
+                sqlParameter.Clear();
+                sqlParameter.Add("WorkCallID", WorkCallID);
+
+                string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_prd_dWorkCall", sqlParameter, "D");
+
+                if (result[0].Equals("success"))
+                {
+                    MessageBox.Show("선택된 항목이 삭제되었습니다.");
+                    flag = true;
+                }
+                else
+                {
+                    MessageBox.Show("삭제 실패, 실패 이유 : " + result[1]);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("오류 발생, 오류 내용 : " + ex.ToString());
+            }
+            finally
+            {
+                DataStore.Instance.CloseConnection();
+            }
+
+            return flag;
+        }
+        #endregion
+
 
         #region 기타 메서드 모음
 
@@ -731,8 +774,10 @@ namespace WizMes_WooJung
     {
         public string Num { get; set; }
         public bool chkData { get; set; }
+        public bool IsCheck { get; set; }
 
         public string cls { get; set; }
+        public string WorkCallID { get; set; }
         public string CallDate { get; set; }
         public string ProcessID { get; set; }
         public string Process { get; set; }

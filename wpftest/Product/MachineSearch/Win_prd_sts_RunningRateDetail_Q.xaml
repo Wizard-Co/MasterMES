@@ -93,7 +93,7 @@
                         </Viewbox>
                     </StackPanel>
                 </Label>
-                <ComboBox x:Name="cboProcess" Grid.Column="1" SelectedValue="{Binding cboProcess}"/>
+                <ComboBox x:Name="cboProcess" Grid.Column="1" SelectionChanged="cboProcess_SelectionChanged"/>
             </Grid>
             
             <!--호기-->
@@ -104,11 +104,11 @@
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" 
                        Style="{DynamicResource LabelSearch}"
-                       MouseLeftButtonDown="lblMCIDSrh_MouseLeftButtonDown">
+                       MouseLeftButtonDown="lblMachineSrh_MouseLeftButtonDown">
                     <StackPanel Style="{DynamicResource StackPanelInLabel}">
                         <Viewbox Style="{DynamicResource ViewBoxSetMaxMinHeight}" >
-                            <CheckBox x:Name="chkMCIDSrh" VerticalAlignment="Center" 
-                                      Checked="chkMCIDSrh_Checked" Unchecked="chkMCIDSrh_Unchecked"/>
+                            <CheckBox x:Name="chkMachineSrh" VerticalAlignment="Center" 
+                                      Checked="chkMachineSrh_Checked" Unchecked="chkMachineSrh_Unchecked"/>
                         </Viewbox>
                         <Viewbox Style="{DynamicResource ViewBoxSetMaxMinHeight}" >
                             <TextBlock Text="호  기" 
@@ -116,7 +116,7 @@
                         </Viewbox>
                     </StackPanel>
                 </Label>
-                <ComboBox x:Name="cboMCID" Grid.Column="1" SelectedValue="{Binding cboMCID}"/>
+                <ComboBox x:Name="cboMachine" Grid.Column="1" />
             </Grid>
 
             <Grid Grid.Column="4" Grid.RowSpan="4" >
@@ -153,12 +153,6 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Button x:Name="btnNoWorking" Grid.Column="2" Click="BtnNoWorking_Click" Margin="1">
-                        <StackPanel Orientation="Vertical" Margin="-2">
-                            <TextBlock Text="비가동" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                            <TextBlock Text="정보 확인" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
                     <Button x:Name="btnExcel" Grid.Column="3" Click="btnExcel_Click"  Margin="1">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{DynamicResource btiExcel}" Style="{DynamicResource imgSize}" VerticalAlignment="Center"/>
@@ -169,39 +163,79 @@
             </Grid>
         </Grid>
 
-        <DataGrid x:Name="dgdMain" Grid.Row="1" Margin="1" IsReadOnly="True" Style="{DynamicResource DataGridMultiLine}"
-                              MouseDoubleClick="DgdMain_MouseLeftButtonDown">
-            <DataGrid.RowStyle>
-                <Style TargetType="DataGridRow">
-                    <Style.Resources>
-                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#3399FF"/>
-                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White"/>
-                        <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#3399FF" />
-                        <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="White"/>
-                    </Style.Resources>
-                </Style>
-            </DataGrid.RowStyle>
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="작업일자" Binding="{Binding A}"/>
-                <DataGridTextColumn Header="품목" Binding="{Binding OrderID}" />
-                <DataGridTextColumn Header="작업자" Binding="{Binding OrderNO}" />
-                <DataGridTextColumn Header="작업자&#10;교육건수" Binding="{Binding KCustom}" />
-                <DataGridTextColumn Header="작업자&#10;자격증" Binding="{Binding BuyerArticleNo}" />
-                <DataGridTextColumn Header="작업자&#10;입사일" Binding="{Binding Article}" />
-                <DataGridTextColumn Header="설비" Binding="{Binding OrderQty}" 
-                                                CellStyle="{StaticResource NumericDataGridCell}"/>
-                <DataGridTextColumn Header="설비호기" Binding="{Binding Amount_CV}" Visibility="Hidden" 
-                                                CellStyle="{DynamicResource NumericDataGridCell}"/>
-                <DataGridTextColumn Header="설비&#10;마지막점검일" Binding="{Binding Vat_IND_YN}" />
-                <DataGridTextColumn Header="설비점검이상&#10;발생건수" Binding="{Binding OrderFlag}" />
-                <DataGridTextColumn Header="설비점검이상&#10;발생내용" Binding="{Binding DvlyPlace}" />
-                <DataGridTextColumn Header="무작업/비가동&#10;발생일" Binding="{Binding OrderSpec}" />
-                <DataGridTextColumn Header="발생사유" Binding="{Binding AcptDate}"/>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
+            <!--작업그리드-->
+            <DataGrid x:Name="dgdWork" Grid.Column="0" Margin="1" IsReadOnly="True" Style="{DynamicResource DataGridMultiLine}"
+                               >
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Style.Resources>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#3399FF"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#3399FF" />
+                            <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="White"/>
+                        </Style.Resources>
+                    </Style>
+                </DataGrid.RowStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="작업일자" Binding="{Binding WorkDate}" Width="*"/>
+                    <DataGridTextColumn Header="품목" Binding="{Binding Article}" Width="*" />
+                    <DataGridTextColumn Header="작업자" Binding="{Binding Name}" Width="*"/>
+                    <DataGridTextColumn Header="작업자&#10;교육건수" Binding="{Binding KCustom}" Width="*" />
+                    <DataGridTextColumn Header="작업자&#10;자격증" Binding="{Binding EduCount}"  Width="*"/>
+                    <DataGridTextColumn Header="작업자&#10;입사일" Binding="{Binding StartDate}"  Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
 
-            </DataGrid.Columns>
-        </DataGrid>
+            <!--호기그리드-->
+            <DataGrid x:Name="dgdMachine" Grid.Column="1"  Margin="1" IsReadOnly="True" Style="{DynamicResource DataGridMultiLine}"
+                      MouseDoubleClick="dgdMachine_MouseLeftButtonDown">
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Style.Resources>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#3399FF"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#3399FF" />
+                            <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="White"/>
+                        </Style.Resources>
+                    </Style>
+                </DataGrid.RowStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="설비" Binding="{Binding Machine}" Width="*" />
+                    <DataGridTextColumn Header="설비호기" Binding="{Binding MCNAME}"  Width="*" />
+                    <DataGridTextColumn Header="설비&#10;마지막점검일" Binding="{Binding LastInspectDate}" Width="*" />
+                    <DataGridTextColumn Header="설비점검이상&#10;발생건수" Binding="{Binding InspectCount}" Width="*" />
+                    <DataGridTextColumn Header="설비점검이상&#10;발생내용" Binding="{Binding DefectContents}" Width="*" />
+                </DataGrid.Columns>
+            </DataGrid>
 
+            <!-- 그리드-->
+            <DataGrid x:Name="dgdNoWork" Grid.Column="2"  Margin="1" IsReadOnly="True" Style="{DynamicResource DataGridMultiLine}">
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Style.Resources>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#3399FF"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#3399FF" />
+                            <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="White"/>
+                        </Style.Resources>
+                    </Style>
+                </DataGrid.RowStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="무작업/비가동&#10;발생일" Binding="{Binding WorkDate}" Width="*" />
+                    <DataGridTextColumn Header="발생사유" Binding="{Binding NoReworkReason}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            
+        </Grid>
+        
+       
 
 
     </Grid>

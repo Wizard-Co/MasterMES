@@ -16,16 +16,14 @@ namespace WizMes_WooJung
     /**************************************************************************************************
     '** System 명 : WizMES
     '** Author    : Wizard
-    '** 작성자    : 최준호
-    '** 내용      : 설비가동률 조회
-    '** 생성일자  : 2018.10~2019.2 월 사이
+    '** 작성자    : 김수정
+    '** 내용      : 설비가동률 상세조회
+    '** 생성일자  : 2022.09
     '** 변경일자  : 
     '**------------------------------------------------------------------------------------------------
     ''*************************************************************************************************
     ' 변경일자  , 변경자, 요청자    , 요구사항ID  , 요청 및 작업내용
     '**************************************************************************************************
-    ' ex) 2015.11.09, 박진성, 오영      ,S_201510_AFT_03 , 월별집계(가로) 순서 변경 : 합계/10월/9월/8월 순으로
-    ' 2019.06.25 , 최준호 , 최규환   , 일자선택에서 기간선택으로, 비가동시간 나오게(특정 동작시 나오도록)
     '**************************************************************************************************/
 
     /// <summary>
@@ -35,12 +33,15 @@ namespace WizMes_WooJung
     {
         string stDate = string.Empty;
         string stTime = string.Empty;
+        string ProcessID = string.Empty;
 
         Lib lib = new Lib();
         public DataGrid FilterGrid { get; set; }
         public DataTable FilterTable { get; set; }
 
-        ObservableCollection<Win_prd_sts_RunningRateDetail_Q_CodeView> ovcCollection = new ObservableCollection<Win_prd_sts_RunningRateDetail_Q_CodeView>();
+        ObservableCollection<Work_CodeView> WorkCollection = new ObservableCollection<Work_CodeView>();
+        ObservableCollection<MC_CodeView> MCCollection = new ObservableCollection<MC_CodeView>();
+        ObservableCollection<NoWork_CodeView> NoWorkCollection = new ObservableCollection<NoWork_CodeView>();
 
         public Win_prd_sts_RunningRateDetail_Q()
         {
@@ -49,15 +50,44 @@ namespace WizMes_WooJung
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            SetComboBox();
+
             stDate = DateTime.Now.ToString("yyyyMMdd");
             stTime = DateTime.Now.ToString("HHmm");
 
             DataStore.Instance.InsertLogByFormS(this.GetType().Name, stDate, stTime, "S");
 
+            string ProcessID = string.Empty;
+            string MachineID = string.Empty;
+            string MCSDate = string.Empty;
+            string MCEDate = String.Empty;
+
+
+            if (MainWindow.MCtemp != null
+               && MainWindow.MCtemp.Count > 0)
+            {
+                ProcessID = MainWindow.MCtemp[0]; //processID
+                MachineID = MainWindow.MCtemp[1]; //MachineID
+                MCSDate = MainWindow.MCtemp[2]; //SDate
+                MCEDate = MainWindow.MCtemp[3]; //EDate
+
+                dtpSDate.SelectedDate = DateTime.Parse(DatePickerFormat(MCSDate));
+                dtpEDate.SelectedDate = DateTime.Parse(DatePickerFormat(MCEDate));
+
+            }
+            else
+            {
+                dtpSDate.SelectedDate = DateTime.Today;
+                dtpEDate.SelectedDate = DateTime.Today;
+            }
+
+            cboProcess.SelectedValue = ProcessID;
+            cboMachine.SelectedValue = MachineID;
+
             Lib.Instance.UiLoading(sender);
 
-            dtpSDate.SelectedDate = DateTime.Today;
-            dtpEDate.SelectedDate = DateTime.Today;
+           
+
         }
 
         #region Header - 검색조건
@@ -95,22 +125,22 @@ namespace WizMes_WooJung
         }
 
         //호기
-        private void lblMCIDSrh_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void lblMachineSrh_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (chkMCIDSrh.IsChecked == true) { chkMCIDSrh.IsChecked = false; }
-            else { chkMCIDSrh.IsChecked = true; }
+            if (chkMachineSrh.IsChecked == true) { chkMachineSrh.IsChecked = false; }
+            else { chkMachineSrh.IsChecked = true; }
         }
 
         //호기
-        private void chkMCIDSrh_Checked(object sender, RoutedEventArgs e)
+        private void chkMachineSrh_Checked(object sender, RoutedEventArgs e)
         {
-            cboMCID.IsEnabled = true;
+            cboMachine.IsEnabled = true;
         }
 
         //호기
-        private void chkMCIDSrh_Unchecked(object sender, RoutedEventArgs e)
+        private void chkMachineSrh_Unchecked(object sender, RoutedEventArgs e)
         {
-            cboMCID.IsEnabled = false;
+            cboMachine.IsEnabled = false;
         }
 
         //공정
@@ -179,11 +209,16 @@ namespace WizMes_WooJung
                 return;
             }
 
-            FillGrid();
+            FillGrid_Work();
+            FillGrid_Machine();
+            FillGrid_NoWork();
 
-            if (dgdMain.Items.Count > 0)
+            if (dgdWork.Items.Count > 0 && dgdMachine.Items.Count > 0 && dgdNoWork.Items.Count > 0)
             {
-                dgdMain.SelectedIndex = 0;
+                dgdWork.SelectedIndex = 0;
+                dgdMachine.SelectedIndex = 0;
+                dgdNoWork.SelectedIndex = 0;
+
             } else
             {
                 MessageBox.Show("조회된 내용이 없습니다.");
@@ -208,9 +243,13 @@ namespace WizMes_WooJung
                 DataTable dt = null;
                 string Name = string.Empty;
 
-                string[] lst = new string[2];
-                lst[0] = "설비 가동률";
-                lst[1] = dgdMain.Name;
+                string[] lst = new string[6];
+                lst[0] = "작업 조회";
+                lst[1] = "설비 조회";
+                lst[2] = "비가동 조회";
+                lst[3] = dgdWork.Name;
+                lst[4] = dgdMachine.Name;
+                lst[5] = dgdNoWork.Name;
 
                 ExportExcelxaml ExpExc = new ExportExcelxaml(lst);
 
@@ -218,22 +257,51 @@ namespace WizMes_WooJung
 
                 if (ExpExc.DialogResult.HasValue)
                 {
-                    if (ExpExc.choice.Equals(dgdMain.Name))
+                    if (ExpExc.choice.Equals(dgdWork.Name))
                     {
                         DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
                         if (ExpExc.Check.Equals("Y"))
-                            dt = Lib.Instance.DataGridToDTinHidden(dgdMain);
+                            dt = Lib.Instance.DataGridToDTinHidden(dgdWork);
                         else
-                            dt = Lib.Instance.DataGirdToDataTable(dgdMain);
+                            dt = Lib.Instance.DataGirdToDataTable(dgdWork);
 
-                        Name = dgdMain.Name;
+                        Name = dgdWork.Name;
 
                         if (Lib.Instance.GenerateExcel(dt, Name))
                             Lib.Instance.excel.Visible = true;
                         else
                             return;
-                    }
-                    else
+
+                    } else if (ExpExc.choice.Equals(dgdMachine.Name))
+                    {
+                        DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
+                        if (ExpExc.Check.Equals("Y"))
+                            dt = Lib.Instance.DataGridToDTinHidden(dgdMachine);
+                        else
+                            dt = Lib.Instance.DataGirdToDataTable(dgdMachine);
+
+                        Name = dgdMachine.Name;
+
+                        if (Lib.Instance.GenerateExcel(dt, Name))
+                            Lib.Instance.excel.Visible = true;
+                        else
+                            return;
+
+                    } else if (ExpExc.choice.Equals(dgdNoWork.Name))
+                        {
+                            DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
+                            if (ExpExc.Check.Equals("Y"))
+                                dt = Lib.Instance.DataGridToDTinHidden(dgdNoWork);
+                            else
+                                dt = Lib.Instance.DataGirdToDataTable(dgdNoWork);
+
+                            Name = dgdNoWork.Name;
+
+                            if (Lib.Instance.GenerateExcel(dt, Name))
+                                Lib.Instance.excel.Visible = true;
+                            else
+                                return;
+                        }
                     {
                         if (dt != null)
                         {
@@ -250,51 +318,209 @@ namespace WizMes_WooJung
 
         #endregion
 
+        #region 콤보박스 
+        private void SetComboBox()
+        {
+
+            ObservableCollection<CodeView> ovcProcess = ComboBoxUtil.Instance.GetWorkProcess(0, "");
+            this.cboProcess.ItemsSource = ovcProcess;
+            this.cboProcess.DisplayMemberPath = "code_name";
+            this.cboProcess.SelectedValuePath = "code_id";
+
+            if (cboProcess.SelectedValue != null)
+            {
+                ProcessID = cboProcess.SelectedValue.ToString();
+            }
+
+            ObservableCollection<CodeView> ovcMachine = ComboBoxUtil.Instance.GetMachine(ProcessID);
+            this.cboMachine.ItemsSource = ovcMachine;
+            this.cboMachine.DisplayMemberPath = "code_name";
+            this.cboMachine.SelectedValuePath = "code_id";
+
+
+        }
+        #endregion
+
         #region 주요 메서드 - FillGrid
 
-        //조회
-        private void FillGrid()
+        //작업조회
+        private void FillGrid_Work()
         {
+            if (dgdWork.Items.Count > 0)
+            {
+                dgdWork.Items.Clear();
+            }
+
             try
             {
-                dgdMain.ItemsSource = null;
-                ovcCollection.Clear();
-
+                DataSet ds = null;
                 Dictionary<string, object> sqlParameter = new Dictionary<string, object>();
-                sqlParameter.Add("sFromDate", dtpSDate.SelectedDate != null ? dtpSDate.SelectedDate.Value.ToString("yyyyMMdd") : "");
-                sqlParameter.Add("sToDate", dtpSDate.SelectedDate != null ? dtpEDate.SelectedDate.Value.ToString("yyyyMMdd") : "");
+                sqlParameter.Clear();
+                sqlParameter.Add("chkDate", chkMcInOutDate.IsChecked == true ? 1 : 0);
+                sqlParameter.Add("sFromDate", chkMcInOutDate.IsChecked == true && dtpSDate.SelectedDate != null ? dtpSDate.SelectedDate.Value.ToString("yyyyMMdd") : "");
+                sqlParameter.Add("sToDate", chkMcInOutDate.IsChecked == true && dtpEDate.SelectedDate != null ? dtpEDate.SelectedDate.Value.ToString("yyyyMMdd") : "");
+                sqlParameter.Add("chkProcess", chkProcessSrh.IsChecked == true ? 1 : 0);
+                sqlParameter.Add("ProcessID", chkProcessSrh.IsChecked == true && cboProcess.SelectedValue != null ? cboProcess.SelectedValue.ToString() : "");
+                sqlParameter.Add("chkMachineID", chkMachineSrh.IsChecked == true ? 1 : 0);
+                sqlParameter.Add("MachineID", chkMachineSrh.IsChecked == true && cboMachine.SelectedValue != null ? cboMachine.SelectedValue.ToString() : "");
+   
+                ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_prd_sMCRunningRate_Detail_Work", sqlParameter, true, "R");
 
-             
-                //DataSet ds = DataStore.Instance.ProcedureToDataSet("xp_prd_sMCRunningRate_WPF_20201012", sqlParameter, false);
-                DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_prd_sMCRunningRate_WPF_20210517", sqlParameter, true, "R");
                 if (ds != null && ds.Tables.Count > 0)
                 {
                     DataTable dt = ds.Tables[0];
+                    int i = 0;
 
-                    //dgdPNMSubul.ItemsSource = dt.DefaultView;
                     if (dt.Rows.Count > 0)
                     {
-                        int i = 0;
-                        //var DataTemplateHeader = new ProdNMtrSubulHeaderItem("원재료", "이월량", "생산량", "입고량", "사용량", "재고량");
-                        //dgdPNMSubul.ItemsSource = dt.DefaultView;
                         DataRowCollection drc = dt.Rows;
 
                         foreach (DataRow dr in drc)
                         {
                             i++;
-                            var dgdWorkRate = new Win_prd_sts_RunningRateDetail_Q_CodeView()
+
+                            var Work = new Work_CodeView()
                             {
                                 Num = i,
-                                MCID = dr["MCID"].ToString(),
-                                MCName = dr["MCName"].ToString(),
+                                WorkDate = dr["WorkDate"].ToString(),
+                                ArticleID = dr["ArticleID"].ToString(),
+                                Article = dr["Article"].ToString(),
+                                WorkPersonID = dr["WorkPersonID"].ToString(),
+                                Name = dr["Name"].ToString(),
+                                EduCount = dr["EduCount"].ToString(),
+                                StartDate = dr["StartDate"].ToString(),
 
-                            
                             };
 
-                            ovcCollection.Add(dgdWorkRate);
-                        }
+                            dgdWork.Items.Add(Work);
 
-                        dgdMain.ItemsSource = ovcCollection;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("오류 발생, 오류 내용 : " + ex.ToString());
+            }
+            finally
+            {
+                DataStore.Instance.CloseConnection();
+            }
+        }
+
+        //호기조회
+        private void FillGrid_Machine()
+        {
+            if (dgdMachine.Items.Count > 0)
+            {
+                dgdMachine.Items.Clear();
+            }
+
+            try
+            {
+                DataSet ds = null;
+                Dictionary<string, object> sqlParameter = new Dictionary<string, object>();
+                sqlParameter.Clear();
+                sqlParameter.Add("chkDate", chkMcInOutDate.IsChecked == true ? 1 : 0);
+                sqlParameter.Add("sFromDate", chkMcInOutDate.IsChecked == true && dtpSDate.SelectedDate != null ? dtpSDate.SelectedDate.Value.ToString("yyyyMMdd") : "");
+                sqlParameter.Add("sToDate", chkMcInOutDate.IsChecked == true && dtpEDate.SelectedDate != null ? dtpEDate.SelectedDate.Value.ToString("yyyyMMdd") : "");
+                sqlParameter.Add("chkProcess", chkProcessSrh.IsChecked == true ? 1 : 0);
+                sqlParameter.Add("ProcessID", chkProcessSrh.IsChecked == true && cboProcess.SelectedValue != null ? cboProcess.SelectedValue.ToString() : "");
+                sqlParameter.Add("chkMachineID", chkMachineSrh.IsChecked == true ? 1 : 0);
+                sqlParameter.Add("MachineID", chkMachineSrh.IsChecked == true && cboMachine.SelectedValue != null ? cboMachine.SelectedValue.ToString() : "");
+
+                ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_prd_sMCRunningRate_Detail_MC", sqlParameter, true, "R");
+
+                if (ds != null && ds.Tables.Count > 0)
+                {
+                    DataTable dt = ds.Tables[0];
+                    int i = 0;
+
+                    if (dt.Rows.Count > 0)
+                    {
+                        DataRowCollection drc = dt.Rows;
+
+                        foreach (DataRow dr in drc)
+                        {
+                            i++;
+
+                            var Machine = new MC_CodeView()
+                            {
+                                MCID = dr["MCID"].ToString(),
+                                MCNAME = dr["MCNAME"].ToString(),
+                                //MachineID = dr["MachineID"].ToString(),
+                                MachineNo = dr["MachineNo"].ToString(),
+                                LastInspectDate = dr["LastInspectDate"].ToString(),
+                                InspectCount = dr["InspectCount"].ToString(),
+                                DefectContents = dr["DefectContents"].ToString(),
+
+                            };
+
+                            dgdMachine.Items.Add(Machine);
+
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("오류 발생, 오류 내용 : " + ex.ToString());
+            }
+            finally
+            {
+                DataStore.Instance.CloseConnection();
+            }
+        }
+
+        //비가동조회
+        private void FillGrid_NoWork()
+        {
+            if (dgdNoWork.Items.Count > 0)
+            {
+                dgdNoWork.Items.Clear();
+            }
+
+            try
+            {
+                DataSet ds = null;
+                Dictionary<string, object> sqlParameter = new Dictionary<string, object>();
+                sqlParameter.Clear();
+                sqlParameter.Add("chkDate", chkMcInOutDate.IsChecked == true ? 1 : 0);
+                sqlParameter.Add("sFromDate", chkMcInOutDate.IsChecked == true && dtpSDate.SelectedDate != null ? dtpSDate.SelectedDate.Value.ToString("yyyyMMdd") : "");
+                sqlParameter.Add("sToDate", chkMcInOutDate.IsChecked == true && dtpEDate.SelectedDate != null ? dtpEDate.SelectedDate.Value.ToString("yyyyMMdd") : "");
+                sqlParameter.Add("chkProcess", chkProcessSrh.IsChecked == true ? 1 : 0);
+                sqlParameter.Add("ProcessID", chkProcessSrh.IsChecked == true && cboProcess.SelectedValue != null ? cboProcess.SelectedValue.ToString() : "");
+                sqlParameter.Add("chkMachineID", chkMachineSrh.IsChecked == true ? 1 : 0);
+                sqlParameter.Add("MachineID", chkMachineSrh.IsChecked == true && cboMachine.SelectedValue != null ? cboMachine.SelectedValue.ToString() : "");
+
+                ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_prd_sMCRunningRate_Detail_NoWork", sqlParameter, true, "R");
+
+                if (ds != null && ds.Tables.Count > 0)
+                {
+                    DataTable dt = ds.Tables[0];
+                    int i = 0;
+
+                    if (dt.Rows.Count > 0)
+                    {
+                        DataRowCollection drc = dt.Rows;
+
+                        foreach (DataRow dr in drc)
+                        {
+                            i++;
+
+                            var NoWork = new NoWork_CodeView()
+                            {
+                                MachineID = dr["MachineID"].ToString(),
+                                WorkDate = dr["WorkDate"].ToString(),
+                                NoReworkCode = dr["NoReworkCode"].ToString(),
+                                NoReworkName = dr["NoReworkName"].ToString(),
+                                NoReworkReason = dr["NoReworkReason"].ToString(),
+
+                            };
+
+                            dgdNoWork.Items.Add(NoWork);
+
+                        }
                     }
                 }
             }
@@ -310,37 +536,26 @@ namespace WizMes_WooJung
 
         #endregion
 
-        private void BtnNoWorking_Click(object sender, RoutedEventArgs e)
+
+        private void cboProcess_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var NoWorkingCode = dgdMain.SelectedItem as Win_prd_sts_RunningRateDetail_Q_CodeView;
+            if(cboProcess.SelectedValue != null) {
+                ProcessID = cboProcess.SelectedValue.ToString();
 
-            string sDate = dtpSDate.SelectedDate.Value.ToString("yyyyMMdd");
-            string eDate = dtpEDate.SelectedDate.Value.ToString("yyyyMMdd");
-
-            NoWorkInfo NoWorking = null;
-
-            if (NoWorkingCode != null)
-            {
-                if (NoWorkingCode.NoWorkDate == null
-                    || ConvertDouble(NoWorkingCode.NoWorkDate) == 0)
-                    MessageBox.Show("선택된 자료의 비가동 시간을 확인해보세요.");
-                else
-                    NoWorking = new NoWorkInfo(sDate, eDate, NoWorkingCode.MCID);
+                ObservableCollection<CodeView> ovcMachine = ComboBoxUtil.Instance.GetMachine(ProcessID);
+                this.cboMachine.ItemsSource = ovcMachine;
+                this.cboMachine.DisplayMemberPath = "code_name";
+                this.cboMachine.SelectedValuePath = "code_id";
             }
-            else
-            {
-                NoWorking = new NoWorkInfo(sDate, eDate, "");
-            }
-
-            if (NoWorking != null)
-                NoWorking.ShowDialog();
+           
         }
 
-        private void DgdMain_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+
+        private void dgdMachine_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (e.ClickCount == 2)
             {
-                var NoWorkingCode = dgdMain.SelectedItem as Win_prd_sts_RunningRateDetail_Q_CodeView;
+                var NoWorkingCode = dgdMachine.SelectedItem as MC_CodeView;
 
                 string sDate = dtpSDate.SelectedDate.Value.ToString("yyyyMMdd");
                 string eDate = dtpEDate.SelectedDate.Value.ToString("yyyyMMdd");
@@ -474,36 +689,46 @@ namespace WizMes_WooJung
             return result;
         }
 
+
         #endregion
 
+       
     }
 
-    public class Win_prd_sts_RunningRateDetail_Q_CodeView : BaseView
+    public class Work_CodeView : BaseView
     {
-        public override string ToString()
-        {
-            return (this.ReportAllProperties());
-        }
-
+ 
         public int Num { get; set; }
         public string WorkDate { get; set; }
         public string ArticleID { get; set; }
         public string Article { get; set; }
-        public string Worker { get; set; }
+        public string WorkPersonID { get; set; }
+        public string Name { get; set; }
+        public string EduCount { get; set; }
+        public string MachineID { get; set; }
+        public string StartDate { get; set; }
 
-        public string LearningCount { get; set; }
-        public string WorkStartDate { get; set; }
-        public string MCID { get; set; }
-        public string MCName { get; set; }
-        public string MCNum { get; set; }
-
-        public string LastMCInspectDate { get; set; }
-        public string MCErrorCount { get; set; }
-        public string MCErrorContent { get; set; }
-        public string NoWorkDate { get; set; }
-        public string NoWorkReason { get; set; }
 
     }
 
+    public class MC_CodeView : BaseView
+    {
+        public string MCID { get; set; }
+        public string MCNAME { get; set; }
+        public string MachineID { get; set; }
+        public string MachineNo { get; set; }
+        public string LastInspectDate { get; set; }
+        public string InspectCount { get; set; }
+        public string DefectContents { get; set; }
+        public string NoWorkDate { get; set; }
+    }
 
+    public class NoWork_CodeView : BaseView
+    {
+        public string WorkDate { get; set; }
+        public string NoReworkCode { get; set; }
+        public string NoReworkName { get; set; }
+        public string NoReworkReason { get; set; }
+        public string MachineID { get; set; }
+    }
 }

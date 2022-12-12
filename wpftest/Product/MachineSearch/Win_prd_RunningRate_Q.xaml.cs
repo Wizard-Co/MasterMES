@@ -40,7 +40,7 @@ namespace WizMes_WooJung
         public DataGrid FilterGrid { get; set; }
         public DataTable FilterTable { get; set; }
 
-        ObservableCollection<Win_prd_RunningRate_Q_CodeView> ovcCollection = new ObservableCollection<Win_prd_RunningRate_Q_CodeView>();
+        ObservableCollection<Win_prd_RunningRate_Q_CodeView_Old> ovcCollection = new ObservableCollection<Win_prd_RunningRate_Q_CodeView_Old>();
 
         public Win_prd_RunningRate_Q()
         {
@@ -298,7 +298,7 @@ namespace WizMes_WooJung
                         foreach (DataRow dr in drc)
                         {
                             i++;
-                            var dgdWorkRate = new Win_prd_RunningRate_Q_CodeView()
+                            var dgdWorkRate = new Win_prd_RunningRate_Q_CodeView_Old()
                             {
                                 Num = i,
                                 MCID = dr["MCID"].ToString(),
@@ -348,7 +348,7 @@ namespace WizMes_WooJung
                     lvcChart.Series.Clear();
                 }
 
-                ChartInfoMCRunningRate chartRunningRate = new ChartInfoMCRunningRate();
+                ChartInfoMCRunningRate_Old chartRunningRate = new ChartInfoMCRunningRate_Old();
                 chartRunningRate.seriesCollection = new SeriesCollection();
                 chartRunningRate.chartRunningRate = new ChartValues<double>();
                 chartRunningRate.chartGoalRate = new ChartValues<double>();
@@ -357,7 +357,7 @@ namespace WizMes_WooJung
                 int index = 0;
                 for (int i = 0; i < dataGrid.Items.Count; i++)
                 {
-                    var Rating = dataGrid.Items[i] as Win_prd_RunningRate_Q_CodeView;
+                    var Rating = dataGrid.Items[i] as Win_prd_RunningRate_Q_CodeView_Old;
 
                     
                     if (Rating != null)
@@ -414,7 +414,7 @@ namespace WizMes_WooJung
 
         private void BtnNoWorking_Click(object sender, RoutedEventArgs e)
         {
-            var NoWorkingCode = dgdMain.SelectedItem as Win_prd_RunningRate_Q_CodeView;
+            var NoWorkingCode = dgdMain.SelectedItem as Win_prd_RunningRate_Q_CodeView_Old;
 
             string sDate = dtpSDate.SelectedDate.Value.ToString("yyyyMMdd");
             string eDate = dtpEDate.SelectedDate.Value.ToString("yyyyMMdd");
@@ -442,7 +442,7 @@ namespace WizMes_WooJung
         {
             if (e.ClickCount == 2)
             {
-                var NoWorkingCode = dgdMain.SelectedItem as Win_prd_RunningRate_Q_CodeView;
+                var NoWorkingCode = dgdMain.SelectedItem as Win_prd_RunningRate_Q_CodeView_Old;
 
                 string sDate = dtpSDate.SelectedDate.Value.ToString("yyyyMMdd");
                 string eDate = dtpEDate.SelectedDate.Value.ToString("yyyyMMdd");
@@ -587,7 +587,7 @@ namespace WizMes_WooJung
 
     }
 
-    public class Win_prd_RunningRate_Q_CodeView : BaseView
+    public class Win_prd_RunningRate_Q_CodeView_Old : BaseView
     {
         public override string ToString()
         {
@@ -623,7 +623,7 @@ namespace WizMes_WooJung
 
     }
 
-    public class ChartInfoMCRunningRate
+    public class ChartInfoMCRunningRate_Old
     {
         public SeriesCollection seriesCollection { get; set; }
         public string[] Labels { get; set; }

@@ -393,23 +393,35 @@ namespace WizMes_WooJung
         }
 
         //관리번호
-        private void lblOrder_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void lblOrderID_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (chkOrder.IsChecked == true) { chkOrder.IsChecked = false; }
-            else { chkOrder.IsChecked = true; }
+            if (chkOrderID.IsChecked == true) { chkOrderID.IsChecked = false; }
+            else { chkOrderID.IsChecked = true; }
         }
 
         //관리번호
-        private void chkOrder_Checked(object sender, RoutedEventArgs e)
+        private void chkOrderID_Checked(object sender, RoutedEventArgs e)
         {
-            txtOrder.IsEnabled = true;
-            txtOrder.Focus();
+            txtOrderID.IsEnabled = true;
+            txtOrderID.Focus();
         }
 
         //관리번호
-        private void chkOrder_Unchecked(object sender, RoutedEventArgs e)
+        private void chkOrderID_Unchecked(object sender, RoutedEventArgs e)
         {
-            txtOrder.IsEnabled = false;
+            txtOrderID.IsEnabled = false;
+        }
+
+        //OrderNo
+        private void txtOrderID_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                if (e.Key == Key.Enter)
+                {
+                    MainWindow.pf.ReturnCode(txtOrderID, (int)Defind_CodeFind.DCF_ORDER, "");
+                }
+            }
         }
 
         //해상도가 낮아지면 체크박스 클릭이 어려워지므로 라벨 클릭으로 대체할수 있게 한다.
@@ -442,11 +454,11 @@ namespace WizMes_WooJung
         {
             if (rbnOrderID.IsChecked == true)
             {
-                tbkOrder.Text = "관리번호";
+                tbkOrderID.Text = "관리번호";
             }
             else if (rbnOrderNo.IsChecked == true)
             {
-                tbkOrder.Text = "Order No.";
+                tbkOrderID.Text = "Order No.";
             }
         }
 
@@ -563,8 +575,8 @@ namespace WizMes_WooJung
                 sqlParameter.Add("ChkArticleID", chkArticle.IsChecked == true ? 1 : 0);
                 sqlParameter.Add("ArticleID", chkArticle.IsChecked == true ?
                     (txtArticle.Tag != null ? txtArticle.Tag.ToString() : "") : "");
-                sqlParameter.Add("ChkOrder", chkOrder.IsChecked == true ? (rbnOrderID.IsChecked == true ? 1 : 2) : 0);
-                sqlParameter.Add("Order", chkOrder.IsChecked == true ? txtOrder.Text : "");
+                sqlParameter.Add("ChkOrder", chkOrderID.IsChecked == true ? (rbnOrderID.IsChecked == true ? 1 : 2) : 0);
+                sqlParameter.Add("Order", chkOrderID.IsChecked == true ? txtOrderID.Text : "");
                 sqlParameter.Add("ChkIncPlComplete", chkPlanComplete.IsChecked == true ? 1 : 0);
                 sqlParameter.Add("ChkCloseClss", chkTheEnd.IsChecked == true ? 1 : 0);
                 sqlParameter.Add("ChkBuyerArticleNo", CheckBoxBuyerArticleNoSearch.IsChecked == true ? 1 : 0);

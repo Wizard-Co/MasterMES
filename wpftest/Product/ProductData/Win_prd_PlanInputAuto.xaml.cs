@@ -326,6 +326,19 @@ namespace WizMes_WooJung
         private void chkOrderIDSrh_Unchecked(object sender, RoutedEventArgs e)
         {
             txtOrderIDSrh.IsEnabled = false;
+
+        }
+
+        //OrderNo
+        private void txtOrderID_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                if (e.Key == Key.Enter)
+                {
+                    MainWindow.pf.ReturnCode(txtOrderIDSrh, (int)Defind_CodeFind.DCF_ORDER, "");
+                }
+            }
         }
 
         //OrderNo
@@ -519,8 +532,8 @@ namespace WizMes_WooJung
                 sqlParameter.Add("CustomID", chkCustom.IsChecked == true ? ((txtCustom.Text != null && txtCustom.Tag != null) ? txtCustom.Text.ToString() : "") : "");
                 sqlParameter.Add("ChkArticleID", chkArticle.IsChecked == true ? 1 : 0);
                 sqlParameter.Add("ArticleID", chkArticle.IsChecked == true ? ((txtArticle.Text != null && txtArticle.Tag != null) ? txtArticle.Text.ToString() : "") : "");
-                sqlParameter.Add("ChkOrder", chkOrderIDSrh.IsChecked == true ? 1 : 0);
-                sqlParameter.Add("Order",  chkOrderIDSrh.IsChecked == true ? ((txtOrderIDSrh.Text != null && txtOrderIDSrh.Tag != null) ? txtOrderIDSrh.Text.ToString() : "" ) : "");
+                sqlParameter.Add("ChkOrderID", chkOrderIDSrh.IsChecked == true ? 1 : 0);
+                sqlParameter.Add("OrderID",  chkOrderIDSrh.IsChecked == true ? ((txtOrderIDSrh.Text != null && txtOrderIDSrh.Tag != null) ? txtOrderIDSrh.Text.ToString() : "" ) : "");
 
                 DataSet ds = DataStore.Instance.ProcedureToDataSet_LogWrite("xp_AutoPlan_sAutoPlan", sqlParameter, true, "R");
 
@@ -539,7 +552,7 @@ namespace WizMes_WooJung
 
                             var Auto = new Win_prd_PlanInputAuto_CodeView()
                             {
-                                Num = i + 1,
+                                Num = i,
                                 InstDate = dr["InstDate"].ToString(),
                                 InstID = dr["InstID"].ToString(),
                                 AcptDate = dr["AcptDate"].ToString(),
@@ -550,9 +563,10 @@ namespace WizMes_WooJung
                                 OrderQty = Convert.ToDouble(dr["OrderQty"]),
                                 DvlyDate = dr["DvlyDate"].ToString(),
                                 SumInstQty = Convert.ToDouble(dr["SumInstQty"]),
-                                PlanQty = Convert.ToDouble(dr["PlanQty"]),
+                                OrderInstQty = Convert.ToDouble(dr["OrderInstQty"]),
                                 NonePlanQty = Convert.ToDouble(dr["NonePlanQty"]),
                                 CustomID = dr["CustomID"].ToString(),
+                                
 
                             };
 
@@ -638,26 +652,22 @@ namespace WizMes_WooJung
 
 
         #region 삭제
-        /// <summary>
-        /// 실삭제
-        /// </summary>
-        /// <param name="WinMcRunning"></param>
-        /// <returns></returns>
-        private bool DeleteData(string strOrderNo)
+        private bool DeleteData(string InstID)
         {
             bool flag = false;
 
             Dictionary<string, object> sqlParameter = new Dictionary<string, object>();
             sqlParameter.Clear();
-            sqlParameter.Add("YYYY", strOrderNo);
+            sqlParameter.Add("InstID", InstID);
+            sqlParameter.Add("OutMessage", "");
 
 
-            string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_MachineGoal_dMachineGoalAll", sqlParameter, "D");
+            string[] result = DataStore.Instance.ExecuteProcedure_NewLog("xp_AutoPlan_dAutoPlan", sqlParameter, "D");
             DataStore.Instance.CloseConnection();
 
             if (result[0].Equals("success"))
             {
-                //MessageBox.Show("성공 *^^*");
+                MessageBox.Show("삭제가 완료되었습니다");
                 flag = true;
             }
 
@@ -717,9 +727,9 @@ namespace WizMes_WooJung
         public string BuyerArticleNo { get; set; }      //품번
         public string OrderID { get; set; }             //오더ID  
         public double OrderQty { get; set; }            //수주량
+        public double OrderInstQty { get; set; }        //계획량
         public string DvlyDate { get; set; }            //납기일
         public double SumInstQty { get; set; }          //누계계획량
-        public double PlanQty { get; set; }             //계획량
         public double NonePlanQty { get; set; }         //미계획량
         public string CustomID { get; set; }
 

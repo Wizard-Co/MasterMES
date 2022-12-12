@@ -204,7 +204,7 @@
                     <RowDefinition Height="24*"/>
                     <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
-                <DataGrid x:Name="dgdInpsect" Grid.Row="0" SelectionChanged="dgdInpsect_SelectionChanged"
+                <DataGrid x:Name="dgdInspect" Grid.Row="0" SelectionChanged="dgdInspect_SelectionChanged"
                       Style="{DynamicResource DataGridSet1}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="" Binding="{Binding Num}" />

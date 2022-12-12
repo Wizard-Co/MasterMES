@@ -212,8 +212,8 @@ namespace WizMes_WooJung
             btnExcel.Visibility = Visibility.Visible;
             gbxMcPart.IsEnabled = false;
             lblMsg.Visibility = Visibility.Hidden;
-            //dgdInpsect.IsEnabled = true;
-            dgdInpsect.IsHitTestVisible = true;
+            //dgdInspect.IsEnabled = true;
+            dgdInspect.IsHitTestVisible = true;
         }
 
         /// <summary>
@@ -230,8 +230,8 @@ namespace WizMes_WooJung
             btnExcel.Visibility = Visibility.Hidden;
             gbxMcPart.IsEnabled = true;
             lblMsg.Visibility = Visibility.Visible;
-            //dgdInpsect.IsEnabled = false;
-            dgdInpsect.IsHitTestVisible = false;
+            //dgdInspect.IsEnabled = false;
+            dgdInspect.IsHitTestVisible = false;
 
             
 
@@ -259,7 +259,7 @@ namespace WizMes_WooJung
 
             lblMsg.Visibility = Visibility.Visible;
             tbkMsg.Text = "자료 입력 중";
-            rowNum = dgdInpsect.SelectedIndex;
+            rowNum = dgdInspect.SelectedIndex;
             this.DataContext = null;
             //검사일자 오늘날짜 들어가도록
             dtpInspectDate.SelectedDate = DateTime.Now;
@@ -277,11 +277,11 @@ namespace WizMes_WooJung
         //수정
         private void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
-            WinMcRegulInspect = dgdInpsect.SelectedItem as Win_prd_RegularInspect_U_CodeView;
+            WinMcRegulInspect = dgdInspect.SelectedItem as Win_prd_RegularInspect_U_CodeView;
 
             if (WinMcRegulInspect != null)
             {
-                rowNum = dgdInpsect.SelectedIndex;
+                rowNum = dgdInspect.SelectedIndex;
                 tbkMsg.Text = "자료 수정 중";
                 lblMsg.Visibility = Visibility.Visible;
                 CantBtnControl();
@@ -300,7 +300,7 @@ namespace WizMes_WooJung
         //삭제
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
-            WinMcRegulInspect = dgdInpsect.SelectedItem as Win_prd_RegularInspect_U_CodeView;
+            WinMcRegulInspect = dgdInspect.SelectedItem as Win_prd_RegularInspect_U_CodeView;
 
             if (WinMcRegulInspect == null)
             {
@@ -310,9 +310,9 @@ namespace WizMes_WooJung
             {
                 if (MessageBox.Show("선택하신 항목을 삭제하시겠습니까?", "삭제 전 확인", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
-                    if (dgdInpsect.Items.Count > 0 && dgdInpsect.SelectedItem != null)
+                    if (dgdInspect.Items.Count > 0 && dgdInspect.SelectedItem != null)
                     {
-                        rowNum = dgdInpsect.SelectedIndex;
+                        rowNum = dgdInspect.SelectedIndex;
                     }
 
                     if (DeleteData(WinMcRegulInspect.McRInspectID))
@@ -354,19 +354,17 @@ namespace WizMes_WooJung
             {
                 try
                 {
-                    rowNum = 0;
+                    int rowNum = 0;
                     using (Loading lw = new Loading(FillGrid))
                     {
                         lw.ShowDialog();
-                        
-                        if (dgdInpsect.Items.Count <= 0)
+                        if (dgdInspect.Items.Count <= 0)
                         {
-                            this.DataContext = null;
                             MessageBox.Show("조회된 내용이 없습니다.");
                         }
                         else
                         {
-                            dgdInpsect.SelectedIndex = rowNum;
+                            dgdInspect.SelectedIndex = rowNum;
                         }
 
                         btnSearch.IsEnabled = true;
@@ -378,6 +376,7 @@ namespace WizMes_WooJung
                 }
 
             }), System.Windows.Threading.DispatcherPriority.Background);
+
 
         }
 
@@ -393,7 +392,7 @@ namespace WizMes_WooJung
 
                 if (strFlag.Equals("I"))
                 {
-                   rowNum = dgdInpsect.Items.Count;
+                   rowNum = dgdInspect.Items.Count;
                    re_Search(rowNum);
                 }
                 else
@@ -428,7 +427,7 @@ namespace WizMes_WooJung
             lst[0] = "설비점검";
             lst[1] = "설비점검 검사 범례";
             lst[2] = "설비점검 검사 수치";
-            lst[3] = dgdInpsect.Name;
+            lst[3] = dgdInspect.Name;
             lst[4] = dgdInspectSub1.Name;
             lst[5] = dgdInspectSub2.Name;
 
@@ -438,14 +437,14 @@ namespace WizMes_WooJung
             if (ExpExc.DialogResult.HasValue)
             {
                 DataStore.Instance.InsertLogByForm(this.GetType().Name, "E");
-                if (ExpExc.choice.Equals(dgdInpsect.Name))
+                if (ExpExc.choice.Equals(dgdInspect.Name))
                 {
                     if (ExpExc.Check.Equals("Y"))
-                        dt = Lib.Instance.DataGridToDTinHidden(dgdInpsect);
+                        dt = Lib.Instance.DataGridToDTinHidden(dgdInspect);
                     else
-                        dt = Lib.Instance.DataGirdToDataTable(dgdInpsect);
+                        dt = Lib.Instance.DataGirdToDataTable(dgdInspect);
 
-                    Name = dgdInpsect.Name;
+                    Name = dgdInspect.Name;
                     Lib.Instance.GenerateExcel(dt, Name);
                     Lib.Instance.excel.Visible = true;
                 }
@@ -489,16 +488,16 @@ namespace WizMes_WooJung
         /// <param name="selectedIndex"></param>
         private void re_Search(int selectedIndex)
         {
-            if (dgdInpsect.Items.Count > 0)
+            if (dgdInspect.Items.Count > 0)
             {
-                dgdInpsect.Items.Clear();
+                dgdInspect.Items.Clear();
             }
 
             FillGrid();
 
-            if (dgdInpsect.Items.Count > 0)
+            if (dgdInspect.Items.Count > 0)
             {
-                dgdInpsect.SelectedIndex = selectedIndex;
+                dgdInspect.SelectedIndex = selectedIndex;
             }
             else
             {
@@ -585,7 +584,7 @@ namespace WizMes_WooJung
                                 Lib.Instance.StrDateTimeBar(WinMCRegulInspect.McRInspectDate);
                             }
 
-                            dgdInpsect.Items.Add(WinMCRegulInspect);
+                            dgdInspect.Items.Add(WinMCRegulInspect);
                             i++;
                         }
                         tbkCount.Text = "▶ 검색결과 : " + i.ToString() + " 건";
@@ -603,9 +602,9 @@ namespace WizMes_WooJung
         }
 
         //설비점검 메인그리드의 행 선택시
-        private void dgdInpsect_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void dgdInspect_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            WinMcRegulInspect = dgdInpsect.SelectedItem as Win_prd_RegularInspect_U_CodeView;
+            WinMcRegulInspect = dgdInspect.SelectedItem as Win_prd_RegularInspect_U_CodeView;
 
             if (WinMcRegulInspect != null)
             {

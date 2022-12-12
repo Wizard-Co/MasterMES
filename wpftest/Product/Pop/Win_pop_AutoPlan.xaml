@@ -44,7 +44,7 @@
                 <Button Grid.Row="1" Grid.Column="5" Grid.RowSpan="2" Background="Azure">
                     <CheckBox x:Name="chkAutoInput" VerticalContentAlignment="Center" Content="자동 작업지시적용" />
                 </Button>
-                <Button Grid.Row="1" Grid.Column="7" Grid.RowSpan="2" Content="닫기" FontSize="3" MouseLeftButtonDown="btnClose_Click"></Button>
+                <Button Grid.Row="1" Grid.Column="7" Grid.RowSpan="2" Content="닫기" FontSize="3" Click="btnClose_Click"></Button>
             </Grid>
         </Grid>
 

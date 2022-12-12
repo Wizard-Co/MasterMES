@@ -209,21 +209,21 @@
                     <ColumnDefinition Width="90*" />
                     <ColumnDefinition Width="15*" />
                 </Grid.ColumnDefinitions>
-                <Label x:Name="lblOrder" Grid.Column="0" 
+                <Label x:Name="lblOrderID" Grid.Column="0" 
                        Style="{DynamicResource LabelSearch}"
-                       MouseLeftButtonUp="lblOrder_MouseLeftButtonUp">
+                       MouseLeftButtonUp="lblOrderID_MouseLeftButtonUp">
                     <StackPanel Style="{DynamicResource StackPanelInLabel}">
                         <Viewbox Style="{DynamicResource ViewBoxSetMaxMinHeight}">
-                            <CheckBox x:Name="chkOrder" VerticalContentAlignment="Center" 
-                                      Checked="chkOrder_Checked" Unchecked="chkOrder_Unchecked"/>
+                            <CheckBox x:Name="chkOrderID" VerticalContentAlignment="Center" 
+                                      Checked="chkOrderID_Checked" Unchecked="chkOrderID_Unchecked"/>
                         </Viewbox>
                         <Viewbox Style="{DynamicResource ViewBoxSetMaxMinHeight}" >
-                            <TextBlock x:Name="tbkOrder" Text="관리번호" 
+                            <TextBlock x:Name="tbkOrderID" Text="관리번호" 
                                        Style="{DynamicResource TextBlockInViewBoxSearch}"/>
                         </Viewbox>
                     </StackPanel>
                 </Label>
-                <TextBox x:Name="txtOrder" Grid.Column="1" 
+                <TextBox x:Name="txtOrderID" Grid.Column="1" Keyboard.KeyDown="txtOrderID_KeyDown"  IsEnabled="False"
                          Style="{DynamicResource TextBoxSearch}"/>
             </Grid>
 

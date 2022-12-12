@@ -318,7 +318,7 @@ namespace WizMes_WooJung.PopUp
                             }
 
                             MessageBox.Show("편성이 완료 되었습니다");
-                            re_Search();
+
                         }
                         else
                         {

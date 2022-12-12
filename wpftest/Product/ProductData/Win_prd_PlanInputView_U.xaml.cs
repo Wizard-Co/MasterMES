@@ -261,23 +261,35 @@ namespace WizMes_WooJung
         }
 
         //관리번호
-        private void lblOrder_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void lblOrderID_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (chkOrder.IsChecked == true) { chkOrder.IsChecked = false; }
-            else { chkOrder.IsChecked = true; }
+            if (chkOrderID.IsChecked == true) { chkOrderID.IsChecked = false; }
+            else { chkOrderID.IsChecked = true; }
         }
 
         //관리번호
-        private void chkOrder_Checked(object sender, RoutedEventArgs e)
+        private void chkOrderID_Checked(object sender, RoutedEventArgs e)
         {
-            txtOrder.IsEnabled = true;
-            txtOrder.Focus();
+            txtOrderID.IsEnabled = true;
+            txtOrderID.Focus();
         }
 
         //관리번호
-        private void chkOrder_Unchecked(object sender, RoutedEventArgs e)
+        private void chkOrderID_Unchecked(object sender, RoutedEventArgs e)
         {
-            txtOrder.IsEnabled = false;
+            txtOrderID.IsEnabled = false;
+        }
+
+        //OrderNo
+        private void txtOrderID_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                if (e.Key == Key.Enter)
+                {
+                    MainWindow.pf.ReturnCode(txtOrderID, (int)Defind_CodeFind.DCF_ORDER, "");
+                }
+            }
         }
 
         //지시완료분 포함
@@ -314,13 +326,13 @@ namespace WizMes_WooJung
         {
             if (rbnOrderNo.IsChecked == true)
             {
-                tbkOrder.Text = "OrderNo";
+                tbkOrderID.Text = "OrderNo";
                 dgdtpeOrderNo.Visibility = Visibility.Visible;
                 dgdtpeOrderID.Visibility = Visibility.Hidden;
             }
             else if (rbnOrderID.IsChecked == true)
             {
-                tbkOrder.Text = "관리번호";
+                tbkOrderID.Text = "관리번호";
                 dgdtpeOrderNo.Visibility = Visibility.Hidden;
                 dgdtpeOrderID.Visibility = Visibility.Visible;
             }
@@ -569,8 +581,8 @@ namespace WizMes_WooJung
 
                 sqlParameter.Add("ChkArticleID", chkArticle.IsChecked == true ? 1 : 0);
                 sqlParameter.Add("ArticleID", chkArticle.IsChecked == true && txtArticle.Tag != null ? txtArticle.Tag.ToString() : "");
-                sqlParameter.Add("ChkOrder", chkOrder.IsChecked == true ? (rbnOrderID.IsChecked == true ? 1 : 2) : 0);
-                sqlParameter.Add("Order", chkOrder.IsChecked == true ? txtOrder.Text : "");
+                sqlParameter.Add("ChkOrder", chkOrderID.IsChecked == true ? (rbnOrderID.IsChecked == true ? 1 : 2) : 0);
+                sqlParameter.Add("Order", chkOrderID.IsChecked == true ? txtOrderID.Text : "");
                 sqlParameter.Add("ChkPlanComplete", chkPlanComplete.IsChecked == true ? 1 : 0);
 
                 sqlParameter.Add("ChkTheEnd", chkTheEndSrh.IsChecked == true ? 1 : 0);

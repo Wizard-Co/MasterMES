@@ -277,7 +277,6 @@ namespace WizMes_WooJung
         //검색
         private void btnSearch_Click(object sender, RoutedEventArgs e)
         {
-
             //검색버튼 비활성화
             btnSearch.IsEnabled = false;
 
@@ -286,14 +285,12 @@ namespace WizMes_WooJung
             {
                 try
                 {
-                    rowNum = 0;
+                    int rowNum = 0;
                     using (Loading lw = new Loading(FillGrid))
                     {
                         lw.ShowDialog();
-
                         if (dgdMCPartRInsOne.Items.Count <= 0)
                         {
-                            this.DataContext = null;
                             MessageBox.Show("조회된 내용이 없습니다.");
                         }
                         else
@@ -310,8 +307,8 @@ namespace WizMes_WooJung
                 }
 
             }), System.Windows.Threading.DispatcherPriority.Background);
-
         }
+
 
         //닫기
         private void btnClose_Click(object sender, RoutedEventArgs e)
